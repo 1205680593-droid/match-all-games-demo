@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="icon" href="data:,">
-  <title>All Games Explore Redesign Demo</title>
+  <title>Matches · Top Matches Demo</title>
   <style>
     :root {
       color-scheme: light;
@@ -535,7 +535,7 @@
     }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* The redesign is scoped to All Games so Featured keeps its existing product logic. */
+    /* The directory redesign is scoped to Matches so Top Matches keeps its existing list logic. */
     .app.all-games-redesign .topbar {
       height: 50px;
       flex-basis: 50px;
@@ -821,8 +821,8 @@
 
     <header class="topbar">
       <nav class="explore-tabs" aria-label="Match sections">
-        <button class="explore-tab" id="liveNav">All Games</button>
-        <button class="explore-tab active" id="exploreNav">Featured</button>
+        <button class="explore-tab" id="liveNav">Matches</button>
+        <button class="explore-tab active" id="exploreNav">Top Matches</button>
       </nav>
       <div class="top-actions">
         <button class="icon-btn search-action" aria-label="Search">⌕</button>
@@ -1271,7 +1271,7 @@
       const matches = selectedDate === '27' ? liveData : [];
       return `<section class="standalone-live-view" aria-label="Live matches list">
         <header class="standalone-live-summary">
-          <button class="standalone-live-back" id="backToAllGames" aria-label="Back to All Games">‹</button>
+          <button class="standalone-live-back" id="backToAllGames" aria-label="Back to Matches">‹</button>
           <span class="standalone-live-dot" aria-hidden="true"></span>
           <h2>Live matches</h2>
           <span class="standalone-live-total">${matches.length}</span>
@@ -1290,7 +1290,7 @@
     function renderStandaloneLive() {
       closeLivePopup();
       matchList.innerHTML = standaloneLiveTemplate();
-      document.getElementById('backToAllGames')?.addEventListener('click', () => switchPage('live'));
+      document.getElementById('backToAllGames')?.addEventListener('click', navigateToAllGames);
       document.getElementById('standaloneSortLive')?.addEventListener('click', () => showToast('Games sorted by time'));
       document.getElementById('standaloneSearchLive')?.addEventListener('click', () => showToast('Search live matches'));
       document.getElementById('standaloneFilterLive')?.addEventListener('click', () => showToast('Filter live matches'));
@@ -1523,7 +1523,7 @@
     }
 
     function redesignedAllGamesTemplate() {
-      return `<section class="all-games-redesign-view" aria-label="All Games">
+      return `<section class="all-games-redesign-view" aria-label="Matches">
         ${selectedDate === '27' ? livePreviewTemplate() : ''}
         <section class="redesign-competition-list" aria-label="Top competitions">${redesignedTopCompetitions.map(redesignedCompetitionTemplate).join('')}</section>
         <section class="redesign-all-competitions" aria-label="All Competitions">
@@ -1549,9 +1549,14 @@
       return redesignedAllGamesTemplate();
     }
 
+    function navigateToAllGames() {
+      window.location.assign(`?view=all&date=${encodeURIComponent(selectedDate)}`);
+    }
+
     function openStandaloneLive(status = 'live') {
-      Object.keys(liveSectionState).forEach(key => { liveSectionState[key] = key === status; });
-      switchPage('live-list');
+      const params = new URLSearchParams({ view: 'live', date: selectedDate });
+      if (status !== 'live') params.set('status', status);
+      window.location.assign(`?${params.toString()}`);
     }
 
     function switchPage(page) {
@@ -1612,10 +1617,20 @@
     }
 
     liveNav.addEventListener('click', () => {
+      if (currentPage === 'live-list') {
+        navigateToAllGames();
+        return;
+      }
       if (currentPage === 'live' && livePopup.classList.contains('show')) closeLivePopup();
       else switchPage('live');
     });
-    exploreNav.addEventListener('click', () => switchPage('explore'));
+    exploreNav.addEventListener('click', () => {
+      if (currentPage === 'live-list') {
+        window.location.assign(`?view=featured&date=${encodeURIComponent(selectedDate)}`);
+        return;
+      }
+      switchPage('explore');
+    });
     document.querySelector('.search-action').addEventListener('click', () => showToast(currentPage === 'live-list' ? 'Search live matches' : 'Search matches'));
     document.getElementById('sortLiveBtn').addEventListener('click', () => showToast('Games grouped by competition'));
     document.getElementById('liveSearchBtn').addEventListener('click', () => showToast('Search live matches'));
@@ -1653,6 +1668,10 @@
     function applyPreviewState() {
       const view = previewParams.get('view') || 'featured';
       const action = previewParams.get('action');
+      const requestedStatus = previewParams.get('status');
+      if (['finished', 'live', 'upcoming'].includes(requestedStatus)) {
+        Object.keys(liveSectionState).forEach(key => { liveSectionState[key] = key === requestedStatus; });
+      }
       if (view === 'all') switchPage('live');
       else if (view === 'live') switchPage('live-list');
       else renderFeatured();

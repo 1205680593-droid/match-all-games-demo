@@ -1,8 +1,8 @@
-# All Games Live Entry & Status List
+# Matches Live Entry & Status List
 
 ## Scope
 
-This specification covers the Live entry inside All Games and its child status list. It does not add a top-level Live tab and does not change Featured selection logic.
+This specification covers the Live entry inside Matches and its dedicated status list page. It does not add a top-level Live tab and does not change Top Matches selection logic.
 
 ## Display
 
@@ -13,8 +13,8 @@ This specification covers the Live entry inside All Games and its child status l
 - Reveal part of the next card in the first viewport to make horizontal scrolling discoverable.
 - Place a `Finished` entry at the far left and an `Upcoming` entry at the far right. Start at the first Live card, with both status entries reachable by horizontal scrolling.
 - Use the same neutral card style for every Live preview; do not add an `is_featured` background or emphasis border in this rail.
-- Do not show a recommendation rail or `You may like` in All Games.
-- Keep `All Games` active while the Live child list is open.
+- Do not show a recommendation rail or `You may like` in Matches.
+- Navigate to a dedicated Live list page when the Live entry is opened; keep `Matches` active in the shared top navigation.
 
 ## Data
 
@@ -38,13 +38,13 @@ This specification covers the Live entry inside All Games and its child status l
 
 ## Interaction
 
-- Swiping the preview browses Live cards without leaving All Games.
+- Swiping the preview browses Live cards without leaving Matches.
 - Clicking a preview card opens Match Detail.
-- Clicking `View all` opens the Live child list without creating another top navigation tab.
-- Clicking a status entry opens the same child list with the selected Finished or Upcoming group expanded and the other groups collapsed.
+- Clicking `View all` navigates to the dedicated Live list page without creating another top navigation tab.
+- Clicking a status entry navigates to the dedicated Live list page with the selected Finished or Upcoming group expanded and the other groups collapsed.
 - The child list opens with Live expanded and Finished/Upcoming collapsed.
 - Status groups expand independently and may remain open together.
-- Back or the All Games tab returns to the directory and restores its scroll position.
+- Back or the Matches tab returns to the directory and restores the selected-date context.
 - `By time` changes to a cross-competition chronological list.
 - Search accepts team and competition names; Filter supports status, competition, and following.
 - Clicking a match opens Match Detail. Clicking the favorite control only changes following state.
@@ -65,8 +65,8 @@ This specification covers the Live entry inside All Games and its child status l
 - Today shows the Live title and horizontal preview; Tue 28 shows neither.
 - At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
 - Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
-- The top navigation contains only All Games and Featured.
-- Opening Live keeps All Games active and renders Finished, Live, Upcoming in that order.
+- The top navigation contains only Matches and Top Matches.
+- Opening Live keeps Matches active and renders Finished, Live, Upcoming in that order on a dedicated page.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
 - All visible team and competition assets load, and browser console errors remain at 0.
@@ -76,7 +76,7 @@ This specification covers the Live entry inside All Games and its child status l
 - Objective: validate whether the horizontal Live preview improves Live discovery and match-detail entry without harming overall match browsing.
 - Control A: the existing single-row Live entry with dot, label, count, and chevron.
 - Variant B: `Live now` title row with `View all`, horizontal Live cards, and Finished/Upcoming entries at the two ends of the rail. All cards use the same neutral style.
-- Eligibility: All Games + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
+- Eligibility: Matches + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
 - Assignment: 50/50 random assignment by `user_id` or stable device ID, sticky for the experiment period; keep `experiment_id`, `variant`, and `assignment_time` on every event.
 - Primary metric: unique exposed users who click any Live entry, Live card, or open Match Detail divided by unique exposed users.
 - Secondary metrics: card click-through, View all click-through, Finished/Upcoming usage, P50 time to first Match Detail, and Match Detail opens per session.

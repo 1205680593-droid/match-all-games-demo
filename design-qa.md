@@ -9,7 +9,7 @@
 
 ## Review Scope
 
-- All Games navigation and Today date state.
+- Matches navigation and Today date state.
 - Top-positioned Live title and horizontal match preview.
 - Live child list with Finished, Live, Upcoming groups.
 - Top competition and All Competitions continuity after removing the recommendation rail.
@@ -24,10 +24,10 @@
 
 - Product at 393 x 852: Live preview begins at the date strip bottom, remains 150 px high, and has 0 px horizontal overflow. The first 196 px card is fully visible and 175 px of the next card is exposed.
 - Product at 320 x 700: Live preview remains 150 px high with 0 px horizontal overflow. The first card is fully visible and 101 px of the next card is exposed.
-- All Games contains 0 recommendation-rail nodes. The Live preview renders 7 neutral horizontal cards with competition, clock, crests, teams, and score; no card receives the Featured emphasis style.
+- Matches contains 0 recommendation-rail nodes. The Live preview renders 7 neutral horizontal cards with competition, clock, crests, teams, and score; no card receives the Top Matches emphasis style.
 - The track starts at the first Live card. Finished is reachable at the far left and Upcoming at the far right; each opens the child list with its own status group expanded.
 - Clicking a Live card opens Match Detail; clicking `View all` opens the existing Live child list.
-- Live child list keeps All Games active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
+- Dedicated Live page keeps Matches active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
 - Requirement document at 1440 x 900 and 1200 x 900 uses two columns with a maximum 1180 px document width.
@@ -49,14 +49,14 @@
 - Hosting: GitHub Pages from `main` and `/(root)`, with HTTPS enforced.
 - Pages workflow `pages-build-deployment #1` completed successfully in 46 seconds.
 - Public Demo and requirements URLs returned HTTP 200.
-- Public Demo rendered the All Games entry and Live child list with 7 matches, 5 competition groups, 0 broken visible images after load, and 0 console errors/warnings.
+- Public Demo rendered the Matches entry and dedicated Live page with 7 matches, 5 competition groups, 0 broken visible images after load, and 0 console errors/warnings.
 
 ## Required Interactions
 
-- Open Live from All Games.
+- Open Live from Matches.
 - Swipe the Live preview and open a match card.
 - Expand and collapse each status group.
-- Return from Live to All Games.
+- Return from Live to Matches.
 - Switch from Today to Tue 28 and confirm the Live entry is absent.
 - Open the requirements document and operate the embedded Live prototype.
 
