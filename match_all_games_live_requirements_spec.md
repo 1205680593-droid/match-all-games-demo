@@ -8,8 +8,12 @@ This specification covers the Live entry inside All Games and its child status l
 
 - Show the Live entry only when `selected_date` is the user's local Today and the deduplicated Live count is greater than 0.
 - Place the entry directly below the date strip and before Top Competitions.
-- Keep the entry to one 42 px row: live dot, `Live matches`, count, chevron.
-- Do not show team names, scores, a recommendation rail, or `You may like` in All Games.
+- Use a two-part module: a `Live now` title row with count and `View all`, followed by a horizontally scrollable Live match preview.
+- Each preview card shows competition, normalized match clock, both crests, both team names, and the current score.
+- Reveal part of the next card in the first viewport to make horizontal scrolling discoverable.
+- Place a `Finished` entry at the far left and an `Upcoming` entry at the far right. Start at the first Live card, with both status entries reachable by horizontal scrolling.
+- Use the same neutral card style for every Live preview; do not add an `is_featured` background or emphasis border in this rail.
+- Do not show a recommendation rail or `You may like` in All Games.
 - Keep `All Games` active while the Live child list is open.
 
 ## Data
@@ -19,19 +23,25 @@ This specification covers the Live entry inside All Games and its child status l
 - Teams: `home_team`, `away_team`, `home_crest_url`, `away_crest_url`.
 - User: `is_following`.
 - Editorial: `is_featured`.
+- Preview order: `live_preview_sort_order`.
 
 ## Calculation
 
 - Deduplication key: `match_id + status_period`; keep the newest `updated_at`.
 - Group count: count unique `match_id` values in Finished, Live, and Upcoming.
-- Entry count: use the Live group count.
+- Title count and preview-card count: use the Live group count.
+- Order preview cards by `live_preview_sort_order`; fall back to competition order and kickoff time.
+- Track order is `Finished entry`, Live cards, `Upcoming entry`; initial scroll offset equals the Finished entry width plus one gap.
 - Group order: Finished, Live, Upcoming.
 - Within a group, order by `competition_sort_order`, competition name, then kickoff time.
 - Display `HT` at half time; otherwise use the provider's normalized match clock.
 
 ## Interaction
 
-- Clicking the entry opens the Live child list without creating another top navigation tab.
+- Swiping the preview browses Live cards without leaving All Games.
+- Clicking a preview card opens Match Detail.
+- Clicking `View all` opens the Live child list without creating another top navigation tab.
+- Clicking a status entry opens the same child list with the selected Finished or Upcoming group expanded and the other groups collapsed.
 - The child list opens with Live expanded and Finished/Upcoming collapsed.
 - Status groups expand independently and may remain open together.
 - Back or the All Games tab returns to the directory and restores its scroll position.
@@ -41,7 +51,7 @@ This specification covers the Live entry inside All Games and its child status l
 
 ## Boundary Handling
 
-- Hide the entry on non-Today dates or when the Live count is 0.
+- Hide the complete preview module on non-Today dates or when the Live count is 0.
 - A legacy/direct Live URL on a non-Today date shows an empty state with a back action.
 - Missing scores render as dashes; do not convert missing values to 0.
 - Missing logos use fixed-size neutral placeholders without changing row height.
@@ -52,10 +62,23 @@ This specification covers the Live entry inside All Games and its child status l
 ## Acceptance
 
 - At 393 x 852 and 320 x 700, there is no horizontal overflow.
-- Today shows one 42 px Live entry; Tue 28 shows none.
+- Today shows the Live title and horizontal preview; Tue 28 shows neither.
+- At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
+- Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
 - The top navigation contains only All Games and Featured.
 - Opening Live keeps All Games active and renders Finished, Live, Upcoming in that order.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
 - All visible team and competition assets load, and browser console errors remain at 0.
 
+## A/B Test
+
+- Objective: validate whether the horizontal Live preview improves Live discovery and match-detail entry without harming overall match browsing.
+- Control A: the existing single-row Live entry with dot, label, count, and chevron.
+- Variant B: `Live now` title row with `View all`, horizontal Live cards, and Finished/Upcoming entries at the two ends of the rail. All cards use the same neutral style.
+- Eligibility: All Games + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
+- Assignment: 50/50 random assignment by `user_id` or stable device ID, sticky for the experiment period; keep `experiment_id`, `variant`, and `assignment_time` on every event.
+- Primary metric: unique exposed users who click any Live entry, Live card, or open Match Detail divided by unique exposed users.
+- Secondary metrics: card click-through, View all click-through, Finished/Upcoming usage, P50 time to first Match Detail, and Match Detail opens per session.
+- Guardrails: overall Match Detail opens, page exit rate, first-screen load time, and client error rate. Pause if any guardrail worsens by more than 3% or errors rise by more than 0.2 percentage points.
+- Runtime: collect a 7-day baseline for sample sizing, then run at least 14 days including two complete weekends. Recommend B only when the primary metric improves by at least 5% relative and its 95% confidence interval excludes 0; otherwise extend one week or mark the result inconclusive.

@@ -129,6 +129,7 @@
       background: #fff; border-bottom: 1px solid var(--line);
     }
     .app.live-page .all-games-live-entry { display: block; }
+    .app.all-games-redesign .all-games-live-entry { border-bottom: 5px solid var(--soft); }
     .live-preview-heading {
       height: 44px; padding: 2px 14px; display: flex; align-items: center;
     }
@@ -155,10 +156,6 @@
     .live-preview-match {
       width: 196px; padding: 6px 10px; display: block; text-align: left;
       box-shadow: 0 1px 3px rgba(20, 24, 32, .06);
-    }
-    .live-preview-match.featured-match {
-      padding-left: 7px; border-left: 3px solid var(--red); border-color: #ffc8cb #ffc8cb #ffc8cb var(--red);
-      background: var(--red-soft);
     }
     .live-preview-card-head { height: 22px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); }
     .live-preview-league { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #777980; font-size: 10px; font-weight: 700; }
@@ -304,19 +301,6 @@
     .standalone-live-empty { min-height: 280px; padding: 84px 24px 40px; text-align: center; color: var(--muted); }
     .standalone-live-empty b { display: block; margin-bottom: 7px; color: #4f5157; font-size: 16px; }
     .standalone-live-empty span { font-size: 12px; }
-    .redesign-live-entry { border-bottom: 5px solid var(--soft); background: #fff; }
-    .redesign-live-entry-button {
-      width: 100%; height: 42px; padding: 0 12px; border: 0; display: grid;
-      grid-template-columns: 10px minmax(0, 1fr) auto 18px; align-items: center; gap: 8px;
-      background: #fff; text-align: left; cursor: pointer;
-    }
-    .redesign-live-entry-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
-    .redesign-live-entry-title { font-size: 14px; font-weight: 650; }
-    .redesign-live-entry-count {
-      min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
-      display: grid; place-items: center; color: #fff; background: var(--red); font-size: 12px; font-weight: 750;
-    }
-    .redesign-live-entry-chevron { color: #686b71; font-size: 18px; text-align: right; }
     .all-games-directory { background: #fff; padding-bottom: 78px; }
     .directory-heading {
       min-height: 58px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
@@ -1449,9 +1433,8 @@
 
     function livePreviewMatchTemplate(match) {
       const [league, , , , time, , home, homeLogo, away, awayLogo, homeScore, awayScore] = match;
-      const important = isImportantMatch(match);
       const payload = JSON.stringify({ league: match[0], status: 'live', time, reason: 'Live', home, homeLogo, away, awayLogo, homeScore, awayScore }).replaceAll("'", '&apos;');
-      return `<button class="live-preview-match ${important ? 'featured-match' : ''}" data-match='${payload}' aria-label="${important ? 'Featured match, ' : ''}Open ${home} versus ${away}">
+      return `<button class="live-preview-match" data-match='${payload}' aria-label="Open ${home} versus ${away}">
         <span class="live-preview-card-head"><span class="live-preview-league">${league}</span><span class="live-preview-minute">${time}</span></span>
         <span class="live-preview-teams">
           <span class="live-preview-team"><img src="${homeLogo}" alt=""><span>${home}</span><strong>${homeScore}</strong></span>
@@ -1463,7 +1446,7 @@
     function livePreviewTemplate() {
       return `<section class="all-games-live-entry" aria-label="Live match preview">
         <div class="live-preview-heading">
-          <button class="live-preview-title" data-open-status="live" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></button>
+          <button class="live-preview-title" id="openStandaloneLive" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></button>
         </div>
         <div class="live-preview-track" id="livePreviewTrack" aria-label="Swipe through live matches">
           <button class="live-status-entry finished" data-open-status="finished" aria-label="Open finished matches"><strong>← Finished</strong></button>
@@ -1475,8 +1458,7 @@
 
     function bindLivePreview() {
       const track = document.getElementById('livePreviewTrack');
-      track.querySelectorAll('[data-open-status]').forEach(button => button.addEventListener('click', () => openLivePopup(button.dataset.openStatus, button)));
-      document.querySelector('.live-preview-title').addEventListener('click', event => openLivePopup('live', event.currentTarget));
+      track.querySelectorAll('[data-open-status]').forEach(button => button.addEventListener('click', () => openStandaloneLive(button.dataset.openStatus)));
       track.querySelectorAll('.live-preview-match').forEach(button => button.addEventListener('click', () => openSheet(JSON.parse(button.dataset.match))));
       requestAnimationFrame(() => {
         const finishedEntry = track.querySelector('.live-status-entry.finished');
@@ -1537,20 +1519,9 @@
       </section>`;
     }
 
-    function compactLiveEntryTemplate() {
-      return `<section class="redesign-live-entry" aria-label="Live matches entry">
-        <button class="redesign-live-entry-button" id="openStandaloneLive" aria-label="Open ${liveData.length} live matches">
-          <span class="redesign-live-entry-dot" aria-hidden="true"></span>
-          <span class="redesign-live-entry-title">Live matches</span>
-          <span class="redesign-live-entry-count">${liveData.length}</span>
-          <span class="redesign-live-entry-chevron" aria-hidden="true">›</span>
-        </button>
-      </section>`;
-    }
-
     function redesignedAllGamesTemplate() {
       return `<section class="all-games-redesign-view" aria-label="All Games">
-        ${selectedDate === '27' ? compactLiveEntryTemplate() : ''}
+        ${selectedDate === '27' ? livePreviewTemplate() : ''}
         <section class="redesign-competition-list" aria-label="Top competitions">${redesignedTopCompetitions.map(redesignedCompetitionTemplate).join('')}</section>
         <section class="redesign-all-competitions" aria-label="All Competitions">
           <header class="redesign-all-heading"><h2>All Competitions</h2></header>
@@ -1560,7 +1531,7 @@
     }
 
     function bindRedesignedAllGames() {
-      document.getElementById('openStandaloneLive')?.addEventListener('click', () => switchPage('live-list'));
+      document.getElementById('openStandaloneLive')?.addEventListener('click', () => openStandaloneLive('live'));
       document.querySelectorAll('.redesign-competition-row').forEach(button => button.addEventListener('click', () => {
         showToast(`${button.querySelector('.redesign-competition-name')?.textContent || 'Competition'} · Demo`);
       }));
@@ -1573,6 +1544,11 @@
 
     function allGamesTemplate() {
       return redesignedAllGamesTemplate();
+    }
+
+    function openStandaloneLive(status = 'live') {
+      Object.keys(liveSectionState).forEach(key => { liveSectionState[key] = key === status; });
+      switchPage('live-list');
     }
 
     function switchPage(page) {
@@ -1680,7 +1656,7 @@
 
       requestAnimationFrame(() => {
         if (action === 'live-popup') {
-          document.querySelector('.live-preview-title')?.click();
+          document.getElementById('openStandaloneLive')?.click();
           return;
         }
         if (action === 'expand-ucl') {

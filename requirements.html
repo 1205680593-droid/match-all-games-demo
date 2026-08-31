@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="icon" href="data:,">
-  <title>Match 模块需求文档</title>
+  <title>比赛模块需求文档</title>
   <style>
     :root {
       --page: #edf3f7;
@@ -128,27 +128,28 @@
 <body>
   <main class="document">
     <header class="document-top">
-      <p class="document-title">Match 模块需求文档 · All Games / Featured</p>
+      <p class="document-title">比赛模块需求文档 · 全部比赛 / 精选比赛</p>
       <nav class="module-nav" aria-label="需求模块导航">
-        <a href="#navigation">01 Navigation</a>
-        <a href="#live">02 Live</a>
-        <a href="#top-competitions">03 Top Competitions</a>
-        <a href="#all-competitions">04 All Competitions</a>
-        <a href="#featured">05 Featured</a>
-        <a href="#detail">06 Match Detail</a>
+        <a href="#navigation">01 页面导航</a>
+        <a href="#live">02 直播发现</a>
+        <a href="#top-competitions">03 热门联赛</a>
+        <a href="#all-competitions">04 全部联赛</a>
+        <a href="#featured">05 精选比赛</a>
+        <a href="#detail">06 比赛详情</a>
+        <a href="#ab-test">07 A/B 测试</a>
       </nav>
     </header>
 
     <section class="module" id="navigation">
       <header class="module-head">
         <span class="module-number">01</span>
-        <div><h1>Match Navigation & Date</h1><p>比赛页面模式切换、日期选择与滚动同步</p></div>
+        <div><h1>页面导航与日期</h1><p>比赛页面模式切换、日期选择与滚动同步</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>Featured · Today</strong><span>直接操作原 Demo</span></div>
-            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="Match Navigation 与日期切换原型"></iframe>
+            <div class="prototype-label"><strong>精选 · 今天</strong><span>直接操作比赛原型</span></div>
+            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="页面导航与日期切换原型"></iframe>
           </div>
         </div>
         <div class="specification">
@@ -186,23 +187,26 @@
     <section class="module" id="live">
       <header class="module-head">
         <span class="module-number">02</span>
-        <div><h1>Live Entry & Status List</h1><p>All Games 顶部直播入口与赛前、赛中、赛后状态列表</p></div>
+        <div><h1>直播入口与状态列表</h1><p>全部比赛顶部直播入口与赛前、赛中、赛后状态列表</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>Live status list</strong><span>点击状态标题可展开</span></div>
-            <iframe class="prototype-frame" src="index.html?view=live&amp;date=27" title="Live 比赛状态列表原型"></iframe>
+            <div class="prototype-label"><strong>直播预览与状态列表</strong><span>横滑比赛，点击查看全部</span></div>
+            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27" title="直播横滑预览与状态列表原型"></iframe>
           </div>
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
             <li>Live 入口仅在 <strong>All Games + Today</strong> 展示，紧贴日期栏，位于所有赛事目录之前。</li>
-            <li>All Games 不再展示 You may like 推荐卡模块；Live 入口是日期栏后的第一个内容行。</li>
-            <li>点击入口后在 All Games 内进入 Live 二级列表，不新增顶部 Live 页签；顶部 <strong>All Games</strong> 保持选中。</li>
+            <li>All Games 不展示 You may like 推荐卡模块；Live 横滑预览是日期栏后的第一个内容模块。</li>
+            <li>点击 <strong>View all</strong> 后在 All Games 内进入 Live 二级列表，不新增顶部 Live 页签；顶部 <strong>All Games</strong> 保持选中。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>紧凑入口固定为单行，展示红色直播点、<strong>Live matches</strong>、Live 场次数与右箭头；不展示具体球队或比分预览。</li>
+            <li>模块标题行展示红色直播点、<strong>Live now</strong>、Live 场次数与 <strong>View all</strong>；下方横滑卡展示赛事名、比赛分钟、双方队徽、队名与实时比分。</li>
+            <li>首屏至少完整展示 1 张卡并露出下一张卡，明确横滑方向；卡片固定高度，赛事名和队名超长时单行省略。</li>
+            <li>横滑串最左端展示 <strong>Finished</strong> 入口，最右端展示 <strong>Upcoming</strong> 入口；初始位置停在第一张 Live 比赛卡。</li>
+            <li>横滑预览内所有 Live 卡使用统一白底与中性边框，不因 <code>is_featured</code> 增加底色或强调边线。</li>
             <li>二级列表顶部展示返回按钮、Live matches 标题、Live 场次数，以及 <strong>By time / Search / Filter</strong> 工具条。</li>
             <li>状态组顺序固定为 <strong>Finished → Live → Upcoming</strong>；Live 默认展开，另外两组默认收起。</li>
             <li>展开状态组后按赛事分组；赛事头展示真实赛徽、赛事名和组内场次数，比赛行展示状态时间、双方队徽、队名、比分与关注按钮。</li>
@@ -211,22 +215,26 @@
           <section class="rule"><h2>取数</h2><ul>
             <li>比赛字段：<code>match_id</code>、<code>competition_id</code>、<code>competition_name</code>、<code>competition_logo_url</code>、<code>status</code>、<code>clock</code>、<code>kickoff_time</code>、<code>score</code>。</li>
             <li>球队字段：<code>home_team</code>、<code>away_team</code>、<code>home_crest_url</code>、<code>away_crest_url</code>；用户字段：<code>is_following</code>。</li>
-            <li>高亮字段：<code>is_featured</code>；Live 更新优先使用推送，连接失败后每 <strong>15 秒</strong>轮询一次。</li>
+            <li>高亮字段：<code>is_featured</code>；预览排序字段：<code>live_preview_sort_order</code>；Live 更新优先使用推送，连接失败后每 <strong>15 秒</strong>轮询一次。</li>
           </ul></section>
           <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">状态组数量 = selected_date 与 status 匹配的唯一 match_id 数量</span>；入口数量取 Live 组结果。</li>
+            <li><span class="formula">状态组数量 = selected_date 与 status 匹配的唯一 match_id 数量</span>；标题数量与横滑卡数量均取 Live 组结果。</li>
+            <li>横滑卡优先按 <code>live_preview_sort_order</code> 升序；字段缺失时按赛事排序和开赛时间回退。</li>
+            <li>横滑内容顺序固定为 <strong>Finished 入口 → Live 比赛卡 → Upcoming 入口</strong>；初始偏移量等于 Finished 入口宽度加卡片间距。</li>
             <li>比赛先按状态组归类，再按 <code>competition_sort_order</code>、赛事名排序；赛事内默认按开赛时间升序。</li>
             <li>计时显示优先级：中场显示 <strong>HT</strong>，常规进行中显示分钟，补时与加时使用数据源标准值。</li>
             <li>同一 <code>match_id + status_period</code> 仅保留更新时间最新的一条，避免推送重发造成重复比赛。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>点击整行 Live 入口进入二级列表；点击返回按钮或顶部 All Games 回到赛事目录，并恢复原滚动位置。</li>
+            <li>左右滑动浏览 Live 卡片；点击卡片打开 Match Detail，点击标题行的 <strong>View all</strong> 进入 Live 二级列表。</li>
+            <li>点击 Finished 或 Upcoming 入口进入同一 Live 二级列表，并默认只展开所选状态组；顶部 All Games 保持选中。</li>
+            <li>点击返回按钮或顶部 All Games 回到赛事目录，并恢复原滚动位置与横滑位置。</li>
             <li>点击 Finished、Live、Upcoming 标题独立展开或收起，可同时展开多个状态组。</li>
             <li>By time 切换为跨赛事时间排序；Search 搜索球队或赛事；Filter 打开状态、赛事和关注筛选。</li>
             <li>点击比赛行打开 Match Detail；点击关注按钮只更新关注状态，不触发比赛详情。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>非 Today 或 Live 数量为 0 时隐藏入口，不保留空白占位；通过旧链接进入时显示无直播空态并提供返回。</li>
+            <li>非 Today 或 Live 数量为 0 时隐藏完整横滑模块，不保留空白占位；通过旧链接进入时显示无直播空态并提供返回。</li>
             <li>比分缺失但状态为 LIVE 时显示短横线，并继续展示双方、比赛时间和赛事信息。</li>
             <li>赛徽或队徽加载失败时使用固定尺寸中性占位，不改变行高；赛事名和队名超长时单行省略。</li>
             <li>推送超过 <strong>30 秒</strong>未更新时标记数据延迟；接口失败保留最近一次成功列表并提供重试。</li>
@@ -238,18 +246,18 @@
     <section class="module" id="top-competitions">
       <header class="module-head">
         <span class="module-number">03</span>
-        <div><h1>Top Competitions</h1><p>热门联赛目录、重点球队提示与完整比赛展开</p></div>
+        <div><h1>热门联赛</h1><p>热门联赛目录、重点球队提示与完整比赛展开</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>UCL expanded · 18 matches</strong><span>重点比赛有独立氛围</span></div>
-            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=expand-ucl" title="Top Competitions 与联赛展开原型"></iframe>
+            <div class="prototype-label"><strong>冠军联赛 · 展开</strong><span>重点比赛有独立氛围</span></div>
+            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=expand-ucl" title="热门联赛与联赛展开原型"></iframe>
           </div>
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Live 单行入口下方；非 Today 没有 Live 入口时，直接承接日期栏。</li>
+            <li>位于 Live 横滑预览下方；非 Today 没有 Live 模块时，直接承接日期栏。</li>
             <li>每个联赛使用独立折叠行，默认收起，展开内容紧跟该联赛行。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
@@ -288,13 +296,13 @@
     <section class="module" id="all-competitions">
       <header class="module-head">
         <span class="module-number">04</span>
-        <div><h1>All Competitions</h1><p>国家与联赛的长尾比赛目录</p></div>
+        <div><h1>全部联赛</h1><p>国家与联赛的长尾比赛目录</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>All Competitions · country expanded</strong><span>不显示 By country</span></div>
-            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=all-competitions" title="All Competitions 国家目录原型"></iframe>
+            <div class="prototype-label"><strong>全部联赛 · 国家展开</strong><span>不显示按国家说明</span></div>
+            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=all-competitions" title="全部联赛国家目录原型"></iframe>
           </div>
         </div>
         <div class="specification">
@@ -332,13 +340,13 @@
     <section class="module" id="featured">
       <header class="module-head">
         <span class="module-number">05</span>
-        <div><h1>Featured Match Feed</h1><p>少量重要比赛的连续日期列表与选赛逻辑</p></div>
+        <div><h1>精选比赛列表</h1><p>少量重要比赛的连续日期列表与选赛逻辑</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>Featured · continuous dates</strong><span>日期随滚动同步</span></div>
-            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="Featured 重要比赛连续列表原型"></iframe>
+            <div class="prototype-label"><strong>精选 · 连续日期</strong><span>日期随滚动同步</span></div>
+            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="精选比赛连续列表原型"></iframe>
           </div>
         </div>
         <div class="specification">
@@ -379,12 +387,12 @@
     <section class="module" id="detail">
       <header class="module-head">
         <span class="module-number">06</span>
-        <div><h1>Match Detail & Following</h1><p>比赛详情底部弹层、关注状态与后续入口</p></div>
+        <div><h1>比赛详情与关注</h1><p>比赛详情底部弹层、关注状态与后续入口</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>Featured match detail</strong><span>从下至上打开</span></div>
+            <div class="prototype-label"><strong>精选比赛详情</strong><span>从下至上打开</span></div>
             <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27&amp;action=featured-detail" title="比赛详情底部弹层原型"></iframe>
           </div>
         </div>
@@ -414,6 +422,54 @@
             <li><code>featured_reason</code> 缺失时隐藏原因模块，不展示通用占位解释。</li>
             <li>比赛取消或延期时主状态替换比分区域，并保留双方和比赛中心入口。</li>
             <li>无通知权限时允许保存关注，随后单独引导授权；拒绝授权不取消关注。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="ab-test">
+      <header class="module-head">
+        <span class="module-number">07</span>
+        <div><h1>比赛列表优化 A/B 测试</h1><p>验证直播预览改版是否提升发现、点击与连续浏览效率</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>方案 B · 横滑直播预览</strong><span>与真实原型保持一致</span></div>
+            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27" title="比赛列表优化 A/B 测试方案 B 原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>实验入口为 Match 页面中的 All Games + Today；Featured 页签和非当天日期不参与本实验。</li>
+            <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li><strong>A 对照组</strong>：当前单行直播入口，仅展示直播点、Live matches、场次数和箭头。</li>
+            <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及展示赛事名、分钟、真实队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
+            <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>分流字段：<code>experiment_id</code>、<code>variant</code>、<code>user_id</code> 或稳定设备 ID、<code>assignment_time</code>。</li>
+            <li>行为事件：<code>live_preview_exposure</code>、<code>live_card_impression</code>、<code>live_card_click</code>、<code>live_view_all_click</code>、<code>live_status_entry_click</code>、<code>match_detail_open</code>。</li>
+            <li>事件属性统一携带 <code>match_id</code>、<code>status</code>、<code>position</code>、<code>live_count</code>、<code>selected_date</code>、<code>device_width</code>。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li><span class="formula">主要指标 = 直播模块曝光用户中，点击任一 Live 入口、Live 卡或进入比赛详情的用户数 ÷ 直播模块曝光用户数</span>。</li>
+            <li>次要指标：Live 卡点击率、View all 点击率、Finished/Upcoming 入口使用率、首次打开比赛详情耗时 P50、单次会话打开的比赛详情数。</li>
+            <li>按用户去重；同一用户同一自然日只计一次曝光和一次主要转化，避免重复刷新放大结果。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>采用 50/50 随机分流，按用户或稳定设备 ID 固定，实验期间不因登录、刷新或日期切换改变方案。</li>
+            <li>正式实验前运行 7 天基线，使用基线主要指标估算样本量；正式实验至少覆盖 <strong>14 天和两个完整周末</strong>。</li>
+            <li>实验监控按天查看曝光、主要指标和护栏指标；不得在看到中期领先后提前结束。</li>
+            <li>判定规则：B 组主要指标相对提升至少 <strong>5%</strong> 且 95% 置信区间不跨 0；护栏无显著恶化，则推荐全量发布。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li>仅统计成功渲染 Live 模块且 Live 数量大于 0 的用户；无直播、接口失败、机器人、内部账号和重复设备剔除。</li>
+            <li>护栏指标包括比赛详情总打开率、页面退出率、All Games 首屏加载耗时和客户端错误率；任一恶化超过 <strong>3%</strong> 或错误率超过基线 <strong>0.2 个百分点</strong>，暂停发布并排查。</li>
+            <li>样本不足、分流失衡超过 5%、埋点缺失超过 2% 或置信区间跨 0 时，结论标记为“无法判断”，延长一周，不得宣布 B 胜出。</li>
+            <li>实验结束后保留 <code>experiment_id</code>、方案、日期、Live 场次数和位置属性，支持按市场、设备宽度和比赛日复盘。</li>
           </ul></section>
         </div>
       </div>
