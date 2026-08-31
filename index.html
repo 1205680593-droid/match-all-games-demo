@@ -91,6 +91,8 @@
     }
     .explore-tab:focus { outline: none; }
     .explore-tab:focus-visible { box-shadow: inset 0 -3px var(--red); }
+    .standalone-live-nav { display: none; }
+    .app.control-variant .standalone-live-nav { display: block; }
 
     .date-strip {
       height: 50px;
@@ -823,6 +825,7 @@
       <nav class="explore-tabs" aria-label="Match sections">
         <button class="explore-tab" id="liveNav">Matches</button>
         <button class="explore-tab active" id="exploreNav">Top Matches</button>
+        <button class="explore-tab standalone-live-nav" id="standaloneLiveNav">Live</button>
       </nav>
       <div class="top-actions">
         <button class="icon-btn search-action" aria-label="Search">⌕</button>
@@ -1102,6 +1105,7 @@
     ];
 
     const previewParams = new URLSearchParams(location.search);
+    const experimentVariant = previewParams.get('variant') === 'control' ? 'control' : 'inline';
     let selectedDate = previewParams.get('date') || '27';
     let currentPage = 'explore';
     const liveSectionState = { upcoming: false, live: true, finished: false };
@@ -1111,6 +1115,7 @@
     const matchList = document.getElementById('matchList');
     const liveNav = document.getElementById('liveNav');
     const exploreNav = document.getElementById('exploreNav');
+    const standaloneLiveNav = document.getElementById('standaloneLiveNav');
     const livePopup = document.getElementById('livePopup');
     const livePopupBackdrop = document.getElementById('livePopupBackdrop');
     const livePopupList = document.getElementById('livePopupList');
@@ -1524,7 +1529,7 @@
 
     function redesignedAllGamesTemplate() {
       return `<section class="all-games-redesign-view" aria-label="Matches">
-        ${selectedDate === '27' ? livePreviewTemplate() : ''}
+        ${experimentVariant !== 'control' && selectedDate === '27' ? livePreviewTemplate() : ''}
         <section class="redesign-competition-list" aria-label="Top competitions">${redesignedTopCompetitions.map(redesignedCompetitionTemplate).join('')}</section>
         <section class="redesign-all-competitions" aria-label="All Competitions">
           <header class="redesign-all-heading"><h2>All Competitions</h2></header>
@@ -1550,12 +1555,15 @@
     }
 
     function navigateToAllGames() {
-      window.location.assign(`?view=all&date=${encodeURIComponent(selectedDate)}`);
+      const params = new URLSearchParams({ view: 'all', date: selectedDate });
+      if (experimentVariant === 'control') params.set('variant', 'control');
+      window.location.assign(`?${params.toString()}`);
     }
 
     function openStandaloneLive(status = 'live') {
       const params = new URLSearchParams({ view: 'live', date: selectedDate });
       if (status !== 'live') params.set('status', status);
+      if (experimentVariant === 'control') params.set('variant', 'control');
       window.location.assign(`?${params.toString()}`);
     }
 
@@ -1565,13 +1573,16 @@
       const isAllGames = page === 'live';
       const isFeatured = page === 'explore';
       const isLiveList = page === 'live-list';
+      const liveTabIsControl = experimentVariant === 'control';
       app.classList.toggle('live-page', isAllGames);
       app.classList.toggle('live-list-page', isLiveList);
       app.classList.toggle('all-games-redesign', isAllGames || isLiveList);
-      liveNav.classList.toggle('active', isAllGames || isLiveList);
+      liveNav.classList.toggle('active', isAllGames || (isLiveList && !liveTabIsControl));
       exploreNav.classList.toggle('active', isFeatured);
-      liveNav.setAttribute('aria-current', isAllGames || isLiveList ? 'page' : 'false');
+      standaloneLiveNav.classList.toggle('active', isLiveList && liveTabIsControl);
+      liveNav.setAttribute('aria-current', isAllGames || (isLiveList && !liveTabIsControl) ? 'page' : 'false');
       exploreNav.setAttribute('aria-current', isFeatured ? 'page' : 'false');
+      standaloneLiveNav.setAttribute('aria-current', isLiveList && liveTabIsControl ? 'page' : 'false');
       if (!isAllGames) closeLivePopup();
       if (isAllGames) renderLive();
       else if (isLiveList) renderStandaloneLive();
@@ -1626,10 +1637,15 @@
     });
     exploreNav.addEventListener('click', () => {
       if (currentPage === 'live-list') {
-        window.location.assign(`?view=featured&date=${encodeURIComponent(selectedDate)}`);
+        const params = new URLSearchParams({ view: 'featured', date: selectedDate });
+        if (experimentVariant === 'control') params.set('variant', 'control');
+        window.location.assign(`?${params.toString()}`);
         return;
       }
       switchPage('explore');
+    });
+    standaloneLiveNav.addEventListener('click', () => {
+      if (currentPage !== 'live-list') openStandaloneLive('live');
     });
     document.querySelector('.search-action').addEventListener('click', () => showToast(currentPage === 'live-list' ? 'Search live matches' : 'Search matches'));
     document.getElementById('sortLiveBtn').addEventListener('click', () => showToast('Games grouped by competition'));
@@ -1669,6 +1685,7 @@
       const view = previewParams.get('view') || 'featured';
       const action = previewParams.get('action');
       const requestedStatus = previewParams.get('status');
+      app.classList.toggle('control-variant', experimentVariant === 'control');
       if (['finished', 'live', 'upcoming'].includes(requestedStatus)) {
         Object.keys(liveSectionState).forEach(key => { liveSectionState[key] = key === requestedStatus; });
       }

@@ -90,6 +90,7 @@
       font-weight: 700;
     }
     .prototype-label strong { color: var(--ink); font-size: 11px; }
+    .prototype-label a { color: var(--red); font-size: 10px; font-weight: 800; text-decoration: none; white-space: nowrap; }
     .prototype-frame {
       width: 100%;
       height: 738px;
@@ -154,11 +155,11 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Match 模块顶部：设备状态栏下方依次展示 <strong>Matches / Top Matches</strong> 页签与日期栏。</li>
+            <li>位于 Match 模块顶部：设备状态栏下方展示 <strong>Matches / Top Matches</strong>；A 对照组在右侧追加独立 <strong>Live</strong> 页签。</li>
             <li>日期栏始终位于比赛内容之前，不随比赛列表横向滚动。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>页签只保留两个入口：<strong>Matches</strong> 与底部导航同名，承载完整比赛目录；<strong>Top Matches</strong> 展示系统精选的重要比赛。</li>
+            <li>B 实验组只保留两个入口：<strong>Matches</strong> 与底部导航同名，承载完整比赛目录；<strong>Top Matches</strong> 展示系统精选的重要比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
             <li>日期栏固定展示 5 天：前 1 天、当天、后 3 天；每项包含星期与日号。</li>
             <li>Matches 与 Top Matches 共用同一日期栏高度（移动端固定为 <strong>50px</strong>），切换页签时不产生垂直跳动。</li>
             <li>当前页签使用红色底线，当前日期使用浅红底与红色文字。</li>
@@ -201,7 +202,7 @@
           <section class="rule"><h2>展示位置</h2><ul>
             <li>Live 入口仅在 <strong>Matches + Today</strong> 展示，紧贴日期栏，位于所有赛事目录之前。</li>
             <li>Matches 不展示 You may like 推荐卡模块；Live 横滑预览是日期栏后的第一个内容模块。</li>
-            <li>点击 <strong>View all</strong> 后跳转至独立 Live 列表页面；不新增顶部 Live 页签，Live 页面仍保持 <strong>Matches</strong> 页签选中。</li>
+            <li>B 实验组点击 <strong>View all</strong> 后跳转至独立 Live 列表页面；不新增顶部 Live 页签，Live 页面仍保持 <strong>Matches</strong> 页签选中。A 对照组直接从顶部 <strong>Live</strong> 页签进入。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
             <li>模块标题行展示红色直播点、<strong>Live now</strong>、Live 场次数与 <strong>View all</strong>；下方横滑卡在赛事名左侧展示固定尺寸的真实赛徽，并展示比赛分钟、双方队徽、队名与实时比分。</li>
@@ -436,17 +437,17 @@
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>方案 B · 横滑直播预览</strong><span>与真实原型保持一致</span></div>
+            <div class="prototype-label"><strong>方案 B · 横滑直播预览</strong><a href="index.html?view=all&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A</a></div>
             <iframe class="prototype-frame" src="index.html?view=all&amp;date=27" title="比赛列表优化 A/B 测试方案 B 原型"></iframe>
           </div>
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>实验入口为 Match 页面中的 Matches + Today；Top Matches 页签和非当天日期不参与本实验。</li>
+            <li>实验入口为 Match 页面中的 Matches + Today；Top Matches 页签和非当天日期不参与本实验。对照组使用 <code>?variant=control</code> 打开三页签版本。</li>
             <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li><strong>A 对照组</strong>：当前单行直播入口，仅展示直播点、Live matches、场次数和箭头。</li>
+            <li><strong>A 对照组</strong>：顶部展示 <strong>Matches / Top Matches / Live</strong> 三个页签，Live 直接打开独立 Live 列表页面；Matches 页面不展示横滑 Live 预览。</li>
             <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
             <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
           </ul></section>

@@ -28,13 +28,14 @@
 - The track starts at the first Live card. Finished is reachable at the far left and Upcoming at the far right; each opens the child list with its own status group expanded.
 - Clicking a Live card opens Match Detail; clicking `View all` opens the existing Live child list.
 - Dedicated Live page keeps Matches active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
+- Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and opens the dedicated Live page with Live active.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
 - Requirement document at 1440 x 900 and 1200 x 900 uses two columns with a maximum 1180 px document width.
 - Requirement document at 390 x 844 uses one column, a 355 px prototype, and no rule-block overflow.
-- The requirement document's Live prototype opens the Live child list from `View all` and returns to the horizontal preview.
+- The requirement document's Live prototype opens the dedicated Live page from `View all` and returns to the horizontal preview; the A control link exposes the three-tab variant.
 - Requirement document module titles and navigation labels are Chinese, including the new `07 A/B 测试` module.
-- The A/B module specifies control A, variant B, 50/50 sticky assignment, event schema, primary/secondary metrics, guardrails, runtime, and decision thresholds.
+- The A/B module specifies the three-tab control A, inline-preview variant B, 50/50 sticky assignment, event schema, primary/secondary metrics, guardrails, runtime, and decision thresholds.
 - Product console: 0 errors and 0 warnings.
 - Direct product check loaded all 25 referenced images with 0 broken assets.
 - Static HTTP check: 58 of 58 files returned 200.
@@ -54,6 +55,7 @@
 ## Required Interactions
 
 - Open Live from Matches.
+- Open the control variant and enter Live from the third top tab.
 - Swipe the Live preview and open a match card.
 - Expand and collapse each status group.
 - Return from Live to Matches.

@@ -2,7 +2,7 @@
 
 ## Scope
 
-This specification covers the Live entry inside Matches and its dedicated status list page. It does not add a top-level Live tab and does not change Top Matches selection logic.
+This specification covers the Live entry inside Matches and its dedicated status list page. The B variant does not add a top-level Live tab; the A control variant adds a top-level Live tab for direct access. Neither variant changes Top Matches selection logic.
 
 ## Display
 
@@ -14,7 +14,7 @@ This specification covers the Live entry inside Matches and its dedicated status
 - Place a `Finished` entry at the far left and an `Upcoming` entry at the far right. Start at the first Live card, with both status entries reachable by horizontal scrolling.
 - Use the same neutral card style for every Live preview; do not add an `is_featured` background or emphasis border in this rail.
 - Do not show a recommendation rail or `You may like` in Matches.
-- Navigate to a dedicated Live list page when the Live entry is opened; keep `Matches` active in the shared top navigation.
+- Navigate to a dedicated Live list page when the Live entry is opened; keep `Matches` active in the shared top navigation for B, or `Live` active for A.
 
 ## Data
 
@@ -65,8 +65,8 @@ This specification covers the Live entry inside Matches and its dedicated status
 - Today shows the Live title and horizontal preview; Tue 28 shows neither.
 - At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
 - Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
-- The top navigation contains only Matches and Top Matches.
-- Opening Live keeps Matches active and renders Finished, Live, Upcoming in that order on a dedicated page.
+- Variant B top navigation contains only Matches and Top Matches; variant A adds Live as a third tab.
+- Opening Live renders Finished, Live, Upcoming in that order on a dedicated page. B keeps Matches active; A keeps Live active.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
 - All visible team and competition assets load, and browser console errors remain at 0.
@@ -74,8 +74,9 @@ This specification covers the Live entry inside Matches and its dedicated status
 ## A/B Test
 
 - Objective: validate whether the horizontal Live preview improves Live discovery and match-detail entry without harming overall match browsing.
-- Control A: the existing single-row Live entry with dot, label, count, and chevron.
+- Control A: three top-level tabs, Matches, Top Matches, and Live; Live opens the dedicated Live list directly, and Matches has no inline Live preview.
 - Variant B: `Live now` title row with `View all`, horizontal Live cards, and Finished/Upcoming entries at the two ends of the rail. All cards use the same neutral style.
+- Control demo URL: `?view=all&date=27&variant=control`.
 - Eligibility: Matches + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
 - Assignment: 50/50 random assignment by `user_id` or stable device ID, sticky for the experiment period; keep `experiment_id`, `variant`, and `assignment_time` on every event.
 - Primary metric: unique exposed users who click any Live entry, Live card, or open Match Detail divided by unique exposed users.
