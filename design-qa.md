@@ -35,6 +35,16 @@
 - Inline product script compiled successfully as one script block.
 - The in-app browser annotation layer emitted two source-less `MutationObserver` errors when reloading the multi-iframe requirement page. The project contains no `MutationObserver` call; direct product-page console checks remained clean.
 
+## Public Deployment
+
+- Repository: `https://github.com/1205680593-droid/match-all-games-demo`
+- Demo: `https://1205680593-droid.github.io/match-all-games-demo/?view=all&date=27`
+- Visual requirements: `https://1205680593-droid.github.io/match-all-games-demo/requirements.html#live`
+- Hosting: GitHub Pages from `main` and `/(root)`, with HTTPS enforced.
+- Pages workflow `pages-build-deployment #1` completed successfully in 46 seconds.
+- Public Demo and requirements URLs returned HTTP 200.
+- Public Demo rendered the All Games entry and Live child list with 7 matches, 5 competition groups, 0 broken visible images after load, and 0 console errors/warnings.
+
 ## Required Interactions
 
 - Open Live from All Games.
