@@ -155,13 +155,13 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Demo 外层、手机画布上方展示 A/B 方案切换页签；手机画布内部的设备状态栏下方展示 <strong>Match Library / Featured</strong>，A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
+            <li>位于 Demo 外层、手机画布上方展示 A/B 方案切换页签；手机画布内部的设备状态栏下方展示 <strong>All / Featured</strong>，A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
             <li>日期栏始终位于比赛内容之前，不随比赛列表横向滚动。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>B 实验组只保留两个入口：<strong>Match Library</strong> 承载完整比赛目录；<strong>Featured</strong> 展示系统精选的重要比赛，包含重点联赛与用户关注比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
+            <li>B 实验组只保留两个入口：<strong>All</strong> 承载完整比赛目录；<strong>Featured</strong> 展示系统精选的重要比赛，包含重点联赛与用户关注比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
             <li>日期栏固定展示 5 天：前 1 天、当天、后 3 天；每项包含星期与日号。</li>
-            <li>Match Library 与 Featured 共用同一日期栏高度（移动端固定为 <strong>50px</strong>），切换页签时不产生垂直跳动。</li>
+            <li>All 与 Featured 共用同一日期栏高度（移动端固定为 <strong>50px</strong>），切换页签时不产生垂直跳动。</li>
             <li>当前页签使用红色底线，当前日期使用浅红底与红色文字。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
@@ -443,11 +443,11 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>实验入口为 Match 页面中的 Match Library + Today；Featured 页签和非当天日期不参与本实验。原型顶部提供 A/B 方案切换页签，对照组使用 <code>?variant=control</code> 打开三页签版本。</li>
+            <li>实验入口为 Match 页面中的 All + Today；Featured 页签和非当天日期不参与本实验。原型顶部提供 A/B 方案切换页签，对照组使用 <code>?variant=control</code> 打开三页签版本。</li>
             <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li><strong>A 对照组</strong>：顶部展示 <strong>Match Library / Featured / Live</strong> 三个页签，Live 直接打开独立 Live 列表页面；Match Library 页面不展示横滑 Live 预览。</li>
+            <li><strong>A 对照组</strong>：顶部展示 <strong>All / Featured / Live</strong> 三个页签，Live 直接打开独立 Live 列表页面；All 页面不展示横滑 Live 预览。</li>
             <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
             <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
           </ul></section>
