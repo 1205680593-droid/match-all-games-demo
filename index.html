@@ -95,8 +95,12 @@
     .app.control-variant .standalone-live-nav { display: block; }
 
     .variant-switcher {
-      height: 42px; flex: 0 0 42px; padding: 5px 14px; display: flex; align-items: center; gap: 8px;
-      background: #fff; border-bottom: 1px solid var(--line);
+      height: 42px; padding: 5px 14px; display: flex; align-items: center; gap: 8px;
+      background: #fff; border: 1px solid #dfe2e7; border-radius: 11px;
+      box-shadow: 0 4px 14px rgba(30, 35, 50, .08);
+    }
+    .variant-switcher-shell {
+      width: min(100%, var(--app-width)); margin: 0 auto 10px;
     }
     .variant-switcher-label {
       flex: 0 0 auto; color: #9a9ba0; font-size: 10px; font-weight: 800; letter-spacing: .04em;
@@ -836,6 +840,15 @@
   </style>
 </head>
 <body>
+  <div class="variant-switcher-shell">
+    <div class="variant-switcher" role="tablist" aria-label="Compare Live entry variants">
+      <span class="variant-switcher-label">A/B</span>
+      <div class="variant-tabs">
+        <button class="variant-tab active" id="variantInlineTab" role="tab" aria-selected="true" data-variant="inline">B · Inline Live</button>
+        <button class="variant-tab" id="variantControlTab" role="tab" aria-selected="false" data-variant="control">A · Live Tab</button>
+      </div>
+    </div>
+  </div>
   <div class="app">
     <div class="status-bar" aria-hidden="true">
       <span>09:34</span>
@@ -853,14 +866,6 @@
         <button class="icon-btn avatar" aria-label="Profile">WF</button>
       </div>
     </header>
-
-    <div class="variant-switcher" role="tablist" aria-label="Compare Live entry variants">
-      <span class="variant-switcher-label">A/B</span>
-      <div class="variant-tabs">
-        <button class="variant-tab active" id="variantInlineTab" role="tab" aria-selected="true" data-variant="inline">B · Inline Live</button>
-        <button class="variant-tab" id="variantControlTab" role="tab" aria-selected="false" data-variant="control">A · Live Tab</button>
-      </div>
-    </div>
 
     <section class="date-strip" aria-label="Choose date" id="dateStrip"></section>
 

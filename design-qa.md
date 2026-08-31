@@ -29,7 +29,7 @@
 - Clicking a Live card opens Match Detail; clicking `View all` opens the dedicated Live child list in a new tab while preserving the current Match Library page.
 - Dedicated Live page keeps Match Library active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
 - Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and opens the dedicated Live page with Live active.
-- The product prototype exposes a compact A/B variant switcher below the primary navigation; switching variants preserves the current view, date, and Live status query parameters.
+- The product prototype exposes a compact A/B variant switcher outside the phone app canvas; switching variants preserves the current view, date, and Live status query parameters.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
 - Requirement document at 1440 x 900 and 1200 x 900 uses two columns with a maximum 1180 px document width.

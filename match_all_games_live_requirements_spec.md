@@ -65,7 +65,7 @@ This specification covers the Live entry inside Match Library and its dedicated 
 - Today shows the Live title and horizontal preview; Tue 28 shows neither.
 - At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
 - Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
-- The prototype includes a compact A/B variant switcher below the primary navigation. Variant B top navigation contains only Match Library and Featured; variant A adds Live as a third tab.
+- The prototype includes a compact A/B variant switcher outside the phone app canvas. Variant B top navigation contains only Match Library and Featured; variant A adds Live as a third tab.
 - Opening Live renders Finished, Live, Upcoming in that order on a dedicated page. B keeps Match Library active; A keeps Live active.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
