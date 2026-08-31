@@ -158,7 +158,7 @@
     }
     .live-preview-title {
       width: 100%; height: 40px; padding: 0 11px; border: 1px solid var(--line); border-radius: 7px; background: var(--soft);
-      display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 750; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; font-size: 15px; font-weight: 750; cursor: pointer;
     }
     .live-preview-title::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
     .live-preview-title strong {
@@ -1485,7 +1485,7 @@
     function livePreviewTemplate() {
       return `<section class="all-games-live-entry" aria-label="Live match preview">
         <div class="live-preview-heading">
-          <button class="live-preview-title" id="openStandaloneLive" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></button>
+          <a class="live-preview-title" id="openStandaloneLive" href="${standaloneLiveHref('live').replaceAll('&', '&amp;')}" target="_blank" rel="noopener noreferrer" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></a>
         </div>
         <div class="live-preview-track" id="livePreviewTrack" aria-label="Swipe through live matches">
           <button class="live-status-entry finished" data-open-status="finished" aria-label="Open finished matches"><strong>← Finished</strong></button>
@@ -1570,7 +1570,6 @@
     }
 
     function bindRedesignedAllGames() {
-      document.getElementById('openStandaloneLive')?.addEventListener('click', () => openStandaloneLive('live'));
       document.querySelectorAll('.redesign-competition-row').forEach(button => button.addEventListener('click', () => {
         showToast(`${button.querySelector('.redesign-competition-name')?.textContent || 'Competition'} · Demo`);
       }));
@@ -1591,11 +1590,17 @@
       window.location.assign(`?${params.toString()}`);
     }
 
-    function openStandaloneLive(status = 'live') {
+    function standaloneLiveHref(status = 'live') {
       const params = new URLSearchParams({ view: 'live', date: selectedDate });
       if (status !== 'live') params.set('status', status);
       if (experimentVariant === 'control') params.set('variant', 'control');
-      window.location.assign(`?${params.toString()}`);
+      return `?${params.toString()}`;
+    }
+
+    function openStandaloneLive(status = 'live') {
+      const liveUrl = standaloneLiveHref(status);
+      const livePage = window.open(liveUrl, '_blank', 'noopener,noreferrer');
+      if (!livePage) window.location.assign(liveUrl);
     }
 
     function updateVariantTabs() {

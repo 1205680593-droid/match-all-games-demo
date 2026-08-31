@@ -26,7 +26,7 @@
 - Product at 320 x 700: Live preview remains 150 px high with 0 px horizontal overflow. The first card is fully visible and 101 px of the next card is exposed.
 - Matches contains 0 recommendation-rail nodes. The Live preview renders 7 neutral horizontal cards with competition, clock, crests, teams, and score; no card receives the Top Matches emphasis style.
 - The track starts at the first Live card. Finished is reachable at the far left and Upcoming at the far right; each opens the child list with its own status group expanded.
-- Clicking a Live card opens Match Detail; clicking `View all` opens the existing Live child list.
+- Clicking a Live card opens Match Detail; clicking `View all` opens the dedicated Live child list in a new tab while preserving the current Matches page.
 - Dedicated Live page keeps Matches active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
 - Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and opens the dedicated Live page with Live active.
 - The product prototype exposes a compact A/B variant switcher below the primary navigation; switching variants preserves the current view, date, and Live status query parameters.
