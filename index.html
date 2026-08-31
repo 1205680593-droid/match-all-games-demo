@@ -94,6 +94,27 @@
     .standalone-live-nav { display: none; }
     .app.control-variant .standalone-live-nav { display: block; }
 
+    .variant-switcher {
+      height: 42px; flex: 0 0 42px; padding: 5px 14px; display: flex; align-items: center; gap: 8px;
+      background: #fff; border-bottom: 1px solid var(--line);
+    }
+    .variant-switcher-label {
+      flex: 0 0 auto; color: #9a9ba0; font-size: 10px; font-weight: 800; letter-spacing: .04em;
+    }
+    .variant-tabs {
+      min-width: 0; flex: 1; height: 32px; padding: 2px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2px; border-radius: 8px; background: #f1f2f4;
+    }
+    .variant-tab {
+      min-width: 0; border: 0; border-radius: 6px; background: transparent; color: #85878d;
+      font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+    }
+    .variant-tab.active {
+      color: var(--ink); background: #fff; box-shadow: 0 1px 3px rgba(20, 24, 32, .12);
+    }
+    .variant-tab:focus { outline: none; }
+    .variant-tab:focus-visible { box-shadow: inset 0 0 0 2px var(--red); }
+
     .date-strip {
       height: 50px;
       flex: 0 0 50px;
@@ -833,6 +854,14 @@
       </div>
     </header>
 
+    <div class="variant-switcher" role="tablist" aria-label="Compare Live entry variants">
+      <span class="variant-switcher-label">A/B</span>
+      <div class="variant-tabs">
+        <button class="variant-tab active" id="variantInlineTab" role="tab" aria-selected="true" data-variant="inline">B · Inline Live</button>
+        <button class="variant-tab" id="variantControlTab" role="tab" aria-selected="false" data-variant="control">A · Live Tab</button>
+      </div>
+    </div>
+
     <section class="date-strip" aria-label="Choose date" id="dateStrip"></section>
 
     <main id="matchList"></main>
@@ -1116,6 +1145,8 @@
     const liveNav = document.getElementById('liveNav');
     const exploreNav = document.getElementById('exploreNav');
     const standaloneLiveNav = document.getElementById('standaloneLiveNav');
+    const variantInlineTab = document.getElementById('variantInlineTab');
+    const variantControlTab = document.getElementById('variantControlTab');
     const livePopup = document.getElementById('livePopup');
     const livePopupBackdrop = document.getElementById('livePopupBackdrop');
     const livePopupList = document.getElementById('livePopupList');
@@ -1567,6 +1598,23 @@
       window.location.assign(`?${params.toString()}`);
     }
 
+    function updateVariantTabs() {
+      const isControl = experimentVariant === 'control';
+      variantInlineTab.classList.toggle('active', !isControl);
+      variantControlTab.classList.toggle('active', isControl);
+      variantInlineTab.setAttribute('aria-selected', String(!isControl));
+      variantControlTab.setAttribute('aria-selected', String(isControl));
+    }
+
+    function switchVariant(nextVariant) {
+      const params = new URLSearchParams(location.search);
+      if (!params.get('view')) params.set('view', currentPage === 'live-list' ? 'live' : currentPage === 'live' ? 'all' : 'featured');
+      params.set('date', selectedDate);
+      if (nextVariant === 'control') params.set('variant', 'control');
+      else params.delete('variant');
+      window.location.assign(`?${params.toString()}`);
+    }
+
     function switchPage(page) {
       if (currentPage === page) return;
       currentPage = page;
@@ -1647,6 +1695,8 @@
     standaloneLiveNav.addEventListener('click', () => {
       if (currentPage !== 'live-list') openStandaloneLive('live');
     });
+    variantInlineTab.addEventListener('click', () => switchVariant('inline'));
+    variantControlTab.addEventListener('click', () => switchVariant('control'));
     document.querySelector('.search-action').addEventListener('click', () => showToast(currentPage === 'live-list' ? 'Search live matches' : 'Search matches'));
     document.getElementById('sortLiveBtn').addEventListener('click', () => showToast('Games grouped by competition'));
     document.getElementById('liveSearchBtn').addEventListener('click', () => showToast('Search live matches'));
@@ -1686,6 +1736,7 @@
       const action = previewParams.get('action');
       const requestedStatus = previewParams.get('status');
       app.classList.toggle('control-variant', experimentVariant === 'control');
+      updateVariantTabs();
       if (['finished', 'live', 'upcoming'].includes(requestedStatus)) {
         Object.keys(liveSectionState).forEach(key => { liveSectionState[key] = key === requestedStatus; });
       }
