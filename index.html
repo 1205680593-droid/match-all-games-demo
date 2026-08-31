@@ -157,7 +157,9 @@
       width: 196px; padding: 6px 10px; display: block; text-align: left;
       box-shadow: 0 1px 3px rgba(20, 24, 32, .06);
     }
-    .live-preview-card-head { height: 22px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); }
+    .live-preview-card-head { height: 22px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--line); }
+    .live-preview-league-mark { width: 16px; height: 16px; flex: 0 0 16px; display: grid; place-items: center; }
+    .live-preview-league-mark img { width: 100%; height: 100%; max-height: 16px; object-fit: contain; }
     .live-preview-league { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #777980; font-size: 10px; font-weight: 700; }
     .live-preview-minute { margin-left: auto; flex: 0 0 auto; color: var(--red); font-size: 12px; font-weight: 750; }
     .live-preview-teams { min-width: 0; display: block; padding-top: 2px; }
@@ -1433,9 +1435,10 @@
 
     function livePreviewMatchTemplate(match) {
       const [league, , , , time, , home, homeLogo, away, awayLogo, homeScore, awayScore] = match;
+      const leagueLogo = liveLeagueLogos[league];
       const payload = JSON.stringify({ league: match[0], status: 'live', time, reason: 'Live', home, homeLogo, away, awayLogo, homeScore, awayScore }).replaceAll("'", '&apos;');
       return `<button class="live-preview-match" data-match='${payload}' aria-label="Open ${home} versus ${away}">
-        <span class="live-preview-card-head"><span class="live-preview-league">${league}</span><span class="live-preview-minute">${time}</span></span>
+        <span class="live-preview-card-head">${leagueLogo ? `<span class="live-preview-league-mark" aria-hidden="true"><img src="${leagueLogo}" alt=""></span>` : ''}<span class="live-preview-league">${league}</span><span class="live-preview-minute">${time}</span></span>
         <span class="live-preview-teams">
           <span class="live-preview-team"><img src="${homeLogo}" alt=""><span>${home}</span><strong>${homeScore}</strong></span>
           <span class="live-preview-team"><img src="${awayLogo}" alt=""><span>${away}</span><strong>${awayScore}</strong></span>

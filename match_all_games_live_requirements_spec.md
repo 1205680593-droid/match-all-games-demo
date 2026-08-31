@@ -9,7 +9,7 @@ This specification covers the Live entry inside All Games and its child status l
 - Show the Live entry only when `selected_date` is the user's local Today and the deduplicated Live count is greater than 0.
 - Place the entry directly below the date strip and before Top Competitions.
 - Use a two-part module: a `Live now` title row with count and `View all`, followed by a horizontally scrollable Live match preview.
-- Each preview card shows competition, normalized match clock, both crests, both team names, and the current score.
+- Each preview card shows a fixed-size real competition crest to the left of the competition name, normalized match clock, both team crests, both team names, and the current score.
 - Reveal part of the next card in the first viewport to make horizontal scrolling discoverable.
 - Place a `Finished` entry at the far left and an `Upcoming` entry at the far right. Start at the first Live card, with both status entries reachable by horizontal scrolling.
 - Use the same neutral card style for every Live preview; do not add an `is_featured` background or emphasis border in this rail.
