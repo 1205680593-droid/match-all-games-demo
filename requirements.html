@@ -155,13 +155,13 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Match 模块顶部：设备状态栏下方展示 <strong>Matches / Top Matches</strong>；其下增加 A/B 方案切换页签，A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
+            <li>位于 Match 模块顶部：设备状态栏下方展示 <strong>Match Library / Featured</strong>；其下增加 A/B 方案切换页签，A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
             <li>日期栏始终位于比赛内容之前，不随比赛列表横向滚动。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>B 实验组只保留两个入口：<strong>Matches</strong> 与底部导航同名，承载完整比赛目录；<strong>Top Matches</strong> 展示系统精选的重要比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
+            <li>B 实验组只保留两个入口：<strong>Match Library</strong> 承载完整比赛目录；<strong>Featured</strong> 展示系统精选的重要比赛，包含重点联赛与用户关注比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
             <li>日期栏固定展示 5 天：前 1 天、当天、后 3 天；每项包含星期与日号。</li>
-            <li>Matches 与 Top Matches 共用同一日期栏高度（移动端固定为 <strong>50px</strong>），切换页签时不产生垂直跳动。</li>
+            <li>Match Library 与 Featured 共用同一日期栏高度（移动端固定为 <strong>50px</strong>），切换页签时不产生垂直跳动。</li>
             <li>当前页签使用红色底线，当前日期使用浅红底与红色文字。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
@@ -174,7 +174,7 @@
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
             <li>切换页签时保留 <code>selected_date</code>，并将新页面滚动到该日期对应内容。</li>
-            <li>Top Matches 中点击日期，平滑滚动到对应日期分区；手动纵向滚动跨入新日期时，日期栏同步更新。</li>
+            <li>Featured 中点击日期，平滑滚动到对应日期分区；手动纵向滚动跨入新日期时，日期栏同步更新。</li>
             <li>Matches 中点击日期，重新请求并渲染该日期的 Live、Top Competitions 与 All Competitions 数据。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
@@ -353,14 +353,14 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Match 模块的 Top Matches 页签内；多个日期的比赛上下连续展示，不通过下拉筛选切断列表。</li>
+            <li>位于 Match 模块的 Featured 页签内；多个日期的比赛上下连续展示，不通过下拉筛选切断列表。</li>
             <li>日期分隔条下按联赛分组，联赛头与其比赛保持相邻。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
             <li>日期分区展示日期；联赛头展示赛徽、联赛名、该组场次数和折叠箭头。</li>
             <li>比赛行展示时间或赛中分钟、双方队徽、队名、比分和关注按钮。</li>
             <li>时间列只显示 <strong>FT / HT / 分钟 / 开赛时间</strong>，不重复显示 Finished、Live、Upcoming 文案。</li>
-            <li>列表中不展示 Featured Clash、推荐原因等解释标签；重要性通过进入 Top Matches 列表本身表达。</li>
+            <li>列表中不展示 Featured Clash、推荐原因等解释标签；重要性通过进入 Featured 列表本身表达。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
             <li>比赛字段：<code>match_id</code>、<code>selected_date</code>、<code>competition</code>、<code>teams</code>、<code>status</code>、<code>clock</code>、<code>score</code>。</li>
@@ -378,7 +378,7 @@
             <li>点击星标只更新 Following 状态，不触发比赛详情；成功后显示轻量反馈。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>单日没有符合阈值的比赛时显示“当天暂无 Top Matches 比赛”，不降低阈值补满数量。</li>
+            <li>单日没有符合阈值的比赛时显示“当天暂无 Featured 比赛”，不降低阈值补满数量。</li>
             <li>比分、队徽或队名任一侧缺失时按完整比赛行降级，不把缺失值显示成 0。</li>
             <li>编辑强制选赛与自动规则冲突时记录最终来源，便于回溯和 A/B 分析。</li>
           </ul></section>
@@ -400,12 +400,12 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>从 Top Matches 比赛列表、赛事展开列表或 Live 状态列表点击比赛后，从页面底部向上弹出。</li>
+            <li>从 Featured 比赛列表、赛事展开列表或 Live 状态列表点击比赛后，从页面底部向上弹出。</li>
             <li>弹层覆盖当前 Match 页面，但保留背景上下文与遮罩。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
             <li>展示联赛名、双方队徽与队名、比分或开赛时间、比赛状态和 <strong>Open Match Centre</strong> 主按钮。</li>
-            <li>从 Top Matches 进入时可展示服务端提供的精选原因；从 Live 进入时展示实时跟进提示，不重复解释重要性。</li>
+            <li>从 Featured 进入时可展示服务端提供的精选原因；从 Live 进入时展示实时跟进提示，不重复解释重要性。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
             <li>详情字段：<code>match_id</code>、<code>competition_name</code>、<code>home_team</code>、<code>away_team</code>、<code>score</code>、<code>status</code>、<code>kickoff_time</code>、<code>featured_reason</code>。</li>
@@ -443,11 +443,11 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>实验入口为 Match 页面中的 Matches + Today；Top Matches 页签和非当天日期不参与本实验。原型顶部提供 A/B 方案切换页签，对照组使用 <code>?variant=control</code> 打开三页签版本。</li>
+            <li>实验入口为 Match 页面中的 Match Library + Today；Featured 页签和非当天日期不参与本实验。原型顶部提供 A/B 方案切换页签，对照组使用 <code>?variant=control</code> 打开三页签版本。</li>
             <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li><strong>A 对照组</strong>：顶部展示 <strong>Matches / Top Matches / Live</strong> 三个页签，Live 直接打开独立 Live 列表页面；Matches 页面不展示横滑 Live 预览。</li>
+            <li><strong>A 对照组</strong>：顶部展示 <strong>Match Library / Featured / Live</strong> 三个页签，Live 直接打开独立 Live 列表页面；Match Library 页面不展示横滑 Live 预览。</li>
             <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
             <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
           </ul></section>
