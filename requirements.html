@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Match 模块需求文档</title>
+  <style>
+    :root {
+      --page: #edf3f7;
+      --surface: #ffffff;
+      --prototype: #e7eef3;
+      --ink: #17263b;
+      --text: #46576c;
+      --muted: #718096;
+      --line: #d5e0ea;
+      --navy: #17263b;
+      --green-bg: #eef9f3;
+      --green-line: #b9dfca;
+      --green: #23633f;
+      --amber-bg: #fff8e9;
+      --amber-line: #efd18c;
+      --red: #d8273f;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: var(--page);
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; }
+    a { color: inherit; }
+    .document { width: min(1180px, calc(100% - 24px)); margin: 16px auto 48px; }
+    .document-top {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .document-title { margin: 0; color: var(--muted); font-size: 15px; font-weight: 700; }
+    .module-nav { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    .module-nav::-webkit-scrollbar { display: none; }
+    .module-nav a {
+      min-width: max-content;
+      min-height: 44px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .module { overflow: hidden; margin-bottom: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+    .module-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+    .module-number {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      color: #fff;
+      background: var(--navy);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .module-head h1 { margin: 0; font-size: 21px; line-height: 1.25; letter-spacing: 0; }
+    .module-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .module-body { display: grid; grid-template-columns: minmax(390px, 46%) minmax(0, 54%); }
+    .prototype { min-height: 792px; padding: 16px; background: var(--prototype); border-right: 1px solid var(--line); }
+    .prototype-inner { width: min(100%, 430px); margin: 0 auto; }
+    .prototype-label {
+      min-height: 38px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid #cbd7e1;
+      border-bottom: 0;
+      border-radius: 7px 7px 0 0;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .prototype-label strong { color: var(--ink); font-size: 11px; }
+    .prototype-frame {
+      width: 100%;
+      height: 738px;
+      display: block;
+      border: 1px solid #cbd7e1;
+      border-radius: 0 0 7px 7px;
+      background: #fff;
+    }
+    .specification { display: grid; align-content: start; gap: 10px; padding: 16px; }
+    .rule { padding: 12px 14px; background: #f9fbfc; border: 1px solid var(--line); border-radius: 8px; }
+    .rule.calculation { background: var(--green-bg); border-color: var(--green-line); }
+    .rule.edge { background: var(--amber-bg); border-color: var(--amber-line); }
+    .rule h2 { margin: 0 0 6px; font-size: 14px; }
+    .rule ul { margin: 0; padding-left: 18px; color: var(--text); font-size: 13px; line-height: 1.62; }
+    .rule li + li { margin-top: 3px; }
+    .rule code { padding: 1px 4px; border-radius: 3px; background: rgba(255, 255, 255, .72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+    .rule strong { color: var(--ink); }
+    .formula { color: var(--green); font-weight: 750; }
+    @media (max-width: 800px) {
+      .document { width: min(100% - 16px, 1180px); margin-top: 8px; }
+      .document-top { display: block; }
+      .module-nav { margin-top: 8px; }
+      .module-body { grid-template-columns: 1fr; }
+      .prototype { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 430px) {
+      .document { width: 100%; margin: 0; }
+      .document-top { padding: 10px 10px 0; }
+      .module { border-right: 0; border-left: 0; border-radius: 0; }
+      .module-head, .prototype, .specification { padding: 10px; }
+      .module-head h1 { font-size: 18px; }
+      .prototype-frame { height: 700px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="document">
+    <header class="document-top">
+      <p class="document-title">Match 模块需求文档 · All Games / Featured</p>
+      <nav class="module-nav" aria-label="需求模块导航">
+        <a href="#navigation">01 Navigation</a>
+        <a href="#live">02 Live</a>
+        <a href="#top-competitions">03 Top Competitions</a>
+        <a href="#all-competitions">04 All Competitions</a>
+        <a href="#featured">05 Featured</a>
+        <a href="#detail">06 Match Detail</a>
+      </nav>
+    </header>
+
+    <section class="module" id="navigation">
+      <header class="module-head">
+        <span class="module-number">01</span>
+        <div><h1>Match Navigation & Date</h1><p>比赛页面模式切换、日期选择与滚动同步</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>Featured · Today</strong><span>直接操作原 Demo</span></div>
+            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="Match Navigation 与日期切换原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>位于 Match 模块顶部：设备状态栏下方依次展示 <strong>All Games / Featured</strong> 页签与日期栏。</li>
+            <li>日期栏始终位于比赛内容之前，不随比赛列表横向滚动。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>页签只保留两个入口：<strong>All Games</strong> 为完整比赛目录，<strong>Featured</strong> 为系统精选重要比赛。</li>
+            <li>日期栏固定展示 5 天：前 1 天、当天、后 3 天；每项包含星期与日号。</li>
+            <li>当前页签使用红色底线，当前日期使用浅红底与红色文字。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>客户端状态：<code>current_view</code>、<code>selected_date</code>、<code>user_timezone</code>。</li>
+            <li>日期按用户时区生成；比赛请求统一携带 <code>selected_date</code> 和 <code>timezone</code>。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li><span class="formula">日期窗口 = [当地今天 - 1 天, 当地今天 + 3 天]</span>。</li>
+            <li>仅当日期等于用户当地自然日时显示 <strong>Today</strong>，其他日期显示本地化星期缩写。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>切换页签时保留 <code>selected_date</code>，并将新页面滚动到该日期对应内容。</li>
+            <li>Featured 中点击日期，平滑滚动到对应日期分区；手动纵向滚动跨入新日期时，日期栏同步更新。</li>
+            <li>All Games 中点击日期，重新请求并渲染该日期的 Live、Top Competitions 与 All Competitions 数据。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li>日期无比赛时显示空态，不回退到其他日期数据，也不隐藏该日期。</li>
+            <li>用户时区发生变化后，以新时区重新计算 Today；已打开的比赛详情不强制关闭。</li>
+            <li>日期接口失败时保留上一次成功数据，并展示非阻断重试入口。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="live">
+      <header class="module-head">
+        <span class="module-number">02</span>
+        <div><h1>Live Entry & Status List</h1><p>All Games 顶部直播入口与赛前、赛中、赛后状态列表</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>Live status list</strong><span>点击状态标题可展开</span></div>
+            <iframe class="prototype-frame" src="index.html?view=live&amp;date=27" title="Live 比赛状态列表原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>Live 入口仅在 <strong>All Games + Today</strong> 展示，紧贴日期栏，位于所有赛事目录之前。</li>
+            <li>All Games 不再展示 You may like 推荐卡模块；Live 入口是日期栏后的第一个内容行。</li>
+            <li>点击入口后在 All Games 内进入 Live 二级列表，不新增顶部 Live 页签；顶部 <strong>All Games</strong> 保持选中。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>紧凑入口固定为单行，展示红色直播点、<strong>Live matches</strong>、Live 场次数与右箭头；不展示具体球队或比分预览。</li>
+            <li>二级列表顶部展示返回按钮、Live matches 标题、Live 场次数，以及 <strong>By time / Search / Filter</strong> 工具条。</li>
+            <li>状态组顺序固定为 <strong>Finished → Live → Upcoming</strong>；Live 默认展开，另外两组默认收起。</li>
+            <li>展开状态组后按赛事分组；赛事头展示真实赛徽、赛事名和组内场次数，比赛行展示状态时间、双方队徽、队名、比分与关注按钮。</li>
+            <li>Live 标题、比赛分钟与比分使用红色；重要比赛可增加红色左边线和浅红背景，普通比赛不增加该高亮。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>比赛字段：<code>match_id</code>、<code>competition_id</code>、<code>competition_name</code>、<code>competition_logo_url</code>、<code>status</code>、<code>clock</code>、<code>kickoff_time</code>、<code>score</code>。</li>
+            <li>球队字段：<code>home_team</code>、<code>away_team</code>、<code>home_crest_url</code>、<code>away_crest_url</code>；用户字段：<code>is_following</code>。</li>
+            <li>高亮字段：<code>is_featured</code>；Live 更新优先使用推送，连接失败后每 <strong>15 秒</strong>轮询一次。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li><span class="formula">状态组数量 = selected_date 与 status 匹配的唯一 match_id 数量</span>；入口数量取 Live 组结果。</li>
+            <li>比赛先按状态组归类，再按 <code>competition_sort_order</code>、赛事名排序；赛事内默认按开赛时间升序。</li>
+            <li>计时显示优先级：中场显示 <strong>HT</strong>，常规进行中显示分钟，补时与加时使用数据源标准值。</li>
+            <li>同一 <code>match_id + status_period</code> 仅保留更新时间最新的一条，避免推送重发造成重复比赛。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>点击整行 Live 入口进入二级列表；点击返回按钮或顶部 All Games 回到赛事目录，并恢复原滚动位置。</li>
+            <li>点击 Finished、Live、Upcoming 标题独立展开或收起，可同时展开多个状态组。</li>
+            <li>By time 切换为跨赛事时间排序；Search 搜索球队或赛事；Filter 打开状态、赛事和关注筛选。</li>
+            <li>点击比赛行打开 Match Detail；点击关注按钮只更新关注状态，不触发比赛详情。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li>非 Today 或 Live 数量为 0 时隐藏入口，不保留空白占位；通过旧链接进入时显示无直播空态并提供返回。</li>
+            <li>比分缺失但状态为 LIVE 时显示短横线，并继续展示双方、比赛时间和赛事信息。</li>
+            <li>赛徽或队徽加载失败时使用固定尺寸中性占位，不改变行高；赛事名和队名超长时单行省略。</li>
+            <li>推送超过 <strong>30 秒</strong>未更新时标记数据延迟；接口失败保留最近一次成功列表并提供重试。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="top-competitions">
+      <header class="module-head">
+        <span class="module-number">03</span>
+        <div><h1>Top Competitions</h1><p>热门联赛目录、重点球队提示与完整比赛展开</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>UCL expanded · 18 matches</strong><span>重点比赛有独立氛围</span></div>
+            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=expand-ucl" title="Top Competitions 与联赛展开原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>位于 Live 单行入口下方；非 Today 没有 Live 入口时，直接承接日期栏。</li>
+            <li>每个联赛使用独立折叠行，默认收起，展开内容紧跟该联赛行。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>联赛行高度为 <strong>52px</strong>，展示赛徽缩写、联赛名、最多 2 枚重点球队队徽、当日比赛数和展开箭头。</li>
+            <li>正在比赛的重点球队队徽使用红色描边，并在每枚队徽右上方空白区展示动态三柱直播波形；全页最多突出 3 支。</li>
+            <li>已结束比赛的重点球队使用低饱和队徽、灰色描边，并在每枚队徽右上方空白区展示 <strong>FT</strong> 状态牌；全页最多突出 2 支。</li>
+            <li>展开后展示该联赛当前日期下的<strong>全部比赛</strong>，不是只展示热门比赛。</li>
+            <li>比赛行展示日期、时间、双方队徽与队名；精选比赛增加红色左边线和浅红背景，不使用额外小图标。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>联赛字段：<code>competition_id</code>、<code>name</code>、<code>mark</code>、<code>brand_color</code>、<code>sort_order</code>。</li>
+            <li>日期聚合：<code>match_count</code>、<code>matches[]</code>、<code>featured_team_ids[]</code>、<code>featured_team_rank</code>、<code>featured_team_status</code>。</li>
+            <li>比赛字段与 Live 模块共用；精选状态使用统一 <code>is_featured</code>。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li><span class="formula">match_count = 当前日期、当前联赛下可展示的唯一 match_id 数量</span>。</li>
+            <li>重点队徽由服务端按 <code>featured_team_rank</code> 降序返回，客户端最多取 2 个；超过 2 个不显示 <strong>+N</strong>。</li>
+            <li>队徽状态优先级为 <strong>Live &gt; Finished &gt; Upcoming</strong>；同一球队只展示一个状态。</li>
+            <li>全页直播高亮最多 3 个、已结束高亮最多 2 个；达到上限后，其余队徽恢复普通样式。</li>
+            <li>联赛排序使用运营配置 <code>sort_order</code>，相同值按当日比赛数降序。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>点击整行展开或收起，箭头同步旋转；允许多个联赛同时展开。</li>
+            <li>点击展开后的比赛行进入 Match Detail；滚动位置保留在当前联赛上下文。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li>无重点球队时移除队徽轨道，联赛名称获得剩余空间。</li>
+            <li>超长联赛名称单行省略，队徽、比赛数和箭头固定保留；比赛数超过 99 显示 <strong>99+</strong>。</li>
+            <li>队徽加载失败时显示联赛色中性的球队首字母占位，不改变行高。</li>
+            <li>展开请求失败时保持联赛行展开，并在内容区显示重试状态。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="all-competitions">
+      <header class="module-head">
+        <span class="module-number">04</span>
+        <div><h1>All Competitions</h1><p>国家与联赛的长尾比赛目录</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>All Competitions · country expanded</strong><span>不显示 By country</span></div>
+            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=all-competitions" title="All Competitions 国家目录原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>位于 Top Competitions 全部联赛之后，同属 All Games 的连续纵向列表。</li>
+            <li>标题仅显示 <strong>All Competitions</strong>，不展示 By country 副文案。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>国家行展示国家缩写标记、国家名称、当前日期比赛总数和展开箭头。</li>
+            <li>展开后展示该国家有比赛的全部联赛；联赛子行展示赛徽缩写、联赛名和比赛数。</li>
+            <li>国家行保持紧凑，列表可连续展示大量国家，不使用横向卡片。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>国家字段：<code>country_id</code>、<code>country_name</code>、<code>country_code</code>、<code>market_priority</code>。</li>
+            <li>联赛字段：<code>competition_id</code>、<code>name</code>、<code>mark</code>、<code>match_count</code>。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li><span class="formula">国家比赛数 = 该国家所有联赛在 selected_date 下可展示比赛数之和</span>。</li>
+            <li>国家排序先按 <code>market_priority</code>，再按比赛数降序；无配置项按本地化国家名排序。</li>
+            <li>国家展开后只显示 <code>match_count &gt; 0</code> 的联赛。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>点击国家整行独立展开或收起；允许多个国家同时展开。</li>
+            <li>切换日期后保留已经展开的国家 ID，但重新计算并更新联赛与场次数。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li>国家当日比赛数为 0 时不进入列表；整个长尾目录为空时隐藏 All Competitions 标题。</li>
+            <li>国家下联赛超过 30 个时分批渲染，滚动到底继续加载，避免一次创建过多节点。</li>
+            <li>国家或联赛缺少品牌色时使用统一中性深灰，不随机生成颜色。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="featured">
+      <header class="module-head">
+        <span class="module-number">05</span>
+        <div><h1>Featured Match Feed</h1><p>少量重要比赛的连续日期列表与选赛逻辑</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>Featured · continuous dates</strong><span>日期随滚动同步</span></div>
+            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="Featured 重要比赛连续列表原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>位于 Match 模块的 Featured 页签内；多个日期的比赛上下连续展示，不通过下拉筛选切断列表。</li>
+            <li>日期分隔条下按联赛分组，联赛头与其比赛保持相邻。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>日期分区展示日期；联赛头展示赛徽、联赛名、该组场次数和折叠箭头。</li>
+            <li>比赛行展示时间或赛中分钟、双方队徽、队名、比分和关注按钮。</li>
+            <li>时间列只显示 <strong>FT / HT / 分钟 / 开赛时间</strong>，不重复显示 Finished、Live、Upcoming 文案。</li>
+            <li>列表中不展示 Featured Clash、推荐原因等解释标签；重要性通过进入 Featured 列表本身表达。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>比赛字段：<code>match_id</code>、<code>selected_date</code>、<code>competition</code>、<code>teams</code>、<code>status</code>、<code>clock</code>、<code>score</code>。</li>
+            <li>选赛字段：<code>importance_score</code>、<code>competition_tier</code>、<code>stage_weight</code>、<code>team_popularity</code>、<code>rivalry_weight</code>、<code>attention_weight</code>、<code>manual_include</code>、<code>manual_exclude</code>。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li><span class="formula">importance_score = 联赛级别 0–30 + 赛制/争冠阶段 0–25 + 双方球队热度 0–25 + 德比/宿敌 0–10 + 全局关注度 0–10</span>。</li>
+            <li><code>manual_exclude</code> 优先级最高；<code>manual_include</code> 强制进入；其余比赛需 <strong>importance_score ≥ 65</strong>。</li>
+            <li>单日最多展示 8 场，超过后按分数、开赛时间、match_id 稳定排序；不足时不使用低分比赛补位。</li>
+            <li>日期升序；日期内联赛按该组最高分降序；联赛内按 Live、Upcoming、Finished 排序。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>点击日期跳转对应分区；纵向滚动跨日期后，顶部日期栏自动切换。</li>
+            <li>点击联赛头收起或展开该组；点击比赛行打开 Match Detail。</li>
+            <li>点击星标只更新 Following 状态，不触发比赛详情；成功后显示轻量反馈。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li>单日没有符合阈值的比赛时显示“当天暂无 Featured 比赛”，不降低阈值补满数量。</li>
+            <li>比分、队徽或队名任一侧缺失时按完整比赛行降级，不把缺失值显示成 0。</li>
+            <li>编辑强制选赛与自动规则冲突时记录最终来源，便于回溯和 A/B 分析。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="detail">
+      <header class="module-head">
+        <span class="module-number">06</span>
+        <div><h1>Match Detail & Following</h1><p>比赛详情底部弹层、关注状态与后续入口</p></div>
+      </header>
+      <div class="module-body">
+        <div class="prototype">
+          <div class="prototype-inner">
+            <div class="prototype-label"><strong>Featured match detail</strong><span>从下至上打开</span></div>
+            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27&amp;action=featured-detail" title="比赛详情底部弹层原型"></iframe>
+          </div>
+        </div>
+        <div class="specification">
+          <section class="rule"><h2>展示位置</h2><ul>
+            <li>从 Featured 比赛列表、赛事展开列表或 Live 状态列表点击比赛后，从页面底部向上弹出。</li>
+            <li>弹层覆盖当前 Match 页面，但保留背景上下文与遮罩。</li>
+          </ul></section>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>展示联赛名、双方队徽与队名、比分或开赛时间、比赛状态和 <strong>Open Match Centre</strong> 主按钮。</li>
+            <li>从 Featured 进入时可展示服务端提供的精选原因；从 Live 进入时展示实时跟进提示，不重复解释重要性。</li>
+          </ul></section>
+          <section class="rule"><h2>取数</h2><ul>
+            <li>详情字段：<code>match_id</code>、<code>competition_name</code>、<code>home_team</code>、<code>away_team</code>、<code>score</code>、<code>status</code>、<code>kickoff_time</code>、<code>featured_reason</code>。</li>
+            <li>关注字段：<code>is_following</code>、<code>notification_permission</code>、<code>updated_at</code>。</li>
+          </ul></section>
+          <section class="rule calculation"><h2>计算</h2><ul>
+            <li>Upcoming 显示开赛时间；Live 与 Finished 显示比分；状态文案统一由 <code>status</code> 映射。</li>
+            <li>关注按钮采用服务端最终状态；同一 <code>match_id</code> 在所有入口实时同步。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>支持关闭按钮、背景点击、Escape 和系统返回；关闭后恢复触发入口焦点与列表滚动位置。</li>
+            <li>Open Match Centre 进入完整比赛中心；返回后回到原日期和原列表位置。</li>
+            <li>关注按钮采用乐观更新，接口失败时回滚并提示；不因关注操作自动进入详情。</li>
+          </ul></section>
+          <section class="rule edge"><h2>边界处理</h2><ul>
+            <li><code>featured_reason</code> 缺失时隐藏原因模块，不展示通用占位解释。</li>
+            <li>比赛取消或延期时主状态替换比分区域，并保留双方和比赛中心入口。</li>
+            <li>无通知权限时允许保存关注，随后单独引导授权；拒绝授权不取消关注。</li>
+          </ul></section>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
