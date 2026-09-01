@@ -28,7 +28,8 @@
 - The track starts at the first Live card. Finished is reachable at the far left and Upcoming at the far right; each opens the child list with its own status group expanded.
 - Clicking a Live card opens Match Detail; clicking `View all` opens the dedicated Live child list layer in the current tab.
 - Dedicated Live page layer covers the status bar, top navigation, date strip, and previous content while keeping only the bottom tab bar visible. It keeps All active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
-- Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and switches to the Live list in place with Live active while retaining the status bar, top navigation, and date strip.
+- Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and switches only the main content in place without changing the URL. Its main area uses the supplied reference toolbar, Finished / Live / Upcoming, and two reference matches while the shared App chrome remains unchanged.
+- At the native 393 x 852 canvas, Control A keeps identical pre/post-switch bounds for the status bar (y=0, h=48), top navigation (y=48, h=50), date strip (y=98, h=50), and bottom navigation (y=776, h=76). The reference toolbar begins at y=148 and Upcoming begins at y=466.
 - The product prototype exposes a compact A/B variant switcher outside the phone app canvas; switching variants preserves the current view, date, and Live status query parameters.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
@@ -38,8 +39,8 @@
 - Requirement document module titles and navigation labels are Chinese, including the new `07 A/B 测试` module.
 - The A/B module specifies the three-tab control A, inline-preview variant B, 50/50 sticky assignment, event schema, primary/secondary metrics, guardrails, runtime, and decision thresholds.
 - Product console: 0 errors and 0 warnings.
-- Direct product check loaded all 25 referenced images with 0 broken assets.
-- Static HTTP check: 58 of 58 files returned 200.
+- Direct product check includes the reference app mark, two competition marks, and four team crests added for Control A; all visible reference assets load without broken images.
+- Static HTTP check: 65 of 65 files returned 200.
 - Inline product script compiled successfully as one script block.
 - The in-app browser annotation layer emitted two source-less `MutationObserver` errors when reloading the multi-iframe requirement page. The project contains no `MutationObserver` call; direct product-page console checks remained clean.
 
@@ -56,8 +57,8 @@
 ## Required Interactions
 
 - Open Live from Matches.
-- Open the control variant and enter Live from the third top tab; confirm the URL does not change and the app chrome remains visible.
-- Switch repeatedly between All, Recommended, and control Live; confirm the topbar and date strip keep identical bounding boxes and no content shifts vertically.
+- Open the control variant and enter Live from the third top tab; confirm the URL and every shared App region remain unchanged while only the main content switches.
+- Switch repeatedly between All, Recommended, and control Live; confirm the status bar, topbar, date strip, and bottom navigation keep identical bounding boxes and the search/profile controls do not appear or disappear unexpectedly.
 - Swipe the Live preview and open a match card.
 - Expand and collapse each status group.
 - Return from Live to Matches.

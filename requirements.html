@@ -155,8 +155,8 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Demo 外层、手机画布上方展示 A/B 方案切换页签；手机画布内部的设备状态栏下方展示 <strong>All / Recommended</strong>，A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
-            <li>日期栏始终位于比赛内容之前，不随比赛列表横向滚动。</li>
+            <li>位于 Demo 外层、手机画布上方展示 A/B 方案切换页签；手机画布内部的设备状态栏下方展示 <strong>All / Recommended</strong>，A 对照组在比赛库页面额外展示独立 <strong>Live</strong> 页签。</li>
+            <li>日期栏始终位于比赛内容之前；A 对照组进入 Live 后仍保留相同的设备状态栏、<strong>All / Recommended / Live</strong>、日期栏与底部导航。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
             <li>B 实验组只保留两个入口：<strong>All</strong> 承载完整比赛目录；<strong>Recommended</strong> 展示系统精选的重要比赛，包含重点联赛与用户关注比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
@@ -174,7 +174,7 @@
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
             <li>切换页签时保留 <code>selected_date</code>，并将新页面滚动到该日期对应内容。</li>
-            <li>切换 <strong>All / Recommended / Live</strong> 任意页签时，顶部导航与日期栏固定为同一高度、内边距、字号和图标尺寸；选中态只改变颜色、字重与下划线，不改变组件占位，禁止页面内容上下跳动。</li>
+            <li>切换 <strong>All / Recommended / Live</strong> 时，设备状态栏、顶部导航、日期栏与底部导航保持同一高度、内边距、字号和图标尺寸；只切换选中态和主内容，禁止公共区域跳动。</li>
             <li>Recommended 中点击日期，平滑滚动到对应日期分区；手动纵向滚动跨入新日期时，日期栏同步更新。</li>
             <li>Matches 中点击日期，重新请求并渲染该日期的 Live、Top Competitions 与 All Competitions 数据。</li>
           </ul></section>
@@ -203,14 +203,14 @@
           <section class="rule"><h2>展示位置</h2><ul>
             <li>Live 入口仅在 <strong>Matches + Today</strong> 展示，紧贴日期栏，位于所有赛事目录之前。</li>
             <li>Matches 不展示 You may like 推荐卡模块；Live 横滑预览是日期栏后的第一个内容模块。</li>
-            <li>B 实验组点击 <strong>View all</strong> 后进入独立 Live 列表页面层；页面覆盖状态栏、顶部导航、日期栏和原比赛内容，仅保留底部 Tab 栏。B 页面仍保持 <strong>All</strong> Tab 选中。A 对照组点击顶部 <strong>Live</strong> Tab 后在当前 App 页面内切换列表，不发起新页面跳转，并保留状态栏、顶部导航与日期栏。</li>
+            <li>B 实验组点击 <strong>View all</strong> 后进入独立 Live 列表页面层；页面覆盖状态栏、顶部导航、日期栏和原比赛内容，仅保留底部 Tab 栏。A 对照组点击顶部 <strong>Live</strong> 后保持当前 URL与全部公共 App 区域不变，只把日期栏下方的主内容切换为参考稿的工具条和状态列表。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
             <li>模块标题行展示红色直播点、<strong>Live now</strong>、Live 场次数与 <strong>View all</strong>；下方横滑卡在赛事名左侧展示固定尺寸的真实赛徽，并展示比赛分钟、双方队徽、队名与实时比分。</li>
             <li>首屏至少完整展示 1 张卡并露出下一张卡，明确横滑方向；卡片固定高度，赛事名和队名超长时单行省略。</li>
             <li>横滑串最左端展示 <strong>Finished</strong> 入口，最右端展示 <strong>Upcoming</strong> 入口；初始位置停在第一张 Live 比赛卡。</li>
             <li>横滑预览内所有 Live 卡使用统一白底与中性边框，不因 <code>is_featured</code> 增加底色或强调边线。</li>
-            <li>二级列表顶部展示返回按钮、Live matches 标题、Live 场次数，以及 <strong>By time / Search / Filter</strong> 工具条。</li>
+            <li>B 的二级列表顶部展示返回按钮、Live matches 标题、Live 场次数，以及 <strong>By time / Search / Filter</strong> 工具条；A 的 Live 主内容直接在日期栏下展示同类工具条，不显示返回标题行。</li>
             <li>状态组顺序固定为 <strong>Finished → Live → Upcoming</strong>；Live 默认展开，另外两组默认收起。</li>
             <li>展开状态组后按赛事分组；赛事头展示真实赛徽、赛事名和组内场次数，比赛行展示状态时间、双方队徽、队名、比分与关注按钮。</li>
             <li>Live 标题、比赛分钟与比分使用红色；重要比赛可增加红色左边线和浅红背景，普通比赛不增加该高亮。</li>
@@ -235,6 +235,7 @@
             <li>点击 Finished、Live、Upcoming 标题独立展开或收起，可同时展开多个状态组。</li>
             <li>By time 切换为跨赛事时间排序；Search 搜索球队或赛事；Filter 打开状态、赛事和关注筛选。</li>
             <li>点击比赛行打开 Match Detail；点击关注按钮只更新关注状态，不触发比赛详情。</li>
+            <li>A 对照组点击顶部 Live 后不修改 URL；点击 All 或 Recommended 只切换主内容，公共顶部和底部区域保持原位。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
             <li>非 Today 或 Live 数量为 0 时隐藏完整横滑模块，不保留空白占位；通过旧链接进入时显示无直播空态并提供返回。</li>
@@ -438,7 +439,7 @@
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>方案 B · 横滑直播预览</strong><a href="index.html?view=all&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A</a></div>
+            <div class="prototype-label"><strong>方案 B · 横滑直播预览</strong><a href="index.html?view=live&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A Live</a></div>
             <iframe class="prototype-frame" src="index.html?view=all&amp;date=27" title="比赛列表优化 A/B 测试方案 B 原型"></iframe>
           </div>
         </div>
@@ -448,7 +449,7 @@
             <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li><strong>A 对照组</strong>：顶部展示 <strong>All / Recommended / Live</strong> 三个页签；点击 Live 在当前 App 页面内切换 Live 列表并保持顶部页签可见，不跳转到覆盖式新页面；All 页面不展示横滑 Live 预览。</li>
+            <li><strong>A 对照组</strong>：顶部展示 <strong>All / Recommended / Live</strong> 三个页签；点击 Live 保持当前 URL、状态栏、三页签、日期栏和底部导航不变，只把主内容切换为 By time / Search / Filter、Finished / Live / Upcoming 与赛事比赛行；All 页面不展示横滑 Live 预览。</li>
             <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
             <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
           </ul></section>

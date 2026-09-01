@@ -53,6 +53,8 @@
       font-size: 15px;
       font-weight: 700;
     }
+    .status-time { flex: 0 0 auto; }
+    .status-dynamic-island, .status-live-app { display: none; }
     .status-icons { display: flex; gap: 7px; align-items: center; font-size: 13px; }
     .battery { width: 23px; height: 11px; border: 1.8px solid #111; border-radius: 3px; padding: 1.5px; position: relative; }
     .battery::after { content: ""; position: absolute; right: -4px; top: 2px; width: 2px; height: 5px; background: #111; border-radius: 0 2px 2px 0; }
@@ -332,6 +334,154 @@
     .standalone-live-empty { min-height: 280px; padding: 84px 24px 40px; text-align: center; color: var(--muted); }
     .standalone-live-empty b { display: block; margin-bottom: 7px; color: #4f5157; font-size: 16px; }
     .standalone-live-empty span { font-size: 12px; }
+
+    /* Control A keeps the shared App chrome and applies the reference only to Live content. */
+    .app.control-live-page .search-action { display: none; }
+    .reference-live-view { min-height: 100%; background: #f7f7f8; }
+    .reference-live-toolbar {
+      height: 38px;
+      padding: 4px 12px;
+      display: grid;
+      grid-template-columns: 90px minmax(0, 1fr) 42px;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #f1f1f2;
+      background: #fff;
+    }
+    .reference-live-tool {
+      min-width: 0;
+      height: 30px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: #f2f2f3;
+      color: #9b9ca0;
+      font-size: 14px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .reference-live-tool.filter { padding: 0; justify-content: center; }
+    .reference-live-tool .clock-glyph { width: 19px; height: 19px; flex-basis: 19px; }
+    .reference-live-tool .search-glyph { font-size: 24px; }
+
+    .reference-status-toggle {
+      width: 100%;
+      height: 40px;
+      padding: 0 14px 0 12px;
+      border: 0;
+      border-bottom: 1px solid #ededee;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: #f7f7f8;
+      text-align: left;
+      cursor: pointer;
+    }
+    .reference-status-toggle strong { font-size: 17px; font-weight: 700; }
+    .reference-status-toggle .reference-count {
+      min-width: 25px;
+      height: 25px;
+      padding: 0 6px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #111;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .reference-status-toggle.live strong { color: var(--red); }
+    .reference-status-toggle.live .reference-count { color: var(--red); background: var(--red-soft); }
+    .reference-chevron { margin-left: auto; color: #111; font-size: 18px; line-height: 1; }
+    .reference-live-block.collapsed .reference-live-content { display: none; }
+
+    .reference-league-row {
+      height: 38px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      color: #9a9b9f;
+      font-size: 14px;
+      font-weight: 520;
+    }
+    .reference-league-row.highlight { background: #fff0f1; }
+    .reference-league-row img { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
+    .reference-league-row.next-pro img { width: 24px; height: 20px; flex-basis: 24px; object-fit: cover; object-position: left center; }
+    .reference-league-row.next-pro { height: 34px; }
+
+    .reference-match-row {
+      min-height: 64px;
+      padding: 3px 9px 3px 4px;
+      display: grid;
+      grid-template-columns: 55px minmax(0, 1fr) 36px 32px;
+      align-items: center;
+      background: #fff;
+      border: 0;
+      border-bottom: 1px solid #f0f0f1;
+      text-align: left;
+      cursor: pointer;
+    }
+    .reference-match-time {
+      align-self: stretch;
+      padding-right: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border-right: 1px solid #e8e8ea;
+    }
+    .reference-match-time span { color: #9a9ca0; font-size: 13px; }
+    .reference-match-time strong { color: var(--red); font-size: 15px; font-weight: 650; }
+    .reference-match-teams { min-width: 0; padding: 0 14px; }
+    .reference-match-team {
+      height: 27px;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+    .reference-match-team img { width: 22px; height: 22px; flex: 0 0 22px; object-fit: contain; }
+    .reference-match-team span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 530; }
+    .reference-match-scores { display: grid; gap: 9px; color: var(--red); font-size: 16px; font-weight: 760; text-align: center; }
+    .reference-bell {
+      width: 32px;
+      height: 48px;
+      margin-left: 0;
+      border: 0;
+      border-left: 1px solid #e8e8ea;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      cursor: pointer;
+    }
+    .reference-bell-icon {
+      width: 14px;
+      height: 16px;
+      position: relative;
+      display: block;
+      border-radius: 8px 8px 3px 3px;
+      background: #e0e3e8;
+    }
+    .reference-bell-icon::after {
+      content: "";
+      position: absolute;
+      left: -2px;
+      right: -2px;
+      bottom: -3px;
+      height: 3px;
+      border-radius: 3px;
+      background: #e0e3e8;
+    }
+    .reference-bell.active .reference-bell-icon,
+    .reference-bell.active .reference-bell-icon::after { background: var(--red); }
+
+    .floating-match-search { display: none; }
     .all-games-directory { background: #fff; padding-bottom: 78px; }
     .directory-heading {
       min-height: 58px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
@@ -843,7 +993,9 @@
   </div>
   <div class="app">
     <div class="status-bar" aria-hidden="true">
-      <span>09:34</span>
+      <span class="status-time">09:34</span>
+      <span class="status-dynamic-island"></span>
+      <span class="status-live-app"><img src="assets/reference-live-app.png" alt=""></span>
       <span class="status-icons"><span>▮▮▮</span><span>◒</span><span class="battery"><span></span></span></span>
     </div>
 
@@ -866,9 +1018,10 @@
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-btn"><span class="nav-icon">▤</span><span>News</span></button>
       <button class="nav-btn active"><span class="nav-icon">▦</span><span>Matches</span></button>
-      <button class="nav-btn"><span class="nav-icon">☆</span><span>Following</span></button>
+      <button class="nav-btn"><span class="nav-icon">☆</span><span id="followingNavLabel">Following</span></button>
       <button class="nav-btn"><span class="nav-icon">♜</span><span>Leagues</span></button>
     </nav>
+    <button class="floating-match-search" aria-label="Search matches">⌕</button>
   </div>
 
   <div class="live-popup-backdrop" id="livePopupBackdrop"></div>
@@ -1320,8 +1473,103 @@
       </section>`;
     }
 
+    const referenceLiveMatches = [
+      {
+        league: 'Mexico > Mexico Liga MX',
+        scheduled: '10:10', minute: "90'",
+        home: 'Rayados de Monterrey', homeLogo: A+'monterrey.png', homeScore: '1',
+        away: 'Atletico San Luis', awayLogo: A+'atletico-san-luis.png', awayScore: '3'
+      },
+      {
+        league: 'USA > MLS Next Pro',
+        scheduled: '10:30', minute: "68'",
+        home: 'San Jose Earthquakes Reserves', homeLogo: A+'san-jose-earthquakes.png', homeScore: '2',
+        away: 'Los Angeles FC II', awayLogo: A+'lafc.png', awayScore: '0'
+      }
+    ];
+
+    function referenceMatchTemplate(match) {
+      const payload = JSON.stringify({
+        league: match.league,
+        status: 'live',
+        time: match.minute,
+        reason: 'Live',
+        home: match.home,
+        homeLogo: match.homeLogo,
+        away: match.away,
+        awayLogo: match.awayLogo,
+        homeScore: match.homeScore,
+        awayScore: match.awayScore
+      }).replaceAll("'", '&apos;');
+      return `<article class="reference-match-row" data-match='${payload}' aria-label="${match.home} versus ${match.away}">
+        <span class="reference-match-time"><span>${match.scheduled}</span><strong>${match.minute}</strong></span>
+        <span class="reference-match-teams">
+          <span class="reference-match-team"><img src="${match.homeLogo}" alt=""><span>${match.home}</span></span>
+          <span class="reference-match-team"><img src="${match.awayLogo}" alt=""><span>${match.away}</span></span>
+        </span>
+        <span class="reference-match-scores"><strong>${match.homeScore}</strong><strong>${match.awayScore}</strong></span>
+        <button class="reference-bell" aria-label="Enable match alert"><span class="reference-bell-icon" aria-hidden="true"></span></button>
+      </article>`;
+    }
+
+    function referenceControlLiveTemplate() {
+      return `<section class="reference-live-view" aria-label="Live matches list">
+        <section class="reference-live-toolbar" aria-label="Live match tools">
+          <button class="reference-live-tool" id="referenceSortLive"><span class="clock-glyph" aria-hidden="true"></span><span>By time</span></button>
+          <button class="reference-live-tool" id="referenceSearchLive"><span class="search-glyph" aria-hidden="true">⌕</span><span>Search</span></button>
+          <button class="reference-live-tool filter" id="referenceFilterLive" aria-label="Filter live matches"><span class="filter-glyph" aria-hidden="true"></span></button>
+        </section>
+        <button class="reference-status-toggle" data-reference-status="finished" aria-expanded="false">
+          <strong>Finished</strong><span class="reference-count">276</span><span class="reference-chevron">⌄</span>
+        </button>
+        <section class="reference-live-block" id="referenceLiveBlock">
+          <button class="reference-status-toggle live" id="referenceLiveToggle" aria-expanded="true">
+            <strong>Live</strong><span class="reference-count">2</span><span class="reference-chevron">⌃</span>
+          </button>
+          <div class="reference-live-content">
+            <div class="reference-league-row highlight"><img src="${A}liga-mx-reference.png" alt=""><span>Mexico &gt; Mexico Liga MX</span></div>
+            ${referenceMatchTemplate(referenceLiveMatches[0])}
+            <div class="reference-league-row next-pro"><img src="${A}mls-next-pro-reference.png" alt=""><span>USA &gt; MLS Next Pro</span></div>
+            ${referenceMatchTemplate(referenceLiveMatches[1])}
+          </div>
+        </section>
+        <button class="reference-status-toggle" data-reference-status="upcoming" aria-expanded="false">
+          <strong>Upcoming</strong><span class="reference-count">322</span><span class="reference-chevron">⌄</span>
+        </button>
+      </section>`;
+    }
+
+    function bindReferenceControlLive() {
+      document.getElementById('referenceSortLive')?.addEventListener('click', () => showToast('Games sorted by time'));
+      document.getElementById('referenceSearchLive')?.addEventListener('click', () => showToast('Search live matches'));
+      document.getElementById('referenceFilterLive')?.addEventListener('click', () => showToast('Filter live matches'));
+      document.querySelectorAll('[data-reference-status]').forEach(button => button.addEventListener('click', () => {
+        showToast(`${button.dataset.referenceStatus === 'finished' ? 'Finished' : 'Upcoming'} matches · Demo`);
+      }));
+      document.getElementById('referenceLiveToggle')?.addEventListener('click', event => {
+        const block = event.currentTarget.closest('.reference-live-block');
+        const collapsed = block.classList.toggle('collapsed');
+        event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+        event.currentTarget.querySelector('.reference-chevron').textContent = collapsed ? '⌄' : '⌃';
+      });
+      document.querySelectorAll('.reference-match-row').forEach(row => row.addEventListener('click', () => {
+        openSheet(JSON.parse(row.dataset.match));
+      }));
+      document.querySelectorAll('.reference-bell').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        button.classList.toggle('active');
+        button.setAttribute('aria-label', button.classList.contains('active') ? 'Disable match alert' : 'Enable match alert');
+      }));
+    }
+
     function renderStandaloneLive() {
       closeLivePopup();
+      if (experimentVariant === 'control') {
+        matchList.innerHTML = referenceControlLiveTemplate();
+        bindReferenceControlLive();
+        matchList.scrollTop = 0;
+        return;
+      }
       matchList.innerHTML = standaloneLiveTemplate();
       document.getElementById('backToAllGames')?.addEventListener('click', () => {
         if (experimentVariant === 'control') switchPage('live');
@@ -1627,9 +1875,14 @@
       const isLiveList = page === 'live-list';
       const liveTabIsControl = experimentVariant === 'control';
       const isOverlayLiveList = isLiveList && !liveTabIsControl;
+      const isControlLivePage = isLiveList && liveTabIsControl;
       app.classList.toggle('live-page', isAllGames);
       app.classList.toggle('live-list-page', isOverlayLiveList);
+      app.classList.toggle('control-live-page', isControlLivePage);
       app.classList.toggle('all-games-redesign', isAllGames || isLiveList);
+      exploreNav.textContent = 'Recommended';
+      document.querySelector('.status-time').textContent = '09:34';
+      document.getElementById('followingNavLabel').textContent = 'Following';
       liveNav.classList.toggle('active', isAllGames || (isLiveList && !liveTabIsControl));
       exploreNav.classList.toggle('active', isFeatured);
       standaloneLiveNav.classList.toggle('active', isLiveList && liveTabIsControl);
@@ -1708,6 +1961,7 @@
     variantInlineTab.addEventListener('click', () => switchVariant('inline'));
     variantControlTab.addEventListener('click', () => switchVariant('control'));
     document.querySelector('.search-action').addEventListener('click', () => showToast(currentPage === 'live-list' ? 'Search live matches' : 'Search matches'));
+    document.querySelector('.floating-match-search').addEventListener('click', () => showToast('Search matches'));
     document.getElementById('sortLiveBtn').addEventListener('click', () => showToast('Games grouped by competition'));
     document.getElementById('liveSearchBtn').addEventListener('click', () => showToast('Search live matches'));
     document.getElementById('closeLivePopup').addEventListener('click', closeLivePopup);
