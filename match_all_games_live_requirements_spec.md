@@ -40,7 +40,7 @@ This specification covers the Live entry inside All and its dedicated status lis
 ## Interaction
 
 - Swiping the preview browses Live cards without leaving Matches.
-- Clicking a preview card opens Match Detail.
+- Clicking a preview card opens the standalone Match Detail page in the current tab.
 - Clicking `View all` opens a dedicated Live page layer in the current tab. It covers the status bar, top navigation, date strip, and previous match content; only the persistent bottom tab bar remains visible.
 - Clicking a status entry navigates to the dedicated Live list page with the selected Finished or Upcoming group expanded and the other groups collapsed.
 - The child list opens with Live expanded and Finished/Upcoming collapsed.
@@ -48,7 +48,8 @@ This specification covers the Live entry inside All and its dedicated status lis
 - Back or the bottom Matches tab closes the Live page layer, returns to the directory, and restores the selected-date context.
 - `By time` changes to a cross-competition chronological list.
 - Search accepts team and competition names; Filter supports status, competition, and following.
-- Clicking a match opens Match Detail. Clicking the favorite control only changes following state.
+- Clicking a match opens the standalone Match Detail page in the current tab. Clicking the favorite control only changes following state.
+- The standalone Match Detail page owns the match URL and content; the Matches list never opens a bottom sheet or scrim for match details.
 - In A, clicking the top-level Live tab keeps the URL unchanged. Clicking All or Recommended switches only the main content while all shared App regions remain mounted and fixed.
 
 ## Boundary Handling
@@ -69,6 +70,7 @@ This specification covers the Live entry inside All and its dedicated status lis
 - Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
 - The prototype includes a compact A/B variant switcher outside the phone app canvas. Variant B top navigation contains only All and Recommended; variant A adds Live as a third tab.
 - B opening Live renders Finished, Live, Upcoming in that order on a dedicated full-screen page layer covering every App region except the persistent bottom tab bar.
+- Any match row in Recommended, All, B Live preview, or either Live list navigates to `match.html` with match, status, score, crest, date, and source context in the URL.
 - A opening Live renders the supplied reference only inside the main content area: toolbar, Finished / Live / Upcoming, and competition-grouped rows. The shared status bar, three match tabs, date strip, and bottom navigation are identical before and after the switch; the URL remains unchanged.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.

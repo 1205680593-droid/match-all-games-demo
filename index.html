@@ -705,30 +705,6 @@
     .nav-icon { height: 27px; display: grid; place-items: center; font-size: 22px; font-weight: 700; }
     .nav-btn.active { color: var(--red); }
 
-    .scrim {
-      position: fixed; z-index: 40; inset: 0; background: rgba(0,0,0,.38);
-      opacity: 0; pointer-events: none; transition: opacity .2s ease;
-    }
-    .scrim.show { opacity: 1; pointer-events: auto; }
-    .sheet {
-      position: fixed; z-index: 41; left: 50%; bottom: 0; width: min(100%, var(--app-width));
-      transform: translate(-50%, 105%); background: #fff; border-radius: 14px 14px 0 0;
-      padding: 10px 20px calc(22px + env(safe-area-inset-bottom)); transition: transform .25s ease;
-    }
-    .sheet.show { transform: translate(-50%, 0); }
-    .handle { width: 36px; height: 4px; border-radius: 4px; background: #d7d8dc; margin: 0 auto 16px; }
-    .sheet-title { display: flex; align-items: center; justify-content: space-between; }
-    .sheet-title h2 { margin: 0; font-size: 19px; }
-    .close-btn { border: 0; background: var(--soft); width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; }
-    .sheet-match { display: grid; grid-template-columns: 1fr 70px 1fr; align-items: center; margin: 26px 0 20px; }
-    .sheet-team { min-width: 0; text-align: center; font-size: 13px; font-weight: 650; }
-    .sheet-team img { display: block; width: 50px; height: 50px; object-fit: contain; margin: 0 auto 8px; }
-    .sheet-score { text-align: center; }
-    .sheet-score strong { display: block; font-size: 24px; }
-    .sheet-score span { font-size: 11px; color: var(--red); font-weight: 700; }
-    .sheet-reason { padding: 13px 14px; border-radius: 7px; background: var(--soft); font-size: 13px; line-height: 1.5; color: #595b60; }
-    .primary-btn { width: 100%; height: 46px; border: 0; border-radius: 7px; background: var(--red); color: #fff; font-weight: 700; margin-top: 16px; cursor: pointer; }
-
     .toast {
       position: fixed; z-index: 60; left: 50%; bottom: 94px; transform: translate(-50%, 20px);
       padding: 10px 15px; border-radius: 7px; background: #171717; color: white; font-size: 12px;
@@ -978,7 +954,6 @@
       body { padding: 16px 0; }
       .app { border-radius: 22px; }
       .bottom-nav { border-radius: 0 0 22px 22px; }
-      .sheet { bottom: 16px; }
       .live-popup { bottom: 16px; border-radius: 16px; }
       .live-popup.show { transform: translate(-50%, 0); }
     }
@@ -1052,18 +1027,6 @@
     <div class="live-popup-list" id="livePopupList"></div>
   </aside>
 
-  <div class="scrim" id="scrim"></div>
-  <aside class="sheet" id="sheet" aria-hidden="true">
-    <div class="handle"></div>
-    <div class="sheet-title"><h2 id="sheetLeague">Match Details</h2><button class="close-btn" id="closeSheet" aria-label="Close">×</button></div>
-    <div class="sheet-match">
-      <div class="sheet-team"><img id="sheetHomeLogo" alt=""><span id="sheetHome"></span></div>
-      <div class="sheet-score"><strong id="sheetScore">-</strong><span id="sheetStatus"></span></div>
-      <div class="sheet-team"><img id="sheetAwayLogo" alt=""><span id="sheetAway"></span></div>
-    </div>
-    <div class="sheet-reason" id="sheetReason"></div>
-    <button class="primary-btn" id="detailBtn">Open Match Centre</button>
-  </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -1378,7 +1341,7 @@
             </a>
             <div class="competition-meta"><span class="competition-count">${matches.length}</span><button class="collapse-btn" aria-label="Collapse or expand">⌃</button></div>
           </header>
-          <div class="matches">${matches.map(matchTemplate).join('')}</div>
+          <div class="matches">${matches.map(match => matchTemplate(match, date.key)).join('')}</div>
         </section>`;
       }).join('');
 
@@ -1402,7 +1365,7 @@
         btn.textContent = btn.classList.contains('active') ? '★' : '☆';
         showToast(btn.classList.contains('active') ? 'Match added to Following' : 'Match removed from Following');
       }));
-      matchList.querySelectorAll('.match-row').forEach(row => row.addEventListener('click', () => openSheet(JSON.parse(row.dataset.match))));
+      matchList.querySelectorAll('.match-row').forEach(row => row.addEventListener('click', () => navigateToMatch(JSON.parse(row.dataset.match), row.dataset.date)));
       if (scrollToActive) requestAnimationFrame(() => scrollToDate(activeDate, 'auto'));
     }
 
@@ -1443,8 +1406,7 @@
         button.setAttribute('aria-expanded', String(expanded));
       }));
       container.querySelectorAll('.live-match-row').forEach(row => row.addEventListener('click', () => {
-        closeLivePopup();
-        openSheet(JSON.parse(row.dataset.match));
+        navigateToMatch(JSON.parse(row.dataset.match));
       }));
       container.querySelectorAll('.favorite-btn').forEach(btn => btn.addEventListener('click', event => {
         event.stopPropagation();
@@ -1569,7 +1531,7 @@
         event.currentTarget.querySelector('.reference-chevron').textContent = collapsed ? '⌄' : '⌃';
       });
       document.querySelectorAll('.reference-match-row').forEach(row => row.addEventListener('click', () => {
-        openSheet(JSON.parse(row.dataset.match));
+        navigateToMatch(JSON.parse(row.dataset.match));
       }));
       document.querySelectorAll('.reference-bell').forEach(button => button.addEventListener('click', event => {
         event.stopPropagation();
@@ -1762,7 +1724,7 @@
     function bindLivePreview() {
       const track = document.getElementById('livePreviewTrack');
       track.querySelectorAll('[data-open-status]').forEach(button => button.addEventListener('click', () => openStandaloneLive(button.dataset.openStatus)));
-      track.querySelectorAll('.live-preview-match').forEach(button => button.addEventListener('click', () => openSheet(JSON.parse(button.dataset.match))));
+      track.querySelectorAll('.live-preview-match').forEach(button => button.addEventListener('click', () => navigateToMatch(JSON.parse(button.dataset.match))));
       requestAnimationFrame(() => {
         const finishedEntry = track.querySelector('.live-status-entry.finished');
         track.scrollLeft = finishedEntry.offsetWidth + 8;
@@ -1834,6 +1796,9 @@
     }
 
     function bindRedesignedAllGames() {
+      document.querySelectorAll('.redesign-card').forEach(button => button.addEventListener('click', () => {
+        navigateToMatch(JSON.parse(button.dataset.match));
+      }));
       document.querySelectorAll('.redesign-region-row').forEach(button => button.addEventListener('click', () => {
         const group = button.closest('.redesign-region-group');
         const expanded = group.classList.toggle('expanded');
@@ -1863,6 +1828,30 @@
       const params = new URLSearchParams({ league, date, from: view });
       if (experimentVariant === 'control') params.set('variant', 'control');
       return `league.html?${params.toString()}`;
+    }
+
+    function matchHref(match, dateOverride = selectedDate) {
+      const view = currentPage === 'explore' ? 'featured' : currentPage === 'live-list' ? 'live' : 'all';
+      const params = new URLSearchParams({
+        league: match.league || 'Match',
+        status: match.status || 'upcoming',
+        time: match.time || '',
+        reason: match.reason || '',
+        home: match.home || '',
+        homeLogo: match.homeLogo || '',
+        away: match.away || '',
+        awayLogo: match.awayLogo || '',
+        homeScore: match.homeScore || '',
+        awayScore: match.awayScore || '',
+        date: dateOverride,
+        from: view
+      });
+      if (experimentVariant === 'control') params.set('variant', 'control');
+      return `match.html?${params.toString()}`;
+    }
+
+    function navigateToMatch(match, dateOverride = selectedDate) {
+      window.location.assign(matchHref(match, dateOverride));
     }
 
     function openStandaloneLive(status = 'live') {
@@ -1938,12 +1927,12 @@
       scrollFrame = requestAnimationFrame(syncDateFromScroll);
     }, { passive: true });
 
-    function matchTemplate(m) {
+    function matchTemplate(m, date = selectedDate) {
       const [, , , status, time, reason, home, homeLogo, away, awayLogo, homeScore, awayScore] = m;
       const scoreA = status === 'upcoming' ? '<span class="score pending">-</span>' : `<span class="score">${homeScore}</span>`;
       const scoreB = status === 'upcoming' ? '<span class="score pending">-</span>' : `<span class="score">${awayScore}</span>`;
       const payload = JSON.stringify({ league: m[0], status, time, reason, home, homeLogo, away, awayLogo, homeScore, awayScore }).replaceAll("'", '&apos;');
-      return `<article class="match-row" data-status="${status}" data-match='${payload}'>
+      return `<article class="match-row" data-date="${date}" data-status="${status}" data-match='${payload}'>
         <div class="match-time"><strong class="${status === 'live' ? 'live' : status === 'finished' ? 'ft' : ''}">${time}</strong></div>
         <div class="match-content">
           <div class="team-line"><span class="crest-wrap"><img class="crest" src="${homeLogo}" alt=""></span><span class="team-name">${home}</span>${scoreA}</div>
@@ -1990,25 +1979,6 @@
       if (event.key === 'Escape' && livePopup.classList.contains('show')) closeLivePopup();
     });
 
-    const sheet = document.getElementById('sheet');
-    const scrim = document.getElementById('scrim');
-    function openSheet(m) {
-      document.getElementById('sheetLeague').textContent = m.league;
-      document.getElementById('sheetHome').textContent = m.home;
-      document.getElementById('sheetAway').textContent = m.away;
-      document.getElementById('sheetHomeLogo').src = m.homeLogo;
-      document.getElementById('sheetAwayLogo').src = m.awayLogo;
-      document.getElementById('sheetScore').textContent = m.status === 'upcoming' ? m.time : `${m.homeScore} - ${m.awayScore}`;
-      document.getElementById('sheetStatus').textContent = m.status === 'live' ? `${m.time} Live` : m.status === 'finished' ? 'Finished' : 'Upcoming';
-      document.getElementById('sheetReason').innerHTML = m.status === 'live'
-        ? '<strong>Live now</strong><br>Follow this match for score changes and key-event alerts.'
-        : `<strong>Why it is featured: ${m.reason}</strong><br>This match is prioritised for quick access to the score, status and key events.`;
-      sheet.classList.add('show'); scrim.classList.add('show'); sheet.setAttribute('aria-hidden', 'false');
-    }
-    function closeSheet() { sheet.classList.remove('show'); scrim.classList.remove('show'); sheet.setAttribute('aria-hidden', 'true'); }
-    document.getElementById('closeSheet').addEventListener('click', closeSheet);
-    scrim.addEventListener('click', closeSheet);
-    document.getElementById('detailBtn').addEventListener('click', () => { closeSheet(); showToast('Opening Match Centre · Demo'); });
     let toastTimer;
     function showToast(message) {
       toast.textContent = message; toast.classList.add('show');
@@ -2053,10 +2023,6 @@
         }
       });
     }
-
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && sheet.classList.contains('show')) closeSheet();
-    });
 
     drawDates();
     applyPreviewState();

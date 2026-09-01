@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="icon" href="data:,">
+  <title>Match Centre · Match Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --red: #f5222d;
+      --red-soft: #fff0f1;
+      --ink: #121212;
+      --muted: #8b8d93;
+      --line: #ececef;
+      --soft: #f6f7f9;
+      --green: #0e9f6e;
+      --app-width: 393px;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    body { background: #eef0f3; color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif; letter-spacing: 0; }
+    button, a { font: inherit; color: inherit; }
+    .match-app { width: min(100%, var(--app-width)); min-height: 100dvh; margin: 0 auto; overflow: hidden; background: #fff; box-shadow: 0 0 40px rgba(30, 35, 50, .10); }
+    .topbar { height: 48px; padding: 0 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+    .back-link, .follow-btn { width: 30px; height: 30px; border: 0; border-radius: 50%; display: grid; place-items: center; background: var(--soft); text-decoration: none; cursor: pointer; }
+    .back-link { font-size: 26px; line-height: 1; }
+    .topbar-title { flex: 1; font-size: 15px; font-weight: 750; }
+    .follow-btn { font-size: 18px; }
+    .back-link:focus-visible, .follow-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .match-hero { padding: 14px 14px 20px; background: linear-gradient(135deg, #f8f9ff 0%, #fff 72%); border-bottom: 6px solid var(--soft); }
+    .league-line { min-height: 28px; display: flex; align-items: center; gap: 8px; color: #5d6168; font-size: 12px; font-weight: 700; }
+    .league-line img { width: 22px; height: 22px; object-fit: contain; }
+    .status-badge { margin-left: auto; padding: 5px 8px; border-radius: 6px; color: var(--red); background: var(--red-soft); font-size: 10px; font-weight: 800; }
+    .status-badge.finished { color: #696c73; background: #eef0f2; }
+    .status-badge.upcoming { color: #b67800; background: #fff5db; }
+    .scoreboard { margin-top: 21px; display: grid; grid-template-columns: minmax(0, 1fr) 82px minmax(0, 1fr); align-items: center; gap: 8px; }
+    .team { min-width: 0; display: grid; place-items: center; text-align: center; }
+    .team img { width: 58px; height: 58px; object-fit: contain; }
+    .team strong { max-width: 125px; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+    .score { text-align: center; }
+    .score strong { display: block; font-size: 28px; line-height: 1; font-weight: 800; }
+    .score span { display: block; margin-top: 8px; color: var(--red); font-size: 11px; font-weight: 750; }
+    .score span.finished { color: #6d7076; }
+    .score span.upcoming { color: #b67800; }
+    .match-tabs { height: 46px; padding: 0 16px; display: flex; gap: 24px; align-items: stretch; border-bottom: 1px solid var(--line); }
+    .match-tab { position: relative; border: 0; padding: 0; background: transparent; color: var(--muted); font-size: 14px; font-weight: 700; cursor: pointer; }
+    .match-tab.active { color: var(--ink); }
+    .match-tab.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; border-radius: 2px 2px 0 0; background: var(--red); }
+    .match-tab:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .match-section { border-bottom: 6px solid var(--soft); }
+    .section-heading { min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .section-heading h2 { margin: 0; font-size: 16px; font-weight: 750; }
+    .section-heading span { color: var(--muted); font-size: 11px; }
+    .event-row { min-height: 54px; padding: 8px 16px; display: grid; grid-template-columns: 45px minmax(0, 1fr); align-items: center; gap: 9px; border-bottom: 1px solid var(--line); }
+    .event-row:last-child { border-bottom: 0; }
+    .event-time { color: var(--red); font-size: 12px; font-weight: 800; }
+    .event-copy { color: #51545b; font-size: 12px; line-height: 1.4; }
+    .event-copy strong { display: block; color: var(--ink); font-size: 13px; }
+    .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .info-item { min-height: 60px; padding: 12px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .info-item:nth-child(2n) { border-right: 0; }
+    .info-item span { display: block; color: var(--muted); font-size: 10px; }
+    .info-item strong { display: block; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .empty { padding: 44px 20px; color: var(--muted); text-align: center; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main class="match-app">
+    <header class="topbar">
+      <a class="back-link" id="backLink" href="index.html?view=featured&amp;date=27" aria-label="Back to matches">‹</a>
+      <span class="topbar-title">Match Centre</span>
+      <button class="follow-btn" type="button" aria-label="Follow match">☆</button>
+    </header>
+    <section class="match-hero">
+      <div class="league-line"><img id="leagueLogo" src="assets/premier-league-logo.svg" alt=""><span id="leagueName">Premier League</span><span class="status-badge" id="statusBadge">LIVE</span></div>
+      <div class="scoreboard">
+        <div class="team"><img id="homeLogo" src="assets/chelsea.png" alt=""><strong id="homeName">Chelsea</strong></div>
+        <div class="score"><strong id="scoreValue">1 - 2</strong><span id="scoreStatus">72' Live</span></div>
+        <div class="team"><img id="awayLogo" src="assets/arsenal.png" alt=""><strong id="awayName">Arsenal</strong></div>
+      </div>
+    </section>
+    <nav class="match-tabs" aria-label="Match sections">
+      <button class="match-tab active" type="button">Summary</button>
+      <button class="match-tab" type="button">Timeline</button>
+      <button class="match-tab" type="button">Stats</button>
+    </nav>
+    <section class="match-section">
+      <header class="section-heading"><h2 id="eventTitle">Key events</h2><span id="eventDate">Today · Jul 27</span></header>
+      <div id="eventList"></div>
+    </section>
+    <section class="match-section">
+      <header class="section-heading"><h2>Match information</h2><span id="infoStatus">Live</span></header>
+      <div class="info-grid">
+        <div class="info-item"><span>Competition</span><strong id="infoLeague">Premier League</strong></div>
+        <div class="info-item"><span>Venue</span><strong>Match stadium</strong></div>
+        <div class="info-item"><span>Round</span><strong>Regular season</strong></div>
+        <div class="info-item"><span>Data status</span><strong>Verified update</strong></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const A = 'assets/';
+    const params = new URLSearchParams(location.search);
+    const status = ['live', 'finished', 'upcoming'].includes(params.get('status')) ? params.get('status') : 'upcoming';
+    const safe = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    const league = params.get('league') || 'Premier League';
+    const home = params.get('home') || 'Chelsea';
+    const away = params.get('away') || 'Arsenal';
+    const homeLogo = params.get('homeLogo') || A + 'chelsea.png';
+    const awayLogo = params.get('awayLogo') || A + 'arsenal.png';
+    const time = params.get('time') || "72'";
+    const homeScore = params.get('homeScore') || (status === 'upcoming' ? '-' : '1');
+    const awayScore = params.get('awayScore') || (status === 'upcoming' ? '-' : '2');
+    const logos = { 'Premier League': A + 'premier-league-logo.svg', LaLiga: A + 'laliga-logo.svg', 'Serie A': A + 'serie-a-logo.svg', Bundesliga: A + 'bundesliga-logo.svg', 'UEFA Champions League': A + 'ucl-logo.svg' };
+    const displayStatus = status === 'live' ? 'LIVE' : status === 'finished' ? 'FINISHED' : 'UPCOMING';
+    const statusText = status === 'live' ? `${time} Live` : status === 'finished' ? 'Full time' : time;
+    const from = params.get('from') || 'featured';
+    const date = params.get('date') || '27';
+    const backParams = new URLSearchParams({ view: from === 'live' ? 'live' : from === 'all' ? 'all' : 'featured', date });
+    if (params.get('variant') === 'control') backParams.set('variant', 'control');
+    document.getElementById('backLink').href = `index.html?${backParams.toString()}`;
+    document.title = `${home} vs ${away} · Match Centre`;
+    document.getElementById('leagueLogo').src = logos[league] || A + 'ucl-logo.svg';
+    document.getElementById('leagueName').textContent = league;
+    document.getElementById('homeLogo').src = homeLogo;
+    document.getElementById('awayLogo').src = awayLogo;
+    document.getElementById('homeName').textContent = home;
+    document.getElementById('awayName').textContent = away;
+    document.getElementById('scoreValue').textContent = `${homeScore} - ${awayScore}`;
+    document.getElementById('scoreStatus').textContent = statusText;
+    document.getElementById('statusBadge').textContent = displayStatus;
+    document.getElementById('statusBadge').classList.add(status);
+    document.getElementById('infoLeague').textContent = league;
+    document.getElementById('infoStatus').textContent = displayStatus;
+    const events = status === 'live'
+      ? [[time, 'Match in progress', `${home} ${homeScore} - ${awayScore} ${away}`], ['—', 'Live updates', 'Score and key events update with the match.']]
+      : status === 'finished'
+        ? [['FT', 'Final score', `${home} ${homeScore} - ${awayScore} ${away}`], ['—', 'Match complete', 'Full-time result confirmed.']]
+        : [['—', 'Kick-off', `${home} vs ${away}`], [time, 'Match preview', 'Line-ups and live events will appear here.']];
+    document.getElementById('eventList').innerHTML = events.map(([eventTime, title, copy]) => `<div class="event-row"><span class="event-time">${safe(eventTime)}</span><div class="event-copy"><strong>${safe(title)}</strong>${safe(copy)}</div></div>`).join('');
+    document.querySelectorAll('.match-tab').forEach(tab => tab.addEventListener('click', () => document.querySelectorAll('.match-tab').forEach(item => item.classList.toggle('active', item === tab))));
+    document.querySelector('.follow-btn').addEventListener('click', event => { event.currentTarget.textContent = event.currentTarget.textContent === '☆' ? '★' : '☆'; });
+  </script>
+</body>
+</html>

@@ -312,12 +312,12 @@
             <li>同一 <code>match_id + status_period</code> 仅保留更新时间最新的一条，避免推送重发造成重复比赛。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>左右滑动浏览 Live 卡片；点击卡片打开 Match Detail，点击标题行的 <strong>View all</strong> 进入覆盖式独立 Live 列表页面层。</li>
+            <li>左右滑动浏览 Live 卡片；点击卡片直接进入独立比赛内页，点击标题行的 <strong>View all</strong> 进入覆盖式独立 Live 列表页面层。</li>
             <li>点击 Finished 或 Upcoming 入口进入独立 Live 列表页面层，并默认展开所选状态组；页面仅保留底部 <strong>Matches</strong> Tab。</li>
             <li>点击返回按钮或底部 <strong>Matches</strong> Tab 回到赛事目录，并恢复原日期上下文；独立 Live 页面层始终覆盖除底部 Tab 栏以外的 App 区域。</li>
             <li>点击 Finished、Live、Upcoming 标题独立展开或收起，可同时展开多个状态组。</li>
             <li>By time 切换为跨赛事时间排序；Search 搜索球队或赛事；Filter 打开状态、赛事和关注筛选。</li>
-            <li>点击比赛行打开 Match Detail；点击关注按钮只更新关注状态，不触发比赛详情。</li>
+            <li>点击比赛行直接进入独立比赛内页；点击关注按钮只更新关注状态，不触发比赛详情。</li>
             <li>A 对照组点击顶部 Live 后不修改 URL；点击 All 或 Recommended 只切换主内容，公共顶部和底部区域保持原位。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
@@ -369,7 +369,7 @@
           <section class="rule"><h2>交互</h2><ul>
             <li>点击整行展开或收起，箭头同步旋转；允许多个联赛同时展开。</li>
             <li>点击联赛赛徽或名称进入独立联赛资料页；右侧箭头仅负责展开或收起，不与资料页跳转冲突。</li>
-            <li>点击展开后的比赛行进入 Match Detail；滚动位置保留在当前联赛上下文。</li>
+            <li>点击展开后的比赛行直接进入独立比赛内页；滚动位置保留在当前联赛上下文。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
             <li>无重点球队时移除队徽轨道，联赛名称获得剩余空间。</li>
@@ -461,7 +461,7 @@
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
             <li>点击日期跳转对应分区；纵向滚动跨日期后，顶部日期栏自动切换。</li>
-            <li>点击联赛头收起或展开该组；点击比赛行打开 Match Detail。</li>
+            <li>点击联赛头收起或展开该组；点击比赛行直接进入独立比赛内页。</li>
             <li>点击星标只更新 Following 状态，不触发比赛详情；成功后显示轻量反馈。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
@@ -476,23 +476,23 @@
     <section class="module" id="detail">
       <header class="module-head">
         <span class="module-number">06</span>
-        <div><h1>比赛详情与关注</h1><p>比赛详情底部弹层、关注状态与后续入口</p></div>
+        <div><h1>比赛详情与关注</h1><p>独立比赛内页、关注状态与后续入口</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>精选比赛详情</strong><span>从下至上打开</span></div>
-            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27&amp;action=featured-detail" title="比赛详情底部弹层原型"></iframe>
+            <div class="prototype-label"><strong>精选比赛内页</strong><span>点击比赛行后跳转</span></div>
+            <iframe class="prototype-frame" src="match.html?league=Premier%20League&amp;status=live&amp;time=72%27&amp;home=Chelsea&amp;homeLogo=assets%2Fchelsea.png&amp;away=Arsenal&amp;awayLogo=assets%2Farsenal.png&amp;homeScore=1&amp;awayScore=2&amp;date=27&amp;from=featured" title="独立比赛内页原型"></iframe>
           </div>
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>从 Recommended 比赛列表、赛事展开列表或 Live 状态列表点击比赛后，从页面底部向上弹出。</li>
-            <li>弹层覆盖当前 Match 页面，但保留背景上下文与遮罩。</li>
+            <li>从 Recommended 比赛列表、赛事展开列表或 Live 状态列表点击比赛后，在当前浏览器标签页打开独立比赛内页。</li>
+            <li>比赛内页覆盖原列表内容，使用独立 URL；浏览器返回或页面返回入口回到原日期和来源列表。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>展示联赛名、双方队徽与队名、比分或开赛时间、比赛状态和 <strong>Open Match Centre</strong> 主按钮。</li>
-            <li>从 Recommended 进入时可展示服务端提供的精选原因；从 Live 进入时展示实时跟进提示，不重复解释重要性。</li>
+            <li>展示联赛名与真实赛徽、双方真实队徽与队名、比分或开赛时间、比赛状态、摘要/时间线/统计页签和关注按钮。</li>
+            <li>从不同来源进入时保留 <code>from</code>、日期和比赛状态上下文；不在列表页展示底部详情窗口。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
             <li>详情字段：<code>match_id</code>、<code>competition_name</code>、<code>home_team</code>、<code>away_team</code>、<code>score</code>、<code>status</code>、<code>kickoff_time</code>、<code>featured_reason</code>。</li>
@@ -503,12 +503,12 @@
             <li>关注按钮采用服务端最终状态；同一 <code>match_id</code> 在所有入口实时同步。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>支持关闭按钮、背景点击、Escape 和系统返回；关闭后恢复触发入口焦点与列表滚动位置。</li>
-            <li>Open Match Centre 进入完整比赛中心；返回后回到原日期和原列表位置。</li>
+            <li>点击比赛行直接进入独立比赛内页；不打开底部弹层、遮罩或二次确认窗口。</li>
+            <li>点击页面返回入口或使用浏览器返回回到原日期和来源列表；直接打开 URL 时使用默认比赛状态。</li>
             <li>关注按钮采用乐观更新，接口失败时回滚并提示；不因关注操作自动进入详情。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li><code>featured_reason</code> 缺失时隐藏原因模块，不展示通用占位解释。</li>
+            <li>比赛参数缺失时按状态显示安全默认值；缺少队徽时保留固定尺寸占位，不能改变比分区高度。</li>
             <li>比赛取消或延期时主状态替换比分区域，并保留双方和比赛中心入口。</li>
             <li>无通知权限时允许保存关注，随后单独引导授权；拒绝授权不取消关注。</li>
           </ul></section>
