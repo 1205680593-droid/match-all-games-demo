@@ -162,8 +162,22 @@
 
     const params = new URLSearchParams(location.search);
     const rawLeague = params.get('league') || 'Premier League';
-    const leagueKey = rawLeague.includes('UEFA Champions') ? 'UEFA Champions League' : rawLeague.includes('Ligue 1') ? 'Ligue 1' : (leagues[rawLeague] ? rawLeague : 'Premier League');
-    const profile = leagues[leagueKey];
+    const leagueAliases = {
+      'English Premier League': 'Premier League',
+      'Spanish La Liga': 'LaLiga',
+      'Italian Serie A': 'Serie A',
+      'German Bundesliga': 'Bundesliga',
+      'French Ligue 1': 'Ligue 1'
+    };
+    const leagueKey = rawLeague.includes('UEFA Champions')
+      ? 'UEFA Champions League'
+      : rawLeague.includes('Ligue 1')
+        ? 'Ligue 1'
+        : leagueAliases[rawLeague] || rawLeague;
+    const profile = leagues[leagueKey] || {
+      country: 'Competition', logo: A + 'ucl-logo.svg', season: '2025/26', matches: '—', goals: '—', teams: '—',
+      note: 'Fixtures and results for this competition are organized in the match library.'
+    };
     const from = params.get('from') || 'featured';
     const date = params.get('date') || '27';
     const backParams = new URLSearchParams({ view: from === 'live' ? 'live' : from === 'all' ? 'all' : 'featured', date });
