@@ -40,11 +40,11 @@ This specification covers the Live entry inside All and its dedicated status lis
 
 - Swiping the preview browses Live cards without leaving Matches.
 - Clicking a preview card opens Match Detail.
-- Clicking `View all` navigates to the dedicated Live list page in the current tab without creating another top navigation tab.
+- Clicking `View all` opens a dedicated Live page layer in the current tab. It covers the status bar, top navigation, date strip, and previous match content; only the persistent bottom tab bar remains visible.
 - Clicking a status entry navigates to the dedicated Live list page with the selected Finished or Upcoming group expanded and the other groups collapsed.
 - The child list opens with Live expanded and Finished/Upcoming collapsed.
 - Status groups expand independently and may remain open together.
-- Back or the Matches tab returns to the directory and restores the selected-date context.
+- Back or the bottom Matches tab closes the Live page layer, returns to the directory, and restores the selected-date context.
 - `By time` changes to a cross-competition chronological list.
 - Search accepts team and competition names; Filter supports status, competition, and following.
 - Clicking a match opens Match Detail. Clicking the favorite control only changes following state.
@@ -66,7 +66,7 @@ This specification covers the Live entry inside All and its dedicated status lis
 - At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
 - Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
 - The prototype includes a compact A/B variant switcher outside the phone app canvas. Variant B top navigation contains only All and Recommended; variant A adds Live as a third tab.
-- Opening Live renders Finished, Live, Upcoming in that order on a dedicated page. B keeps All active; A keeps Live active.
+- Opening Live renders Finished, Live, Upcoming in that order on a dedicated full-screen page layer. The layer covers every App region except the bottom tab bar; B keeps All active and A keeps Live active.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
 - All visible team and competition assets load, and browser console errors remain at 0.

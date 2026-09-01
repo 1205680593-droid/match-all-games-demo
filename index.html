@@ -275,6 +275,7 @@
       padding-left: 5px; border-left: 3px solid var(--red); background: var(--red-soft);
     }
     .standalone-live-view { min-height: 100%; padding-bottom: 76px; background: #fff; }
+    .app.live-list-page .standalone-live-view { padding-bottom: 0; }
     .standalone-live-summary {
       min-height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 8px;
       border-bottom: 1px solid var(--line); background: #fff;
@@ -432,6 +433,19 @@
       scrollbar-width: none;
     }
     main::-webkit-scrollbar { display: none; }
+    /* The dedicated Live route is a full app screen; only the persistent bottom tabs remain visible. */
+    .app.live-list-page .status-bar,
+    .app.live-list-page .topbar,
+    .app.live-list-page .date-strip { display: none; }
+    .app.live-list-page main {
+      position: absolute;
+      z-index: 18;
+      inset: 0 0 calc(76px + env(safe-area-inset-bottom));
+      width: 100%;
+      padding-bottom: 0;
+      background: #fff;
+    }
+    .app.live-list-page .bottom-nav { z-index: 25; }
     .day-section { scroll-margin-top: 0; }
     .day-divider {
       height: 38px; padding: 0 16px; display: flex; align-items: center; gap: 10px;
