@@ -24,7 +24,7 @@
 
 - Product at 393 x 852: Live preview begins at the date strip bottom, remains 150 px high, and has 0 px horizontal overflow. The first 196 px card is fully visible and 175 px of the next card is exposed.
 - Product at 320 x 700: Live preview remains 150 px high with 0 px horizontal overflow. The first card is fully visible and 101 px of the next card is exposed.
-- All contains 0 recommendation-rail nodes. The Live preview renders 7 neutral horizontal cards with competition, clock, crests, teams, and score; no card receives the Picks emphasis style.
+- All contains 0 recommendation-rail nodes. The Live preview renders 7 neutral horizontal cards with competition, clock, crests, teams, and score; no card receives the Recommended emphasis style.
 - The track starts at the first Live card. Finished is reachable at the far left and Upcoming at the far right; each opens the child list with its own status group expanded.
 - Clicking a Live card opens Match Detail; clicking `View all` opens the dedicated Live child list in a new tab while preserving the current All page.
 - Dedicated Live page keeps All active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
