@@ -59,9 +59,9 @@
     .battery span { display: block; width: 80%; height: 100%; background: #111; border-radius: 1px; }
 
     .topbar {
-      height: 62px;
-      flex: 0 0 62px;
-      padding: 0 18px;
+      height: 50px;
+      flex: 0 0 50px;
+      padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -69,20 +69,20 @@
     }
     .top-actions { display: flex; gap: 10px; }
     .icon-btn {
-      width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--soft);
-      display: grid; place-items: center; cursor: pointer; font-size: 20px;
+      width: 28px; height: 28px; border-radius: 50%; border: 0; background: var(--soft);
+      display: grid; place-items: center; cursor: pointer; font-size: 16px;
     }
-    .avatar { background: #1a1a1a; color: white; font-size: 13px; font-weight: 800; }
+    .avatar { background: #1a1a1a; color: white; font-size: 10px; font-weight: 800; }
 
     .explore-tabs {
       align-self: stretch;
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 22px;
     }
     .explore-tab {
       align-self: stretch; border: 0; background: transparent; padding: 2px 0 0;
-      color: #9a9ba0; font-size: 18px; font-weight: 650; position: relative; cursor: pointer;
+      color: #9a9ba0; font-size: 16px; font-weight: 650; position: relative; cursor: pointer;
     }
     .explore-tab.active { color: var(--ink); font-weight: 750; }
     .explore-tab.active::after {
@@ -123,17 +123,18 @@
       height: 50px;
       flex: 0 0 50px;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr)) 31px;
       padding: 3px 8px 3px 12px;
       background: #fff;
+      border-bottom: 1px solid var(--line);
       z-index: 14;
     }
     .date-btn {
       border: 0; background: transparent; border-radius: 7px; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-      color: #999ba0; font-size: 13px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+      color: #999ba0; font-size: 10px;
     }
-    .date-btn strong { font-size: 17px; font-weight: 650; color: #73757a; }
+    .date-btn strong { font-size: 14px; font-weight: 650; color: #73757a; }
     .date-btn.active { background: var(--red-soft); color: var(--red); font-weight: 700; }
     .date-btn.active strong { color: var(--red); }
 
@@ -576,26 +577,8 @@
     }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* The directory redesign is scoped to All so Recommended keeps its existing list logic. */
-    .app.all-games-redesign .topbar {
-      height: 50px;
-      flex-basis: 50px;
-      padding: 0 16px;
-    }
-    .app.all-games-redesign .explore-tabs { gap: 22px; }
-    .app.all-games-redesign .explore-tab { font-size: 16px; }
-    .app.all-games-redesign .explore-tab.active { font-size: 18px; }
-    .app.all-games-redesign .icon-btn { width: 28px; height: 28px; font-size: 16px; }
-    .app.all-games-redesign .avatar { font-size: 10px; }
-    .app.all-games-redesign .date-strip {
-      height: 50px;
-      flex-basis: 50px;
-      grid-template-columns: repeat(5, minmax(0, 1fr)) 31px;
-      padding: 3px 8px 3px 12px;
-      border-bottom: 1px solid var(--line);
-    }
-    .app.all-games-redesign .date-btn { border-radius: 5px; font-size: 10px; gap: 1px; }
-    .app.all-games-redesign .date-btn strong { font-size: 14px; }
+    /* Match content changes by tab; shared navigation and date controls stay fixed. */
+    .date-btn { border-radius: 5px; }
     .date-calendar {
       width: 31px;
       height: 40px;
@@ -634,7 +617,6 @@
       border-left: 2px solid #111;
       border-right: 2px solid #111;
     }
-    .app:not(.all-games-redesign) .date-calendar { display: none; }
     .app.all-games-redesign main { padding-bottom: 76px; background: #fff; }
     .all-games-redesign-view { min-height: 100%; background: #fff; }
     .redesign-discover {
@@ -811,7 +793,7 @@
     .redesign-region-mark.oceania::after { transform: rotate(4deg) scale(.65); }
 
     @media (max-width: 350px) {
-      .app.all-games-redesign .date-strip { grid-template-columns: repeat(5, minmax(0, 1fr)) 28px; padding-left: 7px; padding-right: 4px; }
+      .date-strip { grid-template-columns: repeat(5, minmax(0, 1fr)) 28px; padding-left: 7px; padding-right: 4px; }
       .date-calendar { width: 28px; }
       .redesign-competition-row, .redesign-region-row { grid-template-columns: 22px minmax(0, 1fr) 26px 16px; gap: 6px; }
       .redesign-competition-name, .redesign-region-name { font-size: 14px; }
@@ -824,12 +806,8 @@
       .topbar { padding: 0 12px; }
       .top-actions { gap: 6px; }
       .explore-tabs { gap: 12px; }
-      .explore-tab { font-size: 15px; }
-      .icon-btn { width: 32px; height: 32px; }
-      .app.all-games-redesign .topbar { padding: 0 12px; }
-      .app.all-games-redesign .explore-tabs { gap: 12px; }
-      .app.all-games-redesign .explore-tab { font-size: 14px; }
-      .app.all-games-redesign .explore-tab.active { font-size: 16px; }
+      .explore-tab { font-size: 14px; }
+      .icon-btn { width: 28px; height: 28px; }
     }
 
     @media (min-width: 700px) {
@@ -1345,7 +1323,10 @@
     function renderStandaloneLive() {
       closeLivePopup();
       matchList.innerHTML = standaloneLiveTemplate();
-      document.getElementById('backToAllGames')?.addEventListener('click', navigateToAllGames);
+      document.getElementById('backToAllGames')?.addEventListener('click', () => {
+        if (experimentVariant === 'control') switchPage('live');
+        else navigateToAllGames();
+      });
       document.getElementById('standaloneSortLive')?.addEventListener('click', () => showToast('Games sorted by time'));
       document.getElementById('standaloneSearchLive')?.addEventListener('click', () => showToast('Search live matches'));
       document.getElementById('standaloneFilterLive')?.addEventListener('click', () => showToast('Filter live matches'));
@@ -1645,8 +1626,9 @@
       const isFeatured = page === 'explore';
       const isLiveList = page === 'live-list';
       const liveTabIsControl = experimentVariant === 'control';
+      const isOverlayLiveList = isLiveList && !liveTabIsControl;
       app.classList.toggle('live-page', isAllGames);
-      app.classList.toggle('live-list-page', isLiveList);
+      app.classList.toggle('live-list-page', isOverlayLiveList);
       app.classList.toggle('all-games-redesign', isAllGames || isLiveList);
       liveNav.classList.toggle('active', isAllGames || (isLiveList && !liveTabIsControl));
       exploreNav.classList.toggle('active', isFeatured);
@@ -1700,7 +1682,8 @@
 
     liveNav.addEventListener('click', () => {
       if (currentPage === 'live-list') {
-        navigateToAllGames();
+        if (experimentVariant === 'control') switchPage('live');
+        else navigateToAllGames();
         return;
       }
       if (currentPage === 'live' && livePopup.classList.contains('show')) closeLivePopup();
@@ -1708,6 +1691,10 @@
     });
     exploreNav.addEventListener('click', () => {
       if (currentPage === 'live-list') {
+        if (experimentVariant === 'control') {
+          switchPage('explore');
+          return;
+        }
         const params = new URLSearchParams({ view: 'featured', date: selectedDate });
         if (experimentVariant === 'control') params.set('variant', 'control');
         window.location.assign(`?${params.toString()}`);
@@ -1716,7 +1703,7 @@
       switchPage('explore');
     });
     standaloneLiveNav.addEventListener('click', () => {
-      if (currentPage !== 'live-list') openStandaloneLive('live');
+      if (currentPage !== 'live-list') switchPage('live-list');
     });
     variantInlineTab.addEventListener('click', () => switchVariant('inline'));
     variantControlTab.addEventListener('click', () => switchVariant('control'));

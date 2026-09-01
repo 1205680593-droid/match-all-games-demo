@@ -174,6 +174,7 @@
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
             <li>切换页签时保留 <code>selected_date</code>，并将新页面滚动到该日期对应内容。</li>
+            <li>切换 <strong>All / Recommended / Live</strong> 任意页签时，顶部导航与日期栏固定为同一高度、内边距、字号和图标尺寸；选中态只改变颜色、字重与下划线，不改变组件占位，禁止页面内容上下跳动。</li>
             <li>Recommended 中点击日期，平滑滚动到对应日期分区；手动纵向滚动跨入新日期时，日期栏同步更新。</li>
             <li>Matches 中点击日期，重新请求并渲染该日期的 Live、Top Competitions 与 All Competitions 数据。</li>
           </ul></section>
@@ -202,7 +203,7 @@
           <section class="rule"><h2>展示位置</h2><ul>
             <li>Live 入口仅在 <strong>Matches + Today</strong> 展示，紧贴日期栏，位于所有赛事目录之前。</li>
             <li>Matches 不展示 You may like 推荐卡模块；Live 横滑预览是日期栏后的第一个内容模块。</li>
-            <li>B 实验组点击 <strong>View all</strong> 后进入独立 Live 列表页面层；页面覆盖状态栏、顶部导航、日期栏和原比赛内容，仅保留底部 Tab 栏。B 页面仍保持 <strong>All</strong> Tab 选中；A 对照组直接从顶部 <strong>Live</strong> Tab 进入。</li>
+            <li>B 实验组点击 <strong>View all</strong> 后进入独立 Live 列表页面层；页面覆盖状态栏、顶部导航、日期栏和原比赛内容，仅保留底部 Tab 栏。B 页面仍保持 <strong>All</strong> Tab 选中。A 对照组点击顶部 <strong>Live</strong> Tab 后在当前 App 页面内切换列表，不发起新页面跳转，并保留状态栏、顶部导航与日期栏。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
             <li>模块标题行展示红色直播点、<strong>Live now</strong>、Live 场次数与 <strong>View all</strong>；下方横滑卡在赛事名左侧展示固定尺寸的真实赛徽，并展示比赛分钟、双方队徽、队名与实时比分。</li>
@@ -447,7 +448,7 @@
             <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li><strong>A 对照组</strong>：顶部展示 <strong>All / Recommended / Live</strong> 三个页签，Live 直接打开独立 Live 列表页面；All 页面不展示横滑 Live 预览。</li>
+            <li><strong>A 对照组</strong>：顶部展示 <strong>All / Recommended / Live</strong> 三个页签；点击 Live 在当前 App 页面内切换 Live 列表并保持顶部页签可见，不跳转到覆盖式新页面；All 页面不展示横滑 Live 预览。</li>
             <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
             <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
           </ul></section>

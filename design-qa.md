@@ -28,7 +28,7 @@
 - The track starts at the first Live card. Finished is reachable at the far left and Upcoming at the far right; each opens the child list with its own status group expanded.
 - Clicking a Live card opens Match Detail; clicking `View all` opens the dedicated Live child list layer in the current tab.
 - Dedicated Live page layer covers the status bar, top navigation, date strip, and previous content while keeping only the bottom tab bar visible. It keeps All active, renders status order Finished/Live/Upcoming, and initializes expanded states to false/true/false.
-- Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and opens the dedicated Live page with Live active.
+- Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and switches to the Live list in place with Live active while retaining the status bar, top navigation, and date strip.
 - The product prototype exposes a compact A/B variant switcher outside the phone app canvas; switching variants preserves the current view, date, and Live status query parameters.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
@@ -56,7 +56,8 @@
 ## Required Interactions
 
 - Open Live from Matches.
-- Open the control variant and enter Live from the third top tab.
+- Open the control variant and enter Live from the third top tab; confirm the URL does not change and the app chrome remains visible.
+- Switch repeatedly between All, Recommended, and control Live; confirm the topbar and date strip keep identical bounding boxes and no content shifts vertically.
 - Swipe the Live preview and open a match card.
 - Expand and collapse each status group.
 - Return from Live to Matches.

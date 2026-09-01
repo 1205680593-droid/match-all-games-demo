@@ -2,7 +2,7 @@
 
 ## Scope
 
-This specification covers the Live entry inside All and its dedicated status list page. The B variant does not add a top-level Live tab; the A control variant adds a top-level Live tab for direct access. Neither variant changes Recommended selection logic.
+This specification covers the Live entry inside All and its dedicated status list page. The B variant does not add a top-level Live tab and opens an overlay-style Live page from View all. The A control variant adds a top-level Live tab that switches the list in place without page navigation. Neither variant changes Recommended selection logic.
 
 ## Display
 
@@ -76,7 +76,8 @@ This specification covers the Live entry inside All and its dedicated status lis
 - Objective: validate whether the horizontal Live preview improves Live discovery and match-detail entry without harming overall match browsing.
 - Control A: three top-level tabs, All, Recommended, and Live; Live opens the dedicated Live list directly, and All has no inline Live preview.
 - Variant B: `Live now` title row with `View all`, horizontal Live cards, and Finished/Upcoming entries at the two ends of the rail. All cards use the same neutral style.
-- Control demo URL: `?view=all&date=27&variant=control`.
+- Control demo URL: `?view=all&date=27&variant=control`. Clicking the top-level Live tab switches content in place, retains the app chrome and date strip, and does not navigate to a new URL.
+- All, Recommended, and control Live share one fixed top-navigation and date-strip geometry. Active state must not change the font size, control size, or vertical space.
 - Eligibility: Matches + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
 - Assignment: 50/50 random assignment by `user_id` or stable device ID, sticky for the experiment period; keep `experiment_id`, `variant`, and `assignment_time` on every event.
 - Primary metric: unique exposed users who click any Live entry, Live card, or open Match Detail divided by unique exposed users.
