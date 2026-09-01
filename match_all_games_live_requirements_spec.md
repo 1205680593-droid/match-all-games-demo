@@ -2,7 +2,7 @@
 
 ## Scope
 
-This specification covers the Live entry inside All and its dedicated status list page. The B variant does not add a top-level Live tab; the A control variant adds a top-level Live tab for direct access. Neither variant changes Featured selection logic.
+This specification covers the Live entry inside All and its dedicated status list page. The B variant does not add a top-level Live tab; the A control variant adds a top-level Live tab for direct access. Neither variant changes Picks selection logic.
 
 ## Display
 
@@ -65,7 +65,7 @@ This specification covers the Live entry inside All and its dedicated status lis
 - Today shows the Live title and horizontal preview; Tue 28 shows neither.
 - At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
 - Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
-- The prototype includes a compact A/B variant switcher outside the phone app canvas. Variant B top navigation contains only All and Featured; variant A adds Live as a third tab.
+- The prototype includes a compact A/B variant switcher outside the phone app canvas. Variant B top navigation contains only All and Picks; variant A adds Live as a third tab.
 - Opening Live renders Finished, Live, Upcoming in that order on a dedicated page. B keeps All active; A keeps Live active.
 - Initial expanded states are `false`, `true`, `false`.
 - The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
@@ -74,7 +74,7 @@ This specification covers the Live entry inside All and its dedicated status lis
 ## A/B Test
 
 - Objective: validate whether the horizontal Live preview improves Live discovery and match-detail entry without harming overall match browsing.
-- Control A: three top-level tabs, All, Featured, and Live; Live opens the dedicated Live list directly, and All has no inline Live preview.
+- Control A: three top-level tabs, All, Picks, and Live; Live opens the dedicated Live list directly, and All has no inline Live preview.
 - Variant B: `Live now` title row with `View all`, horizontal Live cards, and Finished/Upcoming entries at the two ends of the rail. All cards use the same neutral style.
 - Control demo URL: `?view=all&date=27&variant=control`.
 - Eligibility: Matches + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
