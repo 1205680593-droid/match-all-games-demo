@@ -39,6 +39,73 @@
       gap: 16px;
     }
     .document-title { margin: 0; color: var(--muted); font-size: 15px; font-weight: 700; }
+    .document-switcher {
+      margin-bottom: 12px;
+      padding: 6px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+    .document-switcher button {
+      min-height: 46px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .document-switcher button small { color: inherit; font-size: 11px; font-weight: 650; }
+    .document-switcher button.active {
+      color: var(--navy);
+      background: #fff;
+      border-color: #cbd7e1;
+      box-shadow: 0 1px 3px rgba(23, 38, 59, .10);
+    }
+    .document-switcher button.active small { color: var(--red); }
+    .document-switcher button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .document-context {
+      margin-bottom: 12px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      background: #fff;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .document-context strong { color: var(--navy); }
+    .document-context-badge {
+      min-width: 30px;
+      height: 24px;
+      padding: 0 7px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 5px;
+      color: #fff;
+      background: var(--navy);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .document[data-variant="control"] .document-context-badge { background: var(--red); }
+    .variant-only-a, .variant-only-b { display: none; }
+    .document[data-variant="control"] .variant-only-a { display: inline; }
+    .document[data-variant="inline"] .variant-only-b { display: inline; }
+    .variant-copy { display: none; }
+    .document[data-variant="control"] .variant-copy-a,
+    .document[data-variant="inline"] .variant-copy-b { display: inline; }
     .module-nav { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
     .module-nav::-webkit-scrollbar { display: none; }
     .module-nav a {
@@ -119,6 +186,10 @@
     @media (max-width: 430px) {
       .document { width: 100%; margin: 0; }
       .document-top { padding: 10px 10px 0; }
+      .document-switcher { margin: 0 10px 10px; }
+      .document-switcher button { min-height: 42px; padding: 0 6px; font-size: 11px; }
+      .document-switcher button small { font-size: 9px; }
+      .document-context { margin: 0 10px 10px; padding: 9px 10px; }
       .module { border-right: 0; border-left: 0; border-radius: 0; }
       .module-head, .prototype, .specification { padding: 10px; }
       .module-head h1 { font-size: 18px; }
@@ -127,9 +198,21 @@
   </style>
 </head>
 <body>
-  <main class="document">
+  <main class="document" data-variant="inline">
+    <div class="document-switcher" role="tablist" aria-label="A/B 测试需求文档切换">
+      <button id="documentVariantB" role="tab" aria-selected="true" class="active" type="button">
+        <span>B 测试 · 横滑预览</span><small>实验组</small>
+      </button>
+      <button id="documentVariantA" role="tab" aria-selected="false" type="button">
+        <span>A 测试 · Live 列表</span><small>对照组</small>
+      </button>
+    </div>
+    <div class="document-context" role="status" aria-live="polite">
+      <span class="document-context-badge" id="documentVariantBadge">B</span>
+      <span id="documentVariantContext"><strong>B 测试需求文档</strong>：All 页面内嵌横滑 Live 预览，点击 View all 进入完整直播列表。</span>
+    </div>
     <header class="document-top">
-      <p class="document-title">比赛模块需求文档 · 全部比赛 / 精选比赛</p>
+      <p class="document-title" id="documentTitle">比赛模块需求文档 · B 测试（横滑 Live）</p>
       <nav class="module-nav" aria-label="需求模块导航">
         <a href="#navigation">01 页面导航</a>
         <a href="#live">02 直播发现</a>
@@ -195,8 +278,8 @@
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>直播预览与状态列表</strong><span>横滑比赛，点击查看全部</span></div>
-            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27" title="直播横滑预览与状态列表原型"></iframe>
+            <div class="prototype-label"><strong id="livePrototypeTitle">直播预览与状态列表</strong><span id="livePrototypeHint">横滑比赛，点击查看全部</span></div>
+            <iframe class="prototype-frame" id="livePrototypeFrame" src="index.html?view=all&amp;date=27" title="直播横滑预览与状态列表原型"></iframe>
           </div>
         </div>
         <div class="specification">
@@ -434,13 +517,13 @@
     <section class="module" id="ab-test">
       <header class="module-head">
         <span class="module-number">07</span>
-        <div><h1>比赛列表优化 A/B 测试</h1><p>验证直播预览改版是否提升发现、点击与连续浏览效率</p></div>
+        <div><h1>比赛列表优化 A/B 测试</h1><p id="abModuleSubtitle">B 测试：横滑 Live 预览与完整列表入口</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>方案 B · 横滑直播预览</strong><a href="index.html?view=live&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A Live</a></div>
-            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27" title="比赛列表优化 A/B 测试方案 B 原型"></iframe>
+            <div class="prototype-label"><strong id="abPrototypeTitle">方案 B · 横滑直播预览</strong><a id="abPrototypeLink" href="index.html?view=live&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A Live</a></div>
+            <iframe class="prototype-frame" id="abPrototypeFrame" src="index.html?view=all&amp;date=27" title="比赛列表优化 A/B 测试方案 B 原型"></iframe>
           </div>
         </div>
         <div class="specification">
@@ -449,6 +532,7 @@
             <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
+            <li id="abCurrentDoc">当前文档：<strong>B 测试</strong>，在 All 页面展示横滑 Live 预览，左右两端提供 Finished / Upcoming 入口。</li>
             <li><strong>A 对照组</strong>：顶部展示 <strong>All / Recommended / Live</strong> 三个页签；点击 Live 保持当前 URL、状态栏、三页签、日期栏和底部导航不变，只把主内容切换为 By time / Search / Filter、Finished / Live / Upcoming 与赛事比赛行；All 页面不展示横滑 Live 预览。</li>
             <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
             <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
@@ -479,5 +563,72 @@
       </div>
     </section>
   </main>
+  <script>
+    (() => {
+      const documentRoot = document.querySelector('.document');
+      const variantB = document.getElementById('documentVariantB');
+      const variantA = document.getElementById('documentVariantA');
+      const variantBadge = document.getElementById('documentVariantBadge');
+      const variantContext = document.getElementById('documentVariantContext');
+      const documentTitle = document.getElementById('documentTitle');
+      const livePrototypeTitle = document.getElementById('livePrototypeTitle');
+      const livePrototypeHint = document.getElementById('livePrototypeHint');
+      const livePrototypeFrame = document.getElementById('livePrototypeFrame');
+      const abModuleSubtitle = document.getElementById('abModuleSubtitle');
+      const abCurrentDoc = document.getElementById('abCurrentDoc');
+      const abPrototypeTitle = document.getElementById('abPrototypeTitle');
+      const abPrototypeLink = document.getElementById('abPrototypeLink');
+      const abPrototypeFrame = document.getElementById('abPrototypeFrame');
+
+      function setVariant(variant, replaceUrl = true) {
+        const isControl = variant === 'control';
+        documentRoot.dataset.variant = isControl ? 'control' : 'inline';
+        variantB.classList.toggle('active', !isControl);
+        variantA.classList.toggle('active', isControl);
+        variantB.setAttribute('aria-selected', String(!isControl));
+        variantA.setAttribute('aria-selected', String(isControl));
+        variantBadge.textContent = isControl ? 'A' : 'B';
+        variantContext.innerHTML = isControl
+          ? '<strong>A 测试需求文档</strong>：比赛库顶部保留 All / Recommended / Live，Live 主内容展示紧凑的完整直播状态列表。'
+          : '<strong>B 测试需求文档</strong>：All 页面内嵌横滑 Live 预览，点击 View all 进入完整直播列表。';
+        documentTitle.textContent = isControl
+          ? '比赛模块需求文档 · A 测试（Live 列表）'
+          : '比赛模块需求文档 · B 测试（横滑 Live）';
+        livePrototypeTitle.textContent = isControl ? '方案 A · Live 状态列表' : '方案 B · 直播预览与状态列表';
+        livePrototypeHint.textContent = isControl ? '保留公共顶部，切换主内容' : '横滑比赛，点击查看全部';
+        livePrototypeFrame.src = isControl
+          ? 'index.html?view=all&date=27&variant=control'
+          : 'index.html?view=all&date=27';
+        livePrototypeFrame.title = isControl ? '方案 A Live 状态列表原型' : '方案 B 直播横滑预览原型';
+        abModuleSubtitle.textContent = isControl
+          ? 'A 测试：保留公共导航，直接切换 Live 状态列表'
+          : 'B 测试：横滑 Live 预览与完整列表入口';
+        abCurrentDoc.innerHTML = isControl
+          ? '当前文档：<strong>A 测试</strong>，点击顶部 Live 后只切换主内容，公共状态栏、页签、日期栏和底部导航保持不变。'
+          : '当前文档：<strong>B 测试</strong>，在 All 页面展示横滑 Live 预览，左右两端提供 Finished / Upcoming 入口。';
+        abPrototypeTitle.textContent = isControl ? '方案 A · Live 状态列表' : '方案 B · 横滑直播预览';
+        abPrototypeLink.textContent = isControl ? '打开方案 A Live' : '打开方案 A Live';
+        abPrototypeLink.href = isControl
+          ? 'index.html?view=all&date=27&variant=control'
+          : 'index.html?view=live&date=27&variant=control';
+        abPrototypeFrame.src = isControl
+          ? 'index.html?view=all&date=27&variant=control'
+          : 'index.html?view=all&date=27';
+        abPrototypeFrame.title = isControl ? '比赛列表优化 A 测试原型' : '比赛列表优化 B 测试原型';
+        if (replaceUrl) {
+          const params = new URLSearchParams(window.location.search);
+          if (isControl) params.set('variant', 'control');
+          else params.delete('variant');
+          const query = params.toString();
+          window.history.replaceState({}, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
+        }
+      }
+
+      const initialVariant = new URLSearchParams(window.location.search).get('variant') === 'control' ? 'control' : 'inline';
+      variantB.addEventListener('click', () => setVariant('inline'));
+      variantA.addEventListener('click', () => setVariant('control'));
+      setVariant(initialVariant, false);
+    })();
+  </script>
 </body>
 </html>
