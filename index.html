@@ -564,8 +564,10 @@
     .league-list-item {
       min-height: 44px; margin: 0 16px 0 60px;
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      color: #5c5e64; font-size: 13px;
+      color: #5c5e64; font-size: 13px; text-decoration: none;
     }
+    .league-list-item:hover, .league-list-item:focus-visible { color: var(--red); }
+    .league-list-item:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
     .league-list-item > span:last-child { color: var(--muted); flex: 0 0 auto; }
     .all-game-child-main { min-width: 0; display: flex; align-items: center; gap: 8px; }
     .all-game-child-name { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -633,6 +635,13 @@
       background: #fff; border-bottom: 1px solid var(--line);
     }
     .competition-title { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .competition-title-link {
+      min-width: 0; flex: 1; display: flex; align-items: center; color: inherit; text-decoration: none;
+      border-radius: 6px; cursor: pointer;
+    }
+    .competition-title-link:hover .competition-title strong,
+    .competition-title-link:focus-visible .competition-title strong { color: var(--red); }
+    .competition-title-link:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
     .league-mark {
       width: 25px; height: 25px; border-radius: 7px; display: grid; place-items: center;
       background: #242f59; color: #fff; font-size: 11px; font-weight: 800;
@@ -884,7 +893,12 @@
       background: #fff;
       text-align: left;
       cursor: pointer;
+      color: inherit;
+      text-decoration: none;
     }
+    .redesign-competition-row:hover .redesign-competition-name,
+    .redesign-competition-row:focus-visible .redesign-competition-name { color: var(--red); }
+    .redesign-competition-row:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
     .redesign-competition-logo { width: 22px; height: 22px; display: grid; place-items: center; }
     .redesign-competition-logo img { width: 100%; height: 100%; max-height: 18px; object-fit: contain; }
     .redesign-competition-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 500; }
@@ -1359,7 +1373,9 @@
         const meta = matches[0];
         return `<section class="competition">
           <header class="competition-header">
-            <div class="competition-title"><span class="league-mark" style="background:${meta[2]}">${meta[1]}</span><strong>${league}</strong></div>
+            <a class="competition-title-link" href="${leagueHref(league, date.key)}" aria-label="Open ${league} league profile" title="Open ${league} league profile">
+              <div class="competition-title"><span class="league-mark" style="background:${meta[2]}">${meta[1]}</span><strong>${league}</strong></div>
+            </a>
             <div class="competition-meta"><span class="competition-count">${matches.length}</span><button class="collapse-btn" aria-label="Collapse or expand">⌃</button></div>
           </header>
           <div class="matches">${matches.map(matchTemplate).join('')}</div>
@@ -1645,13 +1661,13 @@
     }
 
     function leagueListItemTemplate(child, item) {
-      return `<div class="league-list-item">
+      return `<a class="league-list-item" href="${leagueHref(child[0], selectedDate)}" aria-label="Open ${child[0]} league profile">
         <span class="all-game-child-main">
           <span class="child-league-badge" style="background:${item.color}">${child[2] || item.mark}</span>
           <span class="all-game-child-name">${child[0]}</span>
         </span>
         <span>${child[1]}</span>
-      </div>`;
+      </a>`;
     }
 
     function hotTeamCrestTemplate(logo, index, status, teamName) {
@@ -1779,12 +1795,12 @@
 
     function redesignedCompetitionTemplate(item, index) {
       return `<section class="redesign-competition-group">
-        <button class="redesign-competition-row" data-redesign-competition="${index}" aria-label="Open ${item.name}">
+        <a class="redesign-competition-row" data-redesign-competition="${index}" href="${leagueHref(item.name, selectedDate)}" aria-label="Open ${item.name} league profile">
           <span class="redesign-competition-logo"><img src="${item.logo}" alt=""></span>
           <span class="redesign-competition-name" title="${item.name}">${item.name}</span>
           <span class="redesign-competition-count">${item.counts[Number(selectedDate) - 26] || item.counts[1]}</span>
           <span class="redesign-competition-chevron" aria-hidden="true">›</span>
-        </button>
+        </a>
       </section>`;
     }
 
@@ -1818,9 +1834,6 @@
     }
 
     function bindRedesignedAllGames() {
-      document.querySelectorAll('.redesign-competition-row').forEach(button => button.addEventListener('click', () => {
-        showToast(`${button.querySelector('.redesign-competition-name')?.textContent || 'Competition'} · Demo`);
-      }));
       document.querySelectorAll('.redesign-region-row').forEach(button => button.addEventListener('click', () => {
         const group = button.closest('.redesign-region-group');
         const expanded = group.classList.toggle('expanded');
@@ -1843,6 +1856,13 @@
       if (status !== 'live') params.set('status', status);
       if (experimentVariant === 'control') params.set('variant', 'control');
       return `?${params.toString()}`;
+    }
+
+    function leagueHref(league, date = selectedDate) {
+      const view = currentPage === 'explore' ? 'featured' : currentPage === 'live-list' ? 'live' : 'all';
+      const params = new URLSearchParams({ league, date, from: view });
+      if (experimentVariant === 'control') params.set('variant', 'control');
+      return `league.html?${params.toString()}`;
     }
 
     function openStandaloneLive(status = 'live') {

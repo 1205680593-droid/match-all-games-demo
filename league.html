@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="icon" href="data:,">
+  <title>League Profile · Match Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --red: #f5222d;
+      --red-soft: #fff0f1;
+      --ink: #121212;
+      --muted: #8b8d93;
+      --line: #ececef;
+      --soft: #f6f7f9;
+      --green: #0e9f6e;
+      --app-width: 393px;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    body {
+      background: #eef0f3;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+    button, a { font: inherit; color: inherit; }
+    .league-app {
+      width: min(100%, var(--app-width)); min-height: 100dvh; margin: 0 auto; overflow: hidden;
+      background: #fff; box-shadow: 0 0 40px rgba(30, 35, 50, .10);
+    }
+    .topbar {
+      height: 48px; padding: 0 14px; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--line); background: #fff;
+    }
+    .back-link, .follow-btn {
+      width: 30px; height: 30px; border: 0; border-radius: 50%; display: grid; place-items: center;
+      background: var(--soft); text-decoration: none; cursor: pointer;
+    }
+    .back-link { font-size: 26px; line-height: 1; }
+    .topbar-title { flex: 1; font-size: 15px; font-weight: 750; }
+    .follow-btn { font-size: 18px; }
+    .back-link:focus-visible, .follow-btn:focus-visible, .profile-tab:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .league-hero {
+      min-height: 132px; padding: 20px 18px; display: flex; align-items: center; gap: 16px;
+      background: linear-gradient(105deg, #f8f9ff 0%, #fff 70%); border-bottom: 1px solid var(--line);
+    }
+    .league-logo {
+      width: 76px; height: 76px; flex: 0 0 76px; padding: 12px; display: grid; place-items: center;
+      border: 1px solid #e3e5ec; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(20, 24, 32, .08);
+    }
+    .league-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .league-country { margin: 0 0 5px; color: var(--muted); font-size: 11px; font-weight: 650; }
+    .league-hero h1 { max-width: 245px; margin: 0; font-size: 21px; line-height: 1.14; }
+    .league-season { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; }
+    .profile-tabs {
+      height: 46px; padding: 0 16px; display: flex; gap: 24px; align-items: stretch;
+      border-bottom: 1px solid var(--line); background: #fff;
+    }
+    .profile-tab {
+      position: relative; border: 0; padding: 0; background: transparent; color: var(--muted); font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .profile-tab.active { color: var(--ink); }
+    .profile-tab.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--red); border-radius: 2px 2px 0 0; }
+    .profile-content { padding-bottom: 30px; }
+    .section-heading { min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .section-heading h2 { margin: 0; font-size: 16px; font-weight: 750; }
+    .section-heading span { color: var(--muted); font-size: 11px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 6px solid var(--soft); }
+    .stat { min-height: 70px; padding: 13px 8px 10px; text-align: center; border-right: 1px solid var(--line); }
+    .stat:last-child { border-right: 0; }
+    .stat strong { display: block; font-size: 19px; line-height: 1; }
+    .stat span { display: block; margin-top: 7px; color: var(--muted); font-size: 10px; }
+    .form-strip { padding: 13px 16px 15px; border-bottom: 6px solid var(--soft); }
+    .form-strip h2 { margin: 0 0 10px; font-size: 15px; }
+    .form-items { display: flex; gap: 6px; }
+    .form-item { width: 27px; height: 27px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 750; }
+    .form-item.win { background: var(--green); }
+    .form-item.draw { background: #f0a30a; }
+    .form-item.loss { background: #b4b7bd; }
+    .matches-heading { border-top: 0; }
+    .match-row { min-height: 72px; padding: 6px 12px; display: grid; grid-template-columns: 50px minmax(0, 1fr) 36px; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); background: #fff; }
+    .match-time { align-self: stretch; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--line); }
+    .match-time strong { font-size: 12px; }
+    .match-time span { margin-top: 4px; color: var(--muted); font-size: 9px; }
+    .match-time .live { color: var(--red); }
+    .teams { min-width: 0; }
+    .team-line { min-width: 0; height: 27px; display: grid; grid-template-columns: 23px minmax(0, 1fr) 17px; align-items: center; gap: 7px; }
+    .team-line img { width: 21px; height: 21px; object-fit: contain; }
+    .team-line span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; }
+    .team-line strong { text-align: right; font-size: 14px; }
+    .match-row[data-status="live"] .team-line strong { color: var(--red); }
+    .match-link { color: #707278; font-size: 22px; text-align: center; text-decoration: none; }
+    .empty { padding: 54px 20px; color: var(--muted); text-align: center; font-size: 13px; }
+    .overview-note { margin: 0; padding: 14px 16px 17px; color: #5d6168; font-size: 12px; line-height: 1.6; border-bottom: 6px solid var(--soft); }
+    .overview-note strong { color: var(--ink); }
+    @media (max-width: 392px) {
+      .league-hero { padding-left: 14px; padding-right: 14px; }
+      .league-logo { width: 68px; height: 68px; flex-basis: 68px; }
+      .league-hero h1 { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="league-app">
+    <header class="topbar">
+      <a class="back-link" id="backLink" href="index.html?view=featured&amp;date=27" aria-label="Back to matches">‹</a>
+      <span class="topbar-title">League Profile</span>
+      <button class="follow-btn" type="button" aria-label="Follow league">☆</button>
+    </header>
+    <section class="league-hero">
+      <span class="league-logo"><img id="leagueLogo" src="assets/premier-league-logo.svg" alt=""></span>
+      <div>
+        <p class="league-country" id="leagueCountry">England</p>
+        <h1 id="leagueName">Premier League</h1>
+        <span class="league-season" id="leagueSeason">2025/26 · 20 teams</span>
+      </div>
+    </section>
+    <nav class="profile-tabs" aria-label="League profile sections">
+      <button class="profile-tab active" type="button">Overview</button>
+      <button class="profile-tab" type="button">Matches</button>
+      <button class="profile-tab" type="button">Standings</button>
+    </nav>
+    <div class="profile-content">
+      <section>
+        <header class="section-heading"><h2>Season overview</h2><span>2025/26</span></header>
+        <div class="stats-grid">
+          <div class="stat"><strong id="statMatches">380</strong><span>Matches</span></div>
+          <div class="stat"><strong id="statGoals">1,024</strong><span>Goals</span></div>
+          <div class="stat"><strong id="statTeams">20</strong><span>Teams</span></div>
+        </div>
+        <p class="overview-note" id="overviewNote"><strong>League information</strong><br>Follow this competition for fixtures, results and live match updates in one place.</p>
+      </section>
+      <section>
+        <div class="form-strip"><h2>Recent form</h2><div class="form-items"><span class="form-item win">W</span><span class="form-item win">W</span><span class="form-item draw">D</span><span class="form-item win">W</span><span class="form-item loss">L</span></div></div>
+      </section>
+      <section>
+        <header class="section-heading matches-heading"><h2>Matches</h2><span id="matchDateLabel">Today · Jul 27</span></header>
+        <div id="leagueMatches"></div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const A = 'assets/';
+    const leagues = {
+      'Premier League': { country: 'England', logo: A + 'premier-league-logo.svg', season: '2025/26 · 20 teams', matches: '380', goals: '1,024', teams: '20', note: 'England\'s top flight, with every fixture, result and live update grouped by competition.' },
+      'LaLiga': { country: 'Spain', logo: A + 'laliga-logo.svg', season: '2025/26 · 20 teams', matches: '380', goals: '987', teams: '20', note: 'Spain\'s top flight, with current form and match details available from this profile.' },
+      'Serie A': { country: 'Italy', logo: A + 'serie-a-logo.svg', season: '2025/26 · 20 teams', matches: '380', goals: '1,012', teams: '20', note: 'Italy\'s top flight, with fixtures and results organized around the competition.' },
+      'Bundesliga': { country: 'Germany', logo: A + 'bundesliga-logo.svg', season: '2025/26 · 18 teams', matches: '306', goals: '876', teams: '18', note: 'Germany\'s top flight, with match status and results updated in the same match flow.' },
+      'Ligue 1': { country: 'France', logo: A + 'ligue-1-logo.png', season: '2025/26 · 18 teams', matches: '306', goals: '812', teams: '18', note: 'France\'s top flight, with upcoming and completed fixtures in one competition view.' },
+      'UEFA Champions League': { country: 'Europe', logo: A + 'ucl-logo.svg', season: '2025/26 · 36 teams', matches: '189', goals: '542', teams: '36', note: 'European club competition fixtures, results and match status in a single profile.' }
+    };
+    const matchSets = {
+      'Premier League': [['live', "72'", 'Chelsea', 'assets/chelsea.png', 'Arsenal', 'assets/arsenal.png', '1', '2'], ['upcoming', '20:30', 'Manchester City', 'assets/man-city.png', 'Liverpool', 'assets/liverpool.png', '-', '-']],
+      'LaLiga': [['finished', 'FT', 'FC Barcelona', 'assets/barcelona.png', 'Real Madrid', 'assets/real-madrid.png', '2', '2'], ['upcoming', '22:00', 'Villarreal', 'assets/villarreal.png', 'Girona', 'assets/girona.png', '-', '-']],
+      'Serie A': [['finished', 'FT', 'Inter Milan', 'assets/inter.png', 'AC Milan', 'assets/ac-milan.png', '2', '1'], ['upcoming', '21:45', 'Napoli', 'assets/napoli.png', 'Roma', 'assets/roma.png', '-', '-']],
+      'Bundesliga': [['finished', 'FT', 'Bayern Munich', 'assets/bayern.png', 'Leverkusen', 'assets/leverkusen.png', '3', '2'], ['upcoming', '21:30', 'Dortmund', 'assets/dortmund.png', 'RB Leipzig', 'assets/rb-leipzig.png', '-', '-']],
+      'Ligue 1': [['upcoming', '21:00', 'PSG', 'assets/psg.png', 'Monaco', 'assets/monaco.png', '-', '-'], ['upcoming', '22:00', 'Lyon', 'assets/lyon.png', 'Marseille', 'assets/marseille.png', '-', '-']],
+      'UEFA Champions League': [['live', "55'", 'Real Madrid', 'assets/real-madrid.png', 'Bayern Munich', 'assets/bayern.png', '2', '1'], ['upcoming', '22:00', 'Chelsea', 'assets/chelsea.png', 'Arsenal', 'assets/arsenal.png', '-', '-']]
+    };
+
+    const params = new URLSearchParams(location.search);
+    const rawLeague = params.get('league') || 'Premier League';
+    const leagueKey = rawLeague.includes('UEFA Champions') ? 'UEFA Champions League' : rawLeague.includes('Ligue 1') ? 'Ligue 1' : (leagues[rawLeague] ? rawLeague : 'Premier League');
+    const profile = leagues[leagueKey];
+    const from = params.get('from') || 'featured';
+    const date = params.get('date') || '27';
+    const backParams = new URLSearchParams({ view: from === 'live' ? 'live' : from === 'all' ? 'all' : 'featured', date });
+    if (params.get('variant') === 'control') backParams.set('variant', 'control');
+    document.getElementById('backLink').href = `index.html?${backParams.toString()}`;
+    document.title = `${leagueKey} · League Profile`;
+    document.getElementById('leagueLogo').src = profile.logo;
+    document.getElementById('leagueCountry').textContent = profile.country;
+    document.getElementById('leagueName').textContent = leagueKey;
+    document.getElementById('leagueSeason').textContent = profile.season;
+    document.getElementById('statMatches').textContent = profile.matches;
+    document.getElementById('statGoals').textContent = profile.goals;
+    document.getElementById('statTeams').textContent = profile.teams;
+    document.getElementById('overviewNote').innerHTML = `<strong>League information</strong><br>${profile.note}`;
+
+    function matchTemplate(match) {
+      const [status, time, home, homeLogo, away, awayLogo, homeScore, awayScore] = match;
+      const label = status === 'live' ? 'LIVE' : status === 'finished' ? 'FT' : 'UPCOMING';
+      return `<article class="match-row" data-status="${status}">
+        <div class="match-time"><strong class="${status === 'live' ? 'live' : ''}">${time}</strong><span>${label}</span></div>
+        <div class="teams"><div class="team-line"><img src="${homeLogo}" alt=""><span>${home}</span><strong>${homeScore}</strong></div><div class="team-line"><img src="${awayLogo}" alt=""><span>${away}</span><strong>${awayScore}</strong></div></div>
+        <a class="match-link" href="index.html?view=featured&amp;date=${date}" aria-label="Open match details">›</a>
+      </article>`;
+    }
+    document.getElementById('leagueMatches').innerHTML = (matchSets[leagueKey] || []).map(matchTemplate).join('') || '<p class="empty">No matches available for this date.</p>';
+
+    document.querySelectorAll('.profile-tab').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('.profile-tab').forEach(item => item.classList.toggle('active', item === tab));
+      if (tab.textContent === 'Matches') document.querySelector('.matches-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (tab.textContent === 'Overview') document.querySelector('.league-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+    document.querySelector('.follow-btn').addEventListener('click', event => {
+      event.currentTarget.textContent = event.currentTarget.textContent === '☆' ? '★' : '☆';
+    });
+  </script>
+</body>
+</html>

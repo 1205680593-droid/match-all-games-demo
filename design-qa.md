@@ -31,12 +31,16 @@
 - Control variant at `?view=all&date=27&variant=control` renders three top tabs, hides the inline Live preview, and switches only the main content in place without changing the URL. Its main area uses the supplied reference toolbar, Finished / Live / Upcoming, and two reference matches while the shared App chrome remains unchanged.
 - At the native 393 x 852 canvas, Control A keeps identical pre/post-switch bounds for the status bar (y=0, h=48), top navigation (y=48, h=50), date strip (y=98, h=50), and bottom navigation (y=776, h=76). The reference toolbar begins at y=148 and Upcoming begins at y=466.
 - The product prototype exposes a compact A/B variant switcher outside the phone app canvas; switching variants preserves the current view, date, and Live status query parameters.
+- The requirement document exposes a top-level B test / A test switcher; changing it updates the document title, context summary, Live prototype source, A/B module prototype source, and the shareable `variant=control` query parameter.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
 - Requirement document at 1440 x 900 and 1200 x 900 uses two columns with a maximum 1180 px document width.
 - Requirement document at 390 x 844 uses one column, a 355 px prototype, and no rule-block overflow.
 - The requirement document's Live prototype opens the dedicated Live page from `View all` and returns to the horizontal preview; the A control link exposes the three-tab variant.
 - Requirement document module titles and navigation labels are Chinese, including the new `07 A/B 测试` module.
+- Requirement document A/B switcher was verified at desktop and 390 x 844: both tabs are operable, the selected document state is reflected in the title and context, and body scroll width equals viewport width.
+- League headers in Recommended, Top Competitions rows in All, and expanded league child rows expose independent links to `league.html`; the collapse control remains separate from the navigation target.
+- Local league profile navigation was verified for Premier League from Recommended and English Premier League from All; both open a standalone profile page with the correct crest, match summary, date, and context-aware back link.
 - The A/B module specifies the three-tab control A, inline-preview variant B, 50/50 sticky assignment, event schema, primary/secondary metrics, guardrails, runtime, and decision thresholds.
 - Product console: 0 errors and 0 warnings.
 - Direct product check includes the reference app mark, two competition marks, and four team crests added for Control A; all visible reference assets load without broken images.
