@@ -40,7 +40,7 @@ This specification covers the Live entry inside All and its dedicated status lis
 
 - Swiping the preview browses Live cards without leaving Matches.
 - Clicking a preview card opens Match Detail.
-- Clicking `View all` opens the dedicated Live list page in a new tab without creating another top navigation tab; the current All page remains available.
+- Clicking `View all` navigates to the dedicated Live list page in the current tab without creating another top navigation tab.
 - Clicking a status entry navigates to the dedicated Live list page with the selected Finished or Upcoming group expanded and the other groups collapsed.
 - The child list opens with Live expanded and Finished/Upcoming collapsed.
 - Status groups expand independently and may remain open together.

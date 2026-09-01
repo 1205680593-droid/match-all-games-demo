@@ -1490,7 +1490,7 @@
     function livePreviewTemplate() {
       return `<section class="all-games-live-entry" aria-label="Live match preview">
         <div class="live-preview-heading">
-          <a class="live-preview-title" id="openStandaloneLive" href="${standaloneLiveHref('live').replaceAll('&', '&amp;')}" target="_blank" rel="noopener noreferrer" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></a>
+          <a class="live-preview-title" id="openStandaloneLive" href="${standaloneLiveHref('live').replaceAll('&', '&amp;')}" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></a>
         </div>
         <div class="live-preview-track" id="livePreviewTrack" aria-label="Swipe through live matches">
           <button class="live-status-entry finished" data-open-status="finished" aria-label="Open finished matches"><strong>← Finished</strong></button>
@@ -1604,8 +1604,7 @@
 
     function openStandaloneLive(status = 'live') {
       const liveUrl = standaloneLiveHref(status);
-      const livePage = window.open(liveUrl, '_blank', 'noopener,noreferrer');
-      if (!livePage) window.location.assign(liveUrl);
+      window.location.assign(liveUrl);
     }
 
     function updateVariantTabs() {
