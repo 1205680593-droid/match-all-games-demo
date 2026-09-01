@@ -209,7 +209,7 @@
     </div>
     <div class="document-context" role="status" aria-live="polite">
       <span class="document-context-badge" id="documentVariantBadge">B</span>
-      <span id="documentVariantContext"><strong>B 测试需求文档</strong>：All 页面内嵌横滑 Live 预览，点击 View all 进入完整直播列表。</span>
+      <span id="documentVariantContext"><strong>差异说明</strong>：线上公开版本作为基线，以下只记录本次 A/B 优化相对线上版本的新增、变化与验收约束。</span>
     </div>
     <header class="document-top">
       <p class="document-title" id="documentTitle">比赛模块需求文档 · B 测试（横滑 Live）</p>
@@ -227,7 +227,7 @@
     <section class="module" id="navigation">
       <header class="module-head">
         <span class="module-number">01</span>
-        <div><h1>页面导航与日期</h1><p>比赛页面模式切换、日期选择与滚动同步</p></div>
+        <div><h1>页面导航与日期</h1><p>线上基线与本次 A/B 导航差异</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -238,33 +238,30 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Demo 外层、手机画布上方展示 A/B 方案切换页签；手机画布内部的设备状态栏下方展示 <strong>All / Recommended</strong>，A 对照组在比赛库页面额外展示独立 <strong>Live</strong> 页签。</li>
-            <li>日期栏始终位于比赛内容之前；A 对照组进入 Live 后仍保留相同的设备状态栏、<strong>All / Recommended / Live</strong>、日期栏与底部导航。</li>
+            <li>线上已有的设备状态栏、顶部导航、日期栏和底部导航全部沿用；本次只在 Demo 外层新增 A/B 需求文档切换。</li>
+            <li>A 对照组新增独立 <strong>Live</strong> 页签；B 组保留线上两个主入口，不改变线上已有页签的层级。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>B 实验组只保留两个入口：<strong>All</strong> 承载完整比赛目录；<strong>Recommended</strong> 展示系统精选的重要比赛，包含重点联赛与用户关注比赛。A 对照组额外展示独立 <strong>Live</strong> 页签。</li>
-            <li>日期栏固定展示 5 天：前 1 天、当天、后 3 天；每项包含星期与日号。</li>
-            <li>All 与 Recommended 共用同一日期栏高度（移动端固定为 <strong>50px</strong>），切换页签时不产生垂直跳动。</li>
-            <li>当前页签使用红色底线，当前日期使用浅红底与红色文字。</li>
+            <li>新增约束：All、Recommended、Live 三种状态切换时，线上公共区域保持相同高度、内边距、字号和图标尺寸；移动端日期栏固定为 <strong>50px</strong>。</li>
+            <li>新增约束：A/B 文档切换页签位于手机画布之外，不占用 App 内部布局。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
-            <li>客户端状态：<code>current_view</code>、<code>selected_date</code>、<code>user_timezone</code>。</li>
-            <li>日期按用户时区生成；比赛请求统一携带 <code>selected_date</code> 和 <code>timezone</code>。</li>
+            <li>新增状态：<code>experiment_variant</code>、<code>current_view</code>、<code>selected_date</code>、<code>user_timezone</code>。</li>
+            <li>Live 入口新增依赖：<code>live_count</code>；继续复用线上日期和比赛请求字段。</li>
           </ul></section>
           <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">日期窗口 = [当地今天 - 1 天, 当地今天 + 3 天]</span>。</li>
-            <li>仅当日期等于用户当地自然日时显示 <strong>Today</strong>，其他日期显示本地化星期缩写。</li>
+            <li><span class="formula">Live 入口可见 = selected_date 为用户当地 Today 且 live_count &gt; 0</span>。</li>
+            <li>线上日期窗口、Today 文案和时区计算保持不变，本次不重新定义日期范围。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>切换页签时保留 <code>selected_date</code>，并将新页面滚动到该日期对应内容。</li>
-            <li>切换 <strong>All / Recommended / Live</strong> 时，设备状态栏、顶部导航、日期栏与底部导航保持同一高度、内边距、字号和图标尺寸；只切换选中态和主内容，禁止公共区域跳动。</li>
-            <li>Recommended 中点击日期，平滑滚动到对应日期分区；手动纵向滚动跨入新日期时，日期栏同步更新。</li>
-            <li>Matches 中点击日期，重新请求并渲染该日期的 Live、Top Competitions 与 All Competitions 数据。</li>
+            <li>切换 A/B 文档时同步更新原型、说明文案和 <code>variant=control</code> 分享参数；不改变线上页面数据。</li>
+            <li>A 组点击 Live 只切换主内容；B 组点击 All / Recommended 保留 <code>selected_date</code> 和线上滚动行为。</li>
+            <li>切换任意页签时只改变选中态和主内容，公共 App 区域禁止跳动。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>日期无比赛时显示空态，不回退到其他日期数据，也不隐藏该日期。</li>
-            <li>用户时区发生变化后，以新时区重新计算 Today；已打开的比赛详情不强制关闭。</li>
-            <li>日期接口失败时保留上一次成功数据，并展示非阻断重试入口。</li>
+            <li>非 Today 或 <code>live_count = 0</code> 时不显示新增 Live 入口。</li>
+            <li>缺失 <code>variant</code> 时默认使用 B 组；缺失日期时沿用线上默认 Today。</li>
+            <li>线上日期接口、空态和重试策略保持不变，不在本次差异文档重复展开。</li>
           </ul></section>
         </div>
       </div>
@@ -273,7 +270,7 @@
     <section class="module" id="live">
       <header class="module-head">
         <span class="module-number">02</span>
-        <div><h1>直播入口与状态列表</h1><p>全部比赛顶部直播入口与赛前、赛中、赛后状态列表</p></div>
+        <div><h1>直播入口与状态列表</h1><p>新增 Live 入口与状态列表差异</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -284,47 +281,37 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>Live 入口仅在 <strong>Matches + Today</strong> 展示，紧贴日期栏，位于所有赛事目录之前。</li>
-            <li>Matches 不展示 You may like 推荐卡模块；Live 横滑预览是日期栏后的第一个内容模块。</li>
-            <li>B 实验组点击 <strong>View all</strong> 后进入独立 Live 列表页面层；页面覆盖状态栏、顶部导航、日期栏和原比赛内容，仅保留底部 Tab 栏。A 对照组点击顶部 <strong>Live</strong> 后保持当前 URL与全部公共 App 区域不变，只把日期栏下方的主内容切换为参考稿的工具条和状态列表。</li>
+            <li>相对线上 All 页面，B 组在日期栏下新增 Live 入口；A 组将 Live 独立为顶部页签。</li>
+            <li>本次不新增线上已有的推荐内容；Live 入口只在 Matches + Today 场景出现。</li>
+            <li>B 点击 <strong>View all</strong> 进入独立 Live 列表页面层；A 点击顶部 <strong>Live</strong> 只替换日期栏下的主内容，公共 App 区域保持线上尺寸。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>模块标题行展示红色直播点、<strong>Live now</strong>、Live 场次数与 <strong>View all</strong>；下方横滑卡在赛事名左侧展示固定尺寸的真实赛徽，并展示比赛分钟、双方队徽、队名与实时比分。</li>
-            <li>首屏至少完整展示 1 张卡并露出下一张卡，明确横滑方向；卡片固定高度，赛事名和队名超长时单行省略。</li>
-            <li>横滑串最左端展示 <strong>Finished</strong> 入口，最右端展示 <strong>Upcoming</strong> 入口；初始位置停在第一张 Live 比赛卡。</li>
-            <li>横滑预览内所有 Live 卡使用统一白底与中性边框，不因 <code>is_featured</code> 增加底色或强调边线。</li>
-            <li>B 的二级列表顶部展示返回按钮、Live matches 标题、Live 场次数，以及 <strong>By time / Search / Filter</strong> 工具条；A 的 Live 主内容直接在日期栏下展示同类工具条，不显示返回标题行。</li>
-            <li>状态组顺序固定为 <strong>Finished → Live → Upcoming</strong>；Live 默认展开，另外两组默认收起。</li>
-            <li>展开状态组后按赛事分组；赛事头展示真实赛徽、赛事名和组内场次数，比赛行展示状态时间、双方队徽、队名、比分与关注按钮。</li>
-            <li>Live 标题、比赛分钟与比分使用红色；重要比赛可增加红色左边线和浅红背景，普通比赛不增加该高亮。</li>
+            <li>B 新增 <strong>Live now / 场次数 / View all</strong> 标题行和横滑卡；卡片补充真实赛徽、比赛分钟、双方队徽、队名和比分。</li>
+            <li>横滑两端新增 <strong>Finished</strong> 与 <strong>Upcoming</strong> 入口；首屏完整展示 1 张卡并露出下一张。</li>
+            <li>A 新增 <strong>By time / Search / Filter</strong> 工具条和 <strong>Finished → Live → Upcoming</strong> 状态组；Live 默认展开。</li>
+            <li>所有新增 Live 卡使用统一中性样式，不继承 Recommended 的强化样式；比赛行点击后进入独立比赛内页。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
-            <li>比赛字段：<code>match_id</code>、<code>competition_id</code>、<code>competition_name</code>、<code>competition_logo_url</code>、<code>status</code>、<code>clock</code>、<code>kickoff_time</code>、<code>score</code>。</li>
-            <li>球队字段：<code>home_team</code>、<code>away_team</code>、<code>home_crest_url</code>、<code>away_crest_url</code>；用户字段：<code>is_following</code>。</li>
-            <li>高亮字段：<code>is_featured</code>；预览排序字段：<code>live_preview_sort_order</code>；Live 更新优先使用推送，连接失败后每 <strong>15 秒</strong>轮询一次。</li>
+            <li>新增 Live 数据：<code>live_count</code>、<code>status</code>、<code>clock</code>、<code>competition_logo_url</code>、<code>home_crest_url</code>、<code>away_crest_url</code>。</li>
+            <li>新增入口排序字段：<code>live_preview_sort_order</code>；比赛详情跳转携带 <code>match_id</code>、来源和日期上下文。</li>
+            <li>线上比赛、关注和更新数据接口继续复用，不在此重复定义。</li>
           </ul></section>
           <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">状态组数量 = selected_date 与 status 匹配的唯一 match_id 数量</span>；标题数量与横滑卡数量均取 Live 组结果。</li>
-            <li>横滑卡优先按 <code>live_preview_sort_order</code> 升序；字段缺失时按赛事排序和开赛时间回退。</li>
-            <li>横滑内容顺序固定为 <strong>Finished 入口 → Live 比赛卡 → Upcoming 入口</strong>；初始偏移量等于 Finished 入口宽度加卡片间距。</li>
-            <li>比赛先按状态组归类，再按 <code>competition_sort_order</code>、赛事名排序；赛事内默认按开赛时间升序。</li>
-            <li>计时显示优先级：中场显示 <strong>HT</strong>，常规进行中显示分钟，补时与加时使用数据源标准值。</li>
-            <li>同一 <code>match_id + status_period</code> 仅保留更新时间最新的一条，避免推送重发造成重复比赛。</li>
+            <li><span class="formula">Live 入口数量 = selected_date 当天去重后的 Live match_id 数量</span>。</li>
+            <li>B 横滑顺序固定为 <strong>Finished → Live 卡片 → Upcoming</strong>，初始偏移到第一张 Live 卡。</li>
+            <li>A 状态组固定为 <strong>Finished → Live → Upcoming</strong>，默认展开状态为 <code>false / true / false</code>。</li>
+            <li>去重仍使用 <code>match_id + status_period</code>，排序优先复用线上赛事排序和开赛时间。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>左右滑动浏览 Live 卡片；点击卡片直接进入独立比赛内页，点击标题行的 <strong>View all</strong> 进入覆盖式独立 Live 列表页面层。</li>
-            <li>点击 Finished 或 Upcoming 入口进入独立 Live 列表页面层，并默认展开所选状态组；页面仅保留底部 <strong>Matches</strong> Tab。</li>
-            <li>点击返回按钮或底部 <strong>Matches</strong> Tab 回到赛事目录，并恢复原日期上下文；独立 Live 页面层始终覆盖除底部 Tab 栏以外的 App 区域。</li>
-            <li>点击 Finished、Live、Upcoming 标题独立展开或收起，可同时展开多个状态组。</li>
-            <li>By time 切换为跨赛事时间排序；Search 搜索球队或赛事；Filter 打开状态、赛事和关注筛选。</li>
-            <li>点击比赛行直接进入独立比赛内页；点击关注按钮只更新关注状态，不触发比赛详情。</li>
-            <li>A 对照组点击顶部 Live 后不修改 URL；点击 All 或 Recommended 只切换主内容，公共顶部和底部区域保持原位。</li>
+            <li>B 横滑卡点击后直接进入独立比赛内页；标题行进入独立 Live 列表，左右端入口默认展开对应状态。</li>
+            <li>A 顶部 Live 点击后不修改 URL，只切换主内容；状态组可独立展开或收起。</li>
+            <li>点击比赛行直接进入独立比赛内页；点击关注按钮只更新关注状态。</li>
+            <li>Live 列表返回时恢复线上日期和来源上下文，公共顶部与底部区域不跳动。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>非 Today 或 Live 数量为 0 时隐藏完整横滑模块，不保留空白占位；通过旧链接进入时显示无直播空态并提供返回。</li>
-            <li>比分缺失但状态为 LIVE 时显示短横线，并继续展示双方、比赛时间和赛事信息。</li>
-            <li>赛徽或队徽加载失败时使用固定尺寸中性占位，不改变行高；赛事名和队名超长时单行省略。</li>
-            <li>推送超过 <strong>30 秒</strong>未更新时标记数据延迟；接口失败保留最近一次成功列表并提供重试。</li>
+            <li>非 Today 或 Live 数量为 0 时隐藏 B 的新增入口；A 直达 Live 显示线上约定的空态。</li>
+            <li>缺少比分、赛徽或队徽时使用线上占位规则，不改变新增卡片和比赛行高度。</li>
+            <li>推送延迟、接口失败和重试继续沿用线上策略。</li>
           </ul></section>
         </div>
       </div>
@@ -333,7 +320,7 @@
     <section class="module" id="top-competitions">
       <header class="module-head">
         <span class="module-number">03</span>
-        <div><h1>热门联赛</h1><p>热门联赛目录、重点球队提示与完整比赛展开</p></div>
+        <div><h1>热门联赛</h1><p>沿用线上目录，仅记录跳转改动</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -344,38 +331,26 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Live 横滑预览下方；非 Today 没有 Live 模块时，直接承接日期栏。</li>
-            <li>每个联赛使用独立折叠行，默认收起，展开内容紧跟该联赛行。</li>
+            <li>线上热门联赛目录的位置、顺序和折叠结构全部沿用；本次只校验 Live 入口插入后不改变其起始位置。</li>
+            <li>新增的联赛资料页和比赛内页跳转复用现有行，不新增独立按钮。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>联赛行高度为 <strong>52px</strong>，展示赛徽缩写、联赛名、最多 2 枚重点球队队徽、当日比赛数和展开箭头。</li>
-            <li>正在比赛的重点球队队徽使用红色描边，并在每枚队徽右上方空白区展示动态三柱直播波形；全页最多突出 3 支。</li>
-            <li>已结束比赛的重点球队使用低饱和队徽、灰色描边，并在每枚队徽右上方空白区展示 <strong>FT</strong> 状态牌；全页最多突出 2 支。</li>
-            <li>展开后展示该联赛当前日期下的<strong>全部比赛</strong>，不是只展示热门比赛。</li>
-            <li>比赛行展示日期、时间、双方队徽与队名；精选比赛增加红色左边线和浅红背景，不使用额外小图标。</li>
+            <li>本次不改变线上已有的赛徽、球队提示、比赛数、折叠箭头和行高。</li>
+            <li>展开后的比赛行新增明确的独立内页跳转目标；列表仍不增加推荐原因或额外解释标签。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
-            <li>联赛字段：<code>competition_id</code>、<code>name</code>、<code>mark</code>、<code>brand_color</code>、<code>sort_order</code>。</li>
-            <li>日期聚合：<code>match_count</code>、<code>matches[]</code>、<code>featured_team_ids[]</code>、<code>featured_team_rank</code>、<code>featured_team_status</code>。</li>
-            <li>比赛字段与 Live 模块共用；精选状态使用统一 <code>is_featured</code>。</li>
+            <li>沿用线上联赛和比赛字段；新增跳转使用 <code>competition_id</code>、<code>match_id</code>、<code>selected_date</code>。</li>
           </ul></section>
           <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">match_count = 当前日期、当前联赛下可展示的唯一 match_id 数量</span>。</li>
-            <li>重点队徽由服务端按 <code>featured_team_rank</code> 降序返回，客户端最多取 2 个；超过 2 个不显示 <strong>+N</strong>。</li>
-            <li>队徽状态优先级为 <strong>Live &gt; Finished &gt; Upcoming</strong>；同一球队只展示一个状态。</li>
-            <li>全页直播高亮最多 3 个、已结束高亮最多 2 个；达到上限后，其余队徽恢复普通样式。</li>
-            <li>联赛排序使用运营配置 <code>sort_order</code>，相同值按当日比赛数降序。</li>
+            <li><span class="formula">本次新增计算 = 仅生成来源、日期和实体 ID 的可回溯跳转 URL</span>。</li>
+            <li>线上比赛数、排序和球队状态计算不变。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>点击整行展开或收起，箭头同步旋转；允许多个联赛同时展开。</li>
-            <li>点击联赛赛徽或名称进入独立联赛资料页；右侧箭头仅负责展开或收起，不与资料页跳转冲突。</li>
-            <li>点击展开后的比赛行直接进入独立比赛内页；滚动位置保留在当前联赛上下文。</li>
+            <li>线上折叠交互保持不变；点击联赛名称或赛徽进入独立联赛资料页。</li>
+            <li>点击展开后的比赛行直接进入独立比赛内页，浏览器返回后回到原日期和列表位置。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>无重点球队时移除队徽轨道，联赛名称获得剩余空间。</li>
-            <li>超长联赛名称单行省略，队徽、比赛数和箭头固定保留；比赛数超过 99 显示 <strong>99+</strong>。</li>
-            <li>队徽加载失败时显示联赛色中性的球队首字母占位，不改变行高。</li>
-            <li>展开请求失败时保持联赛行展开，并在内容区显示重试状态。</li>
+            <li>线上缺省赛徽、超长名称和展开失败策略保持不变；跳转参数缺失时不阻塞列表渲染。</li>
           </ul></section>
         </div>
       </div>
@@ -384,7 +359,7 @@
     <section class="module" id="all-competitions">
       <header class="module-head">
         <span class="module-number">04</span>
-        <div><h1>全部联赛</h1><p>国家与联赛的长尾比赛目录</p></div>
+        <div><h1>全部联赛</h1><p>沿用线上目录，仅记录链接改动</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -395,32 +370,27 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Top Competitions 全部联赛之后，同属 Matches 的连续纵向列表。</li>
-            <li>标题仅显示 <strong>All Competitions</strong>，不展示 By country 副文案。</li>
+            <li>线上 All Competitions 的位置、标题和纵向目录结构沿用，本次不增加新的推荐或解释模块。</li>
+            <li>新增 Live 入口位于该目录之前；其余国家与联赛区域不因 A/B 切换改变位置。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>国家行展示国家缩写标记、国家名称、当前日期比赛总数和展开箭头。</li>
-            <li>展开后展示该国家有比赛的全部联赛；联赛子行展示赛徽缩写、联赛名和比赛数。</li>
-            <li>国家行保持紧凑，列表可连续展示大量国家，不使用横向卡片。</li>
+            <li>国家行、真实国旗、比赛数、展开箭头和联赛子行均沿用线上样式与高度。</li>
+            <li>本次只补充：展开后的联赛子行可进入独立联赛资料页，并保留来源日期。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
-            <li>国家字段：<code>country_id</code>、<code>country_name</code>、<code>country_code</code>、<code>market_priority</code>。</li>
-            <li>联赛字段：<code>competition_id</code>、<code>name</code>、<code>mark</code>、<code>match_count</code>。</li>
+            <li>沿用线上国家、联赛和比赛数接口；新增跳转携带 <code>competition_id</code>、<code>selected_date</code>、<code>from=all</code>。</li>
           </ul></section>
           <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">国家比赛数 = 该国家所有联赛在 selected_date 下可展示比赛数之和</span>。</li>
-            <li>国家排序先按 <code>market_priority</code>，再按比赛数降序；无配置项按本地化国家名排序。</li>
-            <li>国家展开后只显示 <code>match_count &gt; 0</code> 的联赛。</li>
+            <li><span class="formula">本次新增计算 = 由联赛实体和 selected_date 生成可回溯资料页 URL</span>。</li>
+            <li>线上国家计数、排序和有比赛联赛过滤保持不变。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>点击国家整行独立展开或收起；允许多个国家同时展开。</li>
-            <li>点击展开后的联赛子行进入对应联赛资料页，并保留来源日期与返回入口。</li>
-            <li>切换日期后保留已经展开的国家 ID，但重新计算并更新联赛与场次数。</li>
+            <li>国家展开/收起和日期切换沿用线上行为。</li>
+            <li>点击展开后的联赛子行进入独立联赛资料页，返回后恢复 All 与原日期。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>国家当日比赛数为 0 时不进入列表；整个长尾目录为空时隐藏 All Competitions 标题。</li>
-            <li>国家下联赛超过 30 个时分批渲染，滚动到底继续加载，避免一次创建过多节点。</li>
-            <li>国家或联赛缺少品牌色时使用统一中性深灰，不随机生成颜色。</li>
+            <li>国家无比赛、目录为空、数据缺失和长列表加载均沿用线上处理。</li>
+            <li>资料页参数不完整时回退到安全的联赛默认信息，不影响国家目录。</li>
           </ul></section>
         </div>
       </div>
@@ -429,7 +399,7 @@
     <section class="module" id="featured">
       <header class="module-head">
         <span class="module-number">05</span>
-        <div><h1>精选比赛列表</h1><p>少量重要比赛的连续日期列表与选赛逻辑</p></div>
+        <div><h1>精选比赛列表</h1><p>沿用线上精选，仅记录跳转改动</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -440,34 +410,27 @@
         </div>
         <div class="specification">
           <section class="rule"><h2>展示位置</h2><ul>
-            <li>位于 Match 模块的 Recommended 页签内；多个日期的比赛上下连续展示，不通过下拉筛选切断列表。</li>
-            <li>日期分隔条下按联赛分组，联赛头与其比赛保持相邻。</li>
+            <li>Recommended 及其日期、联赛分组和列表密度沿用线上版本，本次不调整精选入口位置。</li>
+            <li>本次改动仅影响比赛行的跳转目标，以及与 A/B Live 方案共用的比赛上下文。</li>
           </ul></section>
           <section class="rule"><h2>展示内容</h2><ul>
-            <li>日期分区展示日期；联赛头展示赛徽、联赛名、该组场次数和折叠箭头。</li>
-            <li>比赛行展示时间或赛中分钟、双方队徽、队名、比分和关注按钮。</li>
-            <li>时间列只显示 <strong>FT / HT / 分钟 / 开赛时间</strong>，不重复显示 Finished、Live、Upcoming 文案。</li>
-            <li>列表中不展示 Featured Clash、推荐原因等解释标签；重要性通过进入 Recommended 列表本身表达。</li>
+            <li>线上日期、赛徽、队名、比分、状态和关注控件保持不变，不在本文重复定义。</li>
+            <li>新增约束：点击比赛行直接进入独立比赛内页；列表中仍不增加推荐原因或额外解释标签。</li>
           </ul></section>
           <section class="rule"><h2>取数</h2><ul>
-            <li>比赛字段：<code>match_id</code>、<code>selected_date</code>、<code>competition</code>、<code>teams</code>、<code>status</code>、<code>clock</code>、<code>score</code>。</li>
-            <li>选赛字段：<code>importance_score</code>、<code>competition_tier</code>、<code>stage_weight</code>、<code>team_popularity</code>、<code>rivalry_weight</code>、<code>attention_weight</code>、<code>manual_include</code>、<code>manual_exclude</code>。</li>
+            <li>精选排序、选赛和比赛字段全部沿用线上版本；跳转额外读取 <code>match_id</code>、<code>selected_date</code>、<code>from=featured</code>。</li>
           </ul></section>
           <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">importance_score = 联赛级别 0–30 + 赛制/争冠阶段 0–25 + 双方球队热度 0–25 + 德比/宿敌 0–10 + 全局关注度 0–10</span>。</li>
-            <li><code>manual_exclude</code> 优先级最高；<code>manual_include</code> 强制进入；其余比赛需 <strong>importance_score ≥ 65</strong>。</li>
-            <li>单日最多展示 8 场，超过后按分数、开赛时间、match_id 稳定排序；不足时不使用低分比赛补位。</li>
-            <li>日期升序；日期内联赛按该组最高分降序；联赛内按 Live、Upcoming、Finished 排序。</li>
+            <li><span class="formula">本次不改变 importance_score、入选阈值、数量上限和排序</span>。</li>
+            <li>新增计算仅用于生成带来源和日期上下文的比赛内页 URL。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>点击日期跳转对应分区；纵向滚动跨日期后，顶部日期栏自动切换。</li>
-            <li>点击联赛头收起或展开该组；点击比赛行直接进入独立比赛内页。</li>
-            <li>点击星标只更新 Following 状态，不触发比赛详情；成功后显示轻量反馈。</li>
+            <li>线上日期滚动、联赛折叠和星标行为保持不变。</li>
+            <li>点击任一比赛行直接进入独立比赛内页；点击星标不触发跳转。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>单日没有符合阈值的比赛时显示“当天暂无 Recommended 比赛”，不降低阈值补满数量。</li>
-            <li>比分、队徽或队名任一侧缺失时按完整比赛行降级，不把缺失值显示成 0。</li>
-            <li>编辑强制选赛与自动规则冲突时记录最终来源，便于回溯和 A/B 分析。</li>
+            <li>线上无比赛、字段缺失和选赛冲突处理保持不变。</li>
+            <li>比赛 URL 参数缺失时使用状态安全默认值，不阻塞列表渲染。</li>
           </ul></section>
         </div>
       </div>
@@ -476,7 +439,7 @@
     <section class="module" id="detail">
       <header class="module-head">
         <span class="module-number">06</span>
-        <div><h1>比赛详情与关注</h1><p>独立比赛内页、关注状态与后续入口</p></div>
+        <div><h1>比赛详情与关注</h1><p>新增独立比赛内页与后续入口</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -519,7 +482,7 @@
     <section class="module" id="ab-test">
       <header class="module-head">
         <span class="module-number">07</span>
-        <div><h1>比赛列表优化 A/B 测试</h1><p id="abModuleSubtitle">B 测试：横滑 Live 预览与完整列表入口</p></div>
+        <div><h1>比赛列表优化 A/B 测试</h1><p id="abModuleSubtitle">新增 A/B 方案与效果测量</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
@@ -591,8 +554,8 @@
         variantA.setAttribute('aria-selected', String(isControl));
         variantBadge.textContent = isControl ? 'A' : 'B';
         variantContext.innerHTML = isControl
-          ? '<strong>A 测试需求文档</strong>：比赛库顶部保留 All / Recommended / Live，Live 主内容展示紧凑的完整直播状态列表。'
-          : '<strong>B 测试需求文档</strong>：All 页面内嵌横滑 Live 预览，点击 View all 进入完整直播列表。';
+          ? '<strong>A 测试差异</strong>：相对线上版本新增独立 Live 页签，并在原有公共 App 区域不变的前提下切换直播主内容。'
+          : '<strong>B 测试差异</strong>：相对线上版本在 All + Today 下新增横滑 Live 预览和独立列表入口。';
         documentTitle.textContent = isControl
           ? '比赛模块需求文档 · A 测试（Live 列表）'
           : '比赛模块需求文档 · B 测试（横滑 Live）';

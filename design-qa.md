@@ -32,6 +32,7 @@
 - At the native 393 x 852 canvas, Control A keeps identical pre/post-switch bounds for the status bar (y=0, h=48), top navigation (y=48, h=50), date strip (y=98, h=50), and bottom navigation (y=776, h=76). The reference toolbar begins at y=148 and Upcoming begins at y=466.
 - The product prototype exposes a compact A/B variant switcher outside the phone app canvas; switching variants preserves the current view, date, and Live status query parameters.
 - The requirement document exposes a top-level B test / A test switcher; changing it updates the document title, context summary, Live prototype source, A/B module prototype source, and the shareable `variant=control` query parameter.
+- The requirement document now treats the public online Demo as the baseline and records only this iteration's deltas; existing navigation, calendar, competition-directory, and Recommended behavior are marked as inherited rather than re-specified in detail.
 - Live child list renders 7 Live matches across 5 competition groups; status sections expand independently.
 - Tue 28 renders 0 Live entries.
 - Requirement document at 1440 x 900 and 1200 x 900 uses two columns with a maximum 1180 px document width.
