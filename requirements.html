@@ -29,6 +29,8 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; }
+    /* Keep the document selectable when the Codex annotation layer adds a global reset. */
+    :root, :root body, :root body * { user-select: text !important; -webkit-user-select: text !important; }
     a { color: inherit; }
     .document { width: min(1180px, calc(100% - 24px)); margin: 16px auto 48px; }
     .document-top {
@@ -73,39 +75,18 @@
     }
     .document-switcher button.active small { color: var(--red); }
     .document-switcher button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
-    .document-context {
-      margin-bottom: 12px;
-      padding: 11px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      color: var(--text);
-      background: #fff;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-    .document-context strong { color: var(--navy); }
-    .document-context-badge {
-      min-width: 30px;
-      height: 24px;
-      padding: 0 7px;
-      display: inline-grid;
-      place-items: center;
-      border-radius: 5px;
-      color: #fff;
-      background: var(--navy);
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .document[data-variant="control"] .document-context-badge { background: var(--red); }
     .variant-only-a, .variant-only-b { display: none; }
     .document[data-variant="control"] .variant-only-a { display: inline; }
     .document[data-variant="inline"] .variant-only-b { display: inline; }
     .variant-copy { display: none; }
     .document[data-variant="control"] .variant-copy-a,
     .document[data-variant="inline"] .variant-copy-b { display: inline; }
+    .variant-rule-a, .variant-rule-b { display: none; }
+    .document[data-variant="control"] .variant-rule-a,
+    .document[data-variant="inline"] .variant-rule-b { display: block; }
+    .variant-module-a, .variant-nav-a { display: none !important; }
+    .document[data-variant="control"] .variant-module-a { display: block !important; }
+    .document[data-variant="control"] .variant-nav-a { display: inline-flex !important; }
     .module-nav { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
     .module-nav::-webkit-scrollbar { display: none; }
     .module-nav a {
@@ -158,6 +139,35 @@
     }
     .prototype-label strong { color: var(--ink); font-size: 11px; }
     .prototype-label a { color: var(--red); font-size: 10px; font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .live-prototype-label { min-height: 62px; padding: 7px 8px; }
+    .live-prototype-copy { min-width: 0; display: grid; gap: 2px; }
+    .live-prototype-copy span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prototype-state-switcher {
+      flex: 0 0 auto;
+      padding: 2px;
+      display: none;
+      grid-template-columns: repeat(3, 48px);
+      gap: 2px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #eef3f7;
+    }
+    .document[data-variant="inline"] .prototype-state-switcher { display: grid; }
+    .prototype-state-switcher button {
+      min-width: 48px;
+      min-height: 44px;
+      padding: 0 4px;
+      border: 0;
+      border-radius: 4px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 10px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .prototype-state-switcher button.active { color: #fff; background: var(--navy); }
+    .document[data-variant="control"] .prototype-state-switcher button.active { background: var(--red); }
+    .prototype-state-switcher button:focus-visible { outline: 2px solid var(--red); outline-offset: 1px; }
     .prototype-frame {
       width: 100%;
       height: 738px;
@@ -167,9 +177,21 @@
       background: #fff;
     }
     .specification { display: grid; align-content: start; gap: 10px; padding: 16px; }
+    .spec-group-title {
+      margin: 5px 0 0;
+      padding: 9px 2px 7px;
+      border-bottom: 2px solid var(--navy);
+      color: var(--navy);
+      font-size: 17px;
+      line-height: 1.25;
+    }
+    .spec-group-title:first-child { margin-top: 0; }
+    .document[data-variant="control"] .spec-group-title { border-bottom-color: var(--red); }
     .rule { padding: 12px 14px; background: #f9fbfc; border: 1px solid var(--line); border-radius: 8px; }
     .rule.calculation { background: var(--green-bg); border-color: var(--green-line); }
     .rule.edge { background: var(--amber-bg); border-color: var(--amber-line); }
+    .rule.variant-difference { border-left: 3px solid var(--navy); background: #f4f8fb; }
+    .document[data-variant="control"] .rule.variant-difference { border-left-color: var(--red); }
     .rule h2 { margin: 0 0 6px; font-size: 14px; }
     .rule ul { margin: 0; padding-left: 18px; color: var(--text); font-size: 13px; line-height: 1.62; }
     .rule li + li { margin-top: 3px; }
@@ -189,7 +211,6 @@
       .document-switcher { margin: 0 10px 10px; }
       .document-switcher button { min-height: 42px; padding: 0 6px; font-size: 11px; }
       .document-switcher button small { font-size: 9px; }
-      .document-context { margin: 0 10px 10px; padding: 9px 10px; }
       .module { border-right: 0; border-left: 0; border-radius: 0; }
       .module-head, .prototype, .specification { padding: 10px; }
       .module-head h1 { font-size: 18px; }
@@ -198,331 +219,177 @@
   </style>
 </head>
 <body>
-  <main class="document" data-variant="inline">
+  <main class="document" id="requirementsDocument" data-variant="inline" data-annotatable="true" aria-label="比赛模块需求文档" tabindex="0">
     <div class="document-switcher" role="tablist" aria-label="A/B 测试需求文档切换">
-      <button id="documentVariantB" role="tab" aria-selected="true" class="active" type="button">
+      <button id="documentVariantB" role="tab" aria-selected="true" class="active" type="button" data-annotatable="true" aria-label="B 测试 横滑预览 实验组">
         <span>B 测试 · 横滑预览</span><small>实验组</small>
       </button>
-      <button id="documentVariantA" role="tab" aria-selected="false" type="button">
-        <span>A 测试 · Live 列表</span><small>对照组</small>
+      <button id="documentVariantA" role="tab" aria-selected="false" type="button" data-annotatable="true" aria-label="A 测试 Live 列表 实验组">
+        <span>A 测试 · Live 列表</span><small>实验组</small>
       </button>
     </div>
-    <div class="document-context" role="status" aria-live="polite">
-      <span class="document-context-badge" id="documentVariantBadge">B</span>
-      <span id="documentVariantContext"><strong>差异说明</strong>：线上公开版本作为基线，以下只记录本次 A/B 优化相对线上版本的新增、变化与验收约束。</span>
-    </div>
     <header class="document-top">
-      <p class="document-title" id="documentTitle">比赛模块需求文档 · B 测试（横滑 Live）</p>
+      <p class="document-title" id="documentTitle" data-annotatable="true" aria-label="比赛模块需求文档">比赛模块需求文档 · B 测试（横滑 Live）</p>
       <nav class="module-nav" aria-label="需求模块导航">
-        <a href="#navigation">01 页面导航</a>
-        <a href="#live">02 直播发现</a>
-        <a href="#top-competitions">03 热门联赛</a>
-        <a href="#all-competitions">04 全部联赛</a>
-        <a href="#featured">05 精选比赛</a>
-        <a href="#detail">06 比赛详情</a>
-        <a href="#ab-test">07 A/B 测试</a>
+        <a href="#all" data-annotatable="true" aria-label="01 All 页面">01 All</a>
+        <a href="#recommended" data-annotatable="true" aria-label="02 Recommended 页面">02 Recommended</a>
+        <a class="variant-nav-a" href="#live" data-annotatable="true" aria-label="03 Live 页面">03 Live</a>
+        <a href="#ab-test" data-annotatable="true" aria-label="04 A/B 测试">04 A/B 测试</a>
       </nav>
     </header>
 
-    <section class="module" id="navigation">
-      <header class="module-head">
+    <section class="module" id="all" data-annotatable="true" aria-label="01 All 页面" tabindex="0">
+      <header class="module-head" data-annotatable="true" aria-label="All 页面模块标题" tabindex="0">
         <span class="module-number">01</span>
-        <div><h1>页面导航与日期</h1><p>线上基线与本次 A/B 导航差异</p></div>
+        <div><h1>All 页面</h1></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>精选 · 今天</strong><span>直接操作比赛原型</span></div>
-            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="页面导航与日期切换原型"></iframe>
+            <div class="prototype-label live-prototype-label" data-annotatable="true" aria-label="All 页面原型与直播边界状态" tabindex="0">
+              <div class="live-prototype-copy"><strong id="navigationPrototypeTitle">方案 B · All</strong><span id="navigationPrototypeHint">页面调整 + Live 横滑预览</span></div>
+              <div class="prototype-state-switcher" role="tablist" aria-label="All 页面直播场次边界状态">
+                <button id="liveStateMany" class="active" type="button" role="tab" aria-selected="true" data-live-count="7" data-annotatable="true">多场</button>
+                <button id="liveStateOne" type="button" role="tab" aria-selected="false" data-live-count="1" data-annotatable="true">1 场</button>
+                <button id="liveStateZero" type="button" role="tab" aria-selected="false" data-live-count="0" data-annotatable="true">0 场</button>
+              </div>
+            </div>
+            <iframe class="prototype-frame" id="navigationPrototypeFrame" src="index.html?view=all&amp;date=27&amp;embed=1" title="方案 B All 页面原型" data-annotatable="true" aria-label="All 页面原型" tabindex="0"></iframe>
           </div>
         </div>
         <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>线上已有的设备状态栏、顶部导航、日期栏和底部导航全部沿用；本次只在 Demo 外层新增 A/B 需求文档切换。</li>
-            <li>A 对照组新增独立 <strong>Live</strong> 页签；B 组保留线上两个主入口，不改变线上已有页签的层级。</li>
+          <h2 class="spec-group-title">页面调整</h2>
+          <section class="rule variant-rule-b"><h2>展示内容</h2><ul>
+            <li>原 <strong>Explore</strong> 更名为 <strong>All</strong>；All 仅移除 <strong>You may like</strong>，热门联赛和 All Competitions 保持原样。</li>
+            <li>顶部使用 <strong>All / Recommended</strong> 两个页签；All 保持默认入口。</li>
           </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li>新增约束：All、Recommended、Live 三种状态切换时，线上公共区域保持相同高度、内边距、字号和图标尺寸；移动端日期栏固定为 <strong>50px</strong>。</li>
-            <li>新增约束：A/B 文档切换页签位于手机画布之外，不占用 App 内部布局。</li>
+          <section class="rule variant-rule-a"><h2>展示内容</h2><ul>
+            <li>原 <strong>Explore</strong> 更名为 <strong>All</strong>；All 仅移除 <strong>You may like</strong>，热门联赛和 All Competitions 保持原样。</li>
+            <li>顶部使用 <strong>All / Recommended / Live</strong> 三个页签；All 内不增加横滑 Live 预览。</li>
           </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>新增状态：<code>experiment_variant</code>、<code>current_view</code>、<code>selected_date</code>、<code>user_timezone</code>。</li>
-            <li>Live 入口新增依赖：<code>live_count</code>；继续复用线上日期和比赛请求字段。</li>
+          <section class="rule"><h2>保持不变</h2><ul>
+            <li>状态栏、日期栏和底部导航沿用原版；切换页签时高度、字号和间距不变。</li>
           </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">Live 入口可见 = selected_date 为用户当地 Today 且 live_count &gt; 0</span>。</li>
-            <li>线上日期窗口、Today 文案和时区计算保持不变，本次不重新定义日期范围。</li>
+          <h2 class="spec-group-title variant-rule-b">Live 横滑预览</h2>
+          <section class="rule variant-rule-b"><h2>展示位置</h2><ul>
+            <li>横滑 Live 预览位于 <strong>All + Today</strong> 的日期栏下方、热门联赛目录上方；View all 进入独立 Live 页面。</li>
           </ul></section>
-          <section class="rule"><h2>交互</h2><ul>
-            <li>切换 A/B 文档时同步更新原型、说明文案和 <code>variant=control</code> 分享参数；不改变线上页面数据。</li>
-            <li>A 组点击 Live 只切换主内容；B 组点击 All / Recommended 保留 <code>selected_date</code> 和线上滚动行为。</li>
-            <li>切换任意页签时只改变选中态和主内容，公共 App 区域禁止跳动。</li>
+          <section class="rule variant-rule-b"><h2>展示内容</h2><ul>
+            <li>显示 <strong>Live now / 场次数 / View all</strong> 标题行和横滑卡；卡片包含赛徽、比赛分钟、双方队徽、队名和比分。</li>
+            <li>横滑两端分别提供 <strong>Finished</strong> 与 <strong>Upcoming</strong> 入口；首屏完整展示 1 张卡并露出下一张。</li>
           </ul></section>
-          <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>非 Today 或 <code>live_count = 0</code> 时不显示新增 Live 入口。</li>
-            <li>缺失 <code>variant</code> 时默认使用 B 组；缺失日期时沿用线上默认 Today。</li>
-            <li>线上日期接口、空态和重试策略保持不变，不在本次差异文档重复展开。</li>
+          <section class="rule variant-rule-b"><h2>交互</h2><ul>
+            <li>横滑卡点击后进入比赛内页；View all 进入独立 Live 页面，Finished / Upcoming 入口进入对应状态列表。</li>
+            <li>从独立 Live 页面返回时恢复 All、原日期和滚动位置。</li>
+          </ul></section>
+          <section class="rule edge variant-rule-b"><h2>边界处理</h2><ul>
+            <li><strong>0 场进行中：</strong>隐藏 Live now 标题行和整组横滑卡，热门联赛目录直接上移，不保留空白占位。</li>
+            <li><strong>仅 1 场进行中：</strong>显示 Live now 1 和单张加宽比赛卡，保留 View all；不复制卡片填满横滑区域。</li>
+            <li><strong>最后一场刚结束：</strong>当前卡片先更新为 FT；用户再次进入 All 时移除整组 Live 入口，避免浏览过程中内容突然跳动。</li>
+            <li><strong>比赛状态加载中：</strong>保留模块原有高度并显示卡片骨架；加载失败时隐藏该模块，All 的其他比赛入口仍可使用。</li>
+            <li><strong>比分或队徽暂缺：</strong>比分显示短横线、队徽显示固定尺寸占位，卡片高度和左右滑动位置不变化。</li>
           </ul></section>
         </div>
       </div>
     </section>
 
-    <section class="module" id="live">
-      <header class="module-head">
+    <section class="module" id="recommended" data-annotatable="true" aria-label="02 Recommended 页面" tabindex="0">
+      <header class="module-head" data-annotatable="true" aria-label="Recommended 页面模块标题" tabindex="0">
         <span class="module-number">02</span>
-        <div><h1>直播入口与状态列表</h1><p>新增 Live 入口与状态列表差异</p></div>
+        <div><h1>Recommended 页面</h1></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong id="livePrototypeTitle">直播预览与状态列表</strong><span id="livePrototypeHint">横滑比赛，点击查看全部</span></div>
-            <iframe class="prototype-frame" id="livePrototypeFrame" src="index.html?view=all&amp;date=27" title="直播横滑预览与状态列表原型"></iframe>
+            <div class="prototype-label" data-annotatable="true" aria-label="精选比赛原型说明" tabindex="0"><strong id="featuredPrototypeTitle">方案 B · Recommended</strong><span id="featuredPrototypeHint">用户关注球队 + Eleven 热门球队前三优先级</span></div>
+            <iframe class="prototype-frame" id="featuredPrototypeFrame" src="index.html?view=featured&amp;date=27&amp;embed=1" title="方案 B 精选比赛连续列表原型" data-annotatable="true" aria-label="精选比赛连续列表原型" tabindex="0"></iframe>
           </div>
         </div>
         <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>相对线上 All 页面，B 组在日期栏下新增 Live 入口；A 组将 Live 独立为顶部页签。</li>
-            <li>本次不新增线上已有的推荐内容；Live 入口只在 Matches + Today 场景出现。</li>
-            <li>B 点击 <strong>View all</strong> 进入独立 Live 列表页面层；A 点击顶部 <strong>Live</strong> 只替换日期栏下的主内容，公共 App 区域保持线上尺寸。</li>
+          <h2 class="spec-group-title">页面入口与日期</h2>
+          <section class="rule variant-difference"><h2 id="featuredDifferenceHeading">B 测试差异</h2><ul><li id="featuredDifferenceCopy">新增独立 Recommended 页签；B 顶部只保留 All / Recommended。</li></ul></section>
+          <section class="rule variant-rule-b"><h2>展示位置</h2><ul>
+            <li>Recommended 作为 All 右侧的同级页签；列表位于公共日期栏下方。</li>
+            <li>从其他页签进入时保留用户当前选择的日期；没有历史选择时默认 <strong>Today</strong>。进入日期分组后，优先定位第一场进行中的比赛；没有进行中比赛时定位最近开赛的未开始比赛；当天比赛全部结束时定位最近结束的一场。</li>
           </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li>B 新增 <strong>Live now / 场次数 / View all</strong> 标题行和横滑卡；卡片补充真实赛徽、比赛分钟、双方队徽、队名和比分。</li>
-            <li>横滑两端新增 <strong>Finished</strong> 与 <strong>Upcoming</strong> 入口；首屏完整展示 1 张卡并露出下一张。</li>
-            <li>A 新增 <strong>By time / Search / Filter</strong> 工具条和 <strong>Finished → Live → Upcoming</strong> 状态组；Live 默认展开。</li>
-            <li>所有新增 Live 卡使用统一中性样式，不继承 Recommended 的强化样式；比赛行点击后进入独立比赛内页。</li>
-          </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>新增 Live 数据：<code>live_count</code>、<code>status</code>、<code>clock</code>、<code>competition_logo_url</code>、<code>home_crest_url</code>、<code>away_crest_url</code>。</li>
-            <li>新增入口排序字段：<code>live_preview_sort_order</code>；比赛详情跳转携带 <code>match_id</code>、来源和日期上下文。</li>
-            <li>线上比赛、关注和更新数据接口继续复用，不在此重复定义。</li>
-          </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">Live 入口数量 = selected_date 当天去重后的 Live match_id 数量</span>。</li>
-            <li>B 横滑顺序固定为 <strong>Finished → Live 卡片 → Upcoming</strong>，初始偏移到第一张 Live 卡。</li>
-            <li>A 状态组固定为 <strong>Finished → Live → Upcoming</strong>，默认展开状态为 <code>false / true / false</code>。</li>
-            <li>去重仍使用 <code>match_id + status_period</code>，排序优先复用线上赛事排序和开赛时间。</li>
+          <section class="rule variant-rule-a"><h2>展示位置</h2><ul>
+            <li>Recommended 位于 All 与 Live 之间；列表位于公共日期栏下方。</li>
+            <li>从其他页签进入时保留用户当前选择的日期；没有历史选择时默认 <strong>Today</strong>。进入日期分组后，优先定位第一场进行中的比赛；没有进行中比赛时定位最近开赛的未开始比赛；当天比赛全部结束时定位最近结束的一场。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>B 横滑卡点击后直接进入独立比赛内页；标题行进入独立 Live 列表，左右端入口默认展开对应状态。</li>
-            <li>A 顶部 Live 点击后不修改 URL，只切换主内容；状态组可独立展开或收起。</li>
-            <li>点击比赛行直接进入独立比赛内页；点击关注按钮只更新关注状态。</li>
-            <li>Live 列表返回时恢复线上日期和来源上下文，公共顶部与底部区域不跳动。</li>
+            <li>上下滑动列表跨入新的日期分组时，顶部日期同步选中当前浏览日期；点击顶部日期时，列表滚动到对应日期分组。</li>
+          </ul></section>
+          <h2 class="spec-group-title">比赛列表</h2>
+          <section class="rule"><h2>展示内容</h2><ul>
+            <li>Recommended 展示两类比赛：至少一支参赛球队为<strong>用户关注球队</strong>；或至少一支参赛球队在 Eleven 后台<strong>“热门球队优先级”中归属前三优先级</strong>。同时命中两类条件时只展示一次，不显示推荐原因或额外解释标签。</li>
+            <li>比赛字段与视觉样式复用线上比赛行，列表按开赛时间展示。</li>
+          </ul></section>
+          <section class="rule"><h2>交互</h2><ul>
+            <li>点击任一比赛行直接进入比赛内页；点击星标不触发跳转。</li>
           </ul></section>
           <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>非 Today 或 Live 数量为 0 时隐藏 B 的新增入口；A 直达 Live 显示线上约定的空态。</li>
-            <li>缺少比分、赛徽或队徽时使用线上占位规则，不改变新增卡片和比赛行高度。</li>
-            <li>推送延迟、接口失败和重试继续沿用线上策略。</li>
+            <li>用户未关注任何球队时，仅展示至少一支参赛球队在 Eleven 后台“热门球队优先级”中归属前三优先级的比赛。</li>
+            <li>当前日期没有符合条件的比赛时显示线上空态，不自动跳到其他日期；缺少开赛时间的比赛排在列表末尾。</li>
           </ul></section>
         </div>
       </div>
     </section>
 
-    <section class="module" id="top-competitions">
-      <header class="module-head">
+    <section class="module variant-module-a" id="live" data-annotatable="true" aria-label="03 Live 页面" tabindex="0">
+      <header class="module-head" data-annotatable="true" aria-label="Live 页面模块标题" tabindex="0">
         <span class="module-number">03</span>
-        <div><h1>热门联赛</h1><p>沿用线上目录，仅记录跳转改动</p></div>
+        <div><h1>Live 页面</h1></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>冠军联赛 · 展开</strong><span>重点比赛有独立氛围</span></div>
-            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=expand-ucl" title="热门联赛与联赛展开原型"></iframe>
+            <div class="prototype-label" data-annotatable="true" aria-label="Live 页面原型说明" tabindex="0"><strong>方案 A · Live</strong><span>页面内容沿用线上版本</span></div>
+            <iframe class="prototype-frame" src="index.html?view=live&amp;date=27&amp;variant=control&amp;embed=1&amp;v=page-modules-1" title="方案 A Live 页面原型" data-annotatable="true" aria-label="Live 页面原型" tabindex="0"></iframe>
           </div>
         </div>
         <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>线上热门联赛目录的位置、顺序和折叠结构全部沿用；本次只校验 Live 入口插入后不改变其起始位置。</li>
-            <li>新增的联赛资料页和比赛内页跳转复用现有行，不新增独立按钮。</li>
-          </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li>本次不改变线上已有的赛徽、球队提示、比赛数、折叠箭头和行高。</li>
-            <li>展开后的比赛行新增明确的独立内页跳转目标；列表仍不增加推荐原因或额外解释标签。</li>
-          </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>沿用线上联赛和比赛字段；新增跳转使用 <code>competition_id</code>、<code>match_id</code>、<code>selected_date</code>。</li>
-          </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">本次新增计算 = 仅生成来源、日期和实体 ID 的可回溯跳转 URL</span>。</li>
-            <li>线上比赛数、排序和球队状态计算不变。</li>
+          <h2 class="spec-group-title">页面入口</h2>
+          <section class="rule variant-difference"><h2>A 测试差异</h2><ul>
+            <li>Recommended 右侧新增独立 <strong>Live</strong> 页签；点击后仅切换日期栏下方的页面内容。</li>
           </ul></section>
           <section class="rule"><h2>交互</h2><ul>
-            <li>线上折叠交互保持不变；点击联赛名称或赛徽进入独立联赛资料页。</li>
-            <li>点击展开后的比赛行直接进入独立比赛内页，浏览器返回后回到原日期和列表位置。</li>
+            <li>进入 Live 时保留当前选择日期；返回 All 或 Recommended 时，顶部、日期栏和底部导航不移动。</li>
           </ul></section>
-          <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>线上缺省赛徽、超长名称和展开失败策略保持不变；跳转参数缺失时不阻塞列表渲染。</li>
+          <h2 class="spec-group-title">页面内容</h2>
+          <section class="rule"><h2>保持不变</h2><ul>
+            <li><strong>本次没有任何改动</strong>：工具条、Finished / Live / Upcoming 状态分组、比赛行样式和原有交互全部沿用线上版本。</li>
           </ul></section>
         </div>
       </div>
     </section>
 
-    <section class="module" id="all-competitions">
-      <header class="module-head">
+    <section class="module" id="ab-test" data-annotatable="true" aria-label="04 比赛列表优化 A/B 测试" tabindex="0">
+      <header class="module-head" data-annotatable="true" aria-label="比赛列表优化 A/B 测试模块标题" tabindex="0">
         <span class="module-number">04</span>
-        <div><h1>全部联赛</h1><p>沿用线上目录，仅记录链接改动</p></div>
+        <div><h1>比赛列表优化 A/B 测试</h1><p id="abModuleSubtitle">对照组 / A / B 三组测试</p></div>
       </header>
       <div class="module-body">
         <div class="prototype">
           <div class="prototype-inner">
-            <div class="prototype-label"><strong>全部联赛 · 国家展开</strong><span>不显示按国家说明</span></div>
-            <iframe class="prototype-frame" src="index.html?view=all&amp;date=27&amp;action=all-competitions" title="全部联赛国家目录原型"></iframe>
+            <div class="prototype-label" data-annotatable="true" aria-label="A/B 测试原型说明" tabindex="0"><strong id="abPrototypeTitle">方案 B · 横滑直播预览</strong><a id="abPrototypeLink" href="index.html?view=live&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A Live</a></div>
+            <iframe class="prototype-frame" id="abPrototypeFrame" src="index.html?view=all&amp;date=27&amp;embed=1" title="比赛列表优化 B 测试原型" data-annotatable="true" aria-label="比赛列表优化 B 测试原型" tabindex="0"></iframe>
           </div>
         </div>
         <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>线上 All Competitions 的位置、标题和纵向目录结构沿用，本次不增加新的推荐或解释模块。</li>
-            <li>新增 Live 入口位于该目录之前；其余国家与联赛区域不因 A/B 切换改变位置。</li>
+          <section class="rule" id="abTestMethod" data-annotatable="true" aria-label="A/B 测试方法" tabindex="0"><h2>测试方法</h2><ul>
+            <li>符合条件的用户按 <strong>1:1:1</strong> 随机分为：<strong>对照组</strong>（线上现状）、<strong>A 组</strong>（独立 Live 页签）、<strong>B 组</strong>（All 内横滑 Live 预览）。</li>
+            <li>仅纳入进入 Match + Today 且当日至少有 1 场直播的用户；按 <code>user_id</code> 固定分组，未登录用户按稳定 <code>device_id</code> 分组。实验运行至少 <strong>14 天</strong>并覆盖两个完整周末。</li>
+            <li>A、B 分别与对照组比较；若两组均显著提升，再比较 A 与 B。</li>
           </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li>国家行、真实国旗、比赛数、展开箭头和联赛子行均沿用线上样式与高度。</li>
-            <li>本次只补充：展开后的联赛子行可进入独立联赛资料页，并保留来源日期。</li>
-          </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>沿用线上国家、联赛和比赛数接口；新增跳转携带 <code>competition_id</code>、<code>selected_date</code>、<code>from=all</code>。</li>
-          </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">本次新增计算 = 由联赛实体和 selected_date 生成可回溯资料页 URL</span>。</li>
-            <li>线上国家计数、排序和有比赛联赛过滤保持不变。</li>
-          </ul></section>
-          <section class="rule"><h2>交互</h2><ul>
-            <li>国家展开/收起和日期切换沿用线上行为。</li>
-            <li>点击展开后的联赛子行进入独立联赛资料页，返回后恢复 All 与原日期。</li>
-          </ul></section>
-          <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>国家无比赛、目录为空、数据缺失和长列表加载均沿用线上处理。</li>
-            <li>资料页参数不完整时回退到安全的联赛默认信息，不影响国家目录。</li>
-          </ul></section>
-        </div>
-      </div>
-    </section>
-
-    <section class="module" id="featured">
-      <header class="module-head">
-        <span class="module-number">05</span>
-        <div><h1>精选比赛列表</h1><p>沿用线上精选，仅记录跳转改动</p></div>
-      </header>
-      <div class="module-body">
-        <div class="prototype">
-          <div class="prototype-inner">
-            <div class="prototype-label"><strong>精选 · 连续日期</strong><span>日期随滚动同步</span></div>
-            <iframe class="prototype-frame" src="index.html?view=featured&amp;date=27" title="精选比赛连续列表原型"></iframe>
-          </div>
-        </div>
-        <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>Recommended 及其日期、联赛分组和列表密度沿用线上版本，本次不调整精选入口位置。</li>
-            <li>本次改动仅影响比赛行的跳转目标，以及与 A/B Live 方案共用的比赛上下文。</li>
-          </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li>线上日期、赛徽、队名、比分、状态和关注控件保持不变，不在本文重复定义。</li>
-            <li>新增约束：点击比赛行直接进入独立比赛内页；列表中仍不增加推荐原因或额外解释标签。</li>
-          </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>精选排序、选赛和比赛字段全部沿用线上版本；跳转额外读取 <code>match_id</code>、<code>selected_date</code>、<code>from=featured</code>。</li>
-          </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">本次不改变 importance_score、入选阈值、数量上限和排序</span>。</li>
-            <li>新增计算仅用于生成带来源和日期上下文的比赛内页 URL。</li>
-          </ul></section>
-          <section class="rule"><h2>交互</h2><ul>
-            <li>线上日期滚动、联赛折叠和星标行为保持不变。</li>
-            <li>点击任一比赛行直接进入独立比赛内页；点击星标不触发跳转。</li>
-          </ul></section>
-          <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>线上无比赛、字段缺失和选赛冲突处理保持不变。</li>
-            <li>比赛 URL 参数缺失时使用状态安全默认值，不阻塞列表渲染。</li>
-          </ul></section>
-        </div>
-      </div>
-    </section>
-
-    <section class="module" id="detail">
-      <header class="module-head">
-        <span class="module-number">06</span>
-        <div><h1>比赛详情与关注</h1><p>新增独立比赛内页与后续入口</p></div>
-      </header>
-      <div class="module-body">
-        <div class="prototype">
-          <div class="prototype-inner">
-            <div class="prototype-label"><strong>精选比赛内页</strong><span>点击比赛行后跳转</span></div>
-            <iframe class="prototype-frame" src="match.html?league=Premier%20League&amp;status=live&amp;time=72%27&amp;home=Chelsea&amp;homeLogo=assets%2Fchelsea.png&amp;away=Arsenal&amp;awayLogo=assets%2Farsenal.png&amp;homeScore=1&amp;awayScore=2&amp;date=27&amp;from=featured" title="独立比赛内页原型"></iframe>
-          </div>
-        </div>
-        <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>从 Recommended 比赛列表、赛事展开列表或 Live 状态列表点击比赛后，在当前浏览器标签页打开独立比赛内页。</li>
-            <li>比赛内页覆盖原列表内容，使用独立 URL；浏览器返回或页面返回入口回到原日期和来源列表。</li>
-          </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li>展示联赛名与真实赛徽、双方真实队徽与队名、比分或开赛时间、比赛状态、摘要/时间线/统计页签和关注按钮。</li>
-            <li>从不同来源进入时保留 <code>from</code>、日期和比赛状态上下文；不在列表页展示底部详情窗口。</li>
-          </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>详情字段：<code>match_id</code>、<code>competition_name</code>、<code>home_team</code>、<code>away_team</code>、<code>score</code>、<code>status</code>、<code>kickoff_time</code>、<code>featured_reason</code>。</li>
-            <li>关注字段：<code>is_following</code>、<code>notification_permission</code>、<code>updated_at</code>。</li>
-          </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li>Upcoming 显示开赛时间；Live 与 Finished 显示比分；状态文案统一由 <code>status</code> 映射。</li>
-            <li>关注按钮采用服务端最终状态；同一 <code>match_id</code> 在所有入口实时同步。</li>
-          </ul></section>
-          <section class="rule"><h2>交互</h2><ul>
-            <li>点击比赛行直接进入独立比赛内页；不打开底部弹层、遮罩或二次确认窗口。</li>
-            <li>点击页面返回入口或使用浏览器返回回到原日期和来源列表；直接打开 URL 时使用默认比赛状态。</li>
-            <li>关注按钮采用乐观更新，接口失败时回滚并提示；不因关注操作自动进入详情。</li>
-          </ul></section>
-          <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>比赛参数缺失时按状态显示安全默认值；缺少队徽时保留固定尺寸占位，不能改变比分区高度。</li>
-            <li>比赛取消或延期时主状态替换比分区域，并保留双方和比赛中心入口。</li>
-            <li>无通知权限时允许保存关注，随后单独引导授权；拒绝授权不取消关注。</li>
-          </ul></section>
-        </div>
-      </div>
-    </section>
-
-    <section class="module" id="ab-test">
-      <header class="module-head">
-        <span class="module-number">07</span>
-        <div><h1>比赛列表优化 A/B 测试</h1><p id="abModuleSubtitle">新增 A/B 方案与效果测量</p></div>
-      </header>
-      <div class="module-body">
-        <div class="prototype">
-          <div class="prototype-inner">
-            <div class="prototype-label"><strong id="abPrototypeTitle">方案 B · 横滑直播预览</strong><a id="abPrototypeLink" href="index.html?view=live&amp;date=27&amp;variant=control" target="_blank" rel="noopener">打开方案 A Live</a></div>
-            <iframe class="prototype-frame" id="abPrototypeFrame" src="index.html?view=all&amp;date=27" title="比赛列表优化 A/B 测试方案 B 原型"></iframe>
-          </div>
-        </div>
-        <div class="specification">
-          <section class="rule"><h2>展示位置</h2><ul>
-            <li>实验入口为 Match 页面中的 All + Today；Recommended 页签和非当天日期不参与本实验。原型顶部提供 A/B 方案切换页签，对照组使用 <code>?variant=control</code> 打开三页签版本。</li>
-            <li>实验配置、分流和埋点在客户端启动时完成，用户在整个实验周期内保持同一方案。</li>
-          </ul></section>
-          <section class="rule"><h2>展示内容</h2><ul>
-            <li id="abCurrentDoc">当前文档：<strong>B 测试</strong>，在 All 页面展示横滑 Live 预览，左右两端提供 Finished / Upcoming 入口。</li>
-            <li><strong>A 对照组</strong>：顶部展示 <strong>All / Recommended / Live</strong> 三个页签；点击 Live 保持当前 URL、状态栏、三页签、日期栏和底部导航不变，只把主内容切换为 By time / Search / Filter、Finished / Live / Upcoming 与赛事比赛行；All 页面不展示横滑 Live 预览。</li>
-            <li><strong>B 实验组</strong>：Live now 标题行、场次数、View all，以及在赛事名左侧展示真实赛徽、同时展示分钟、双方队徽、球队和比分的横滑卡；最左为 Finished、最右为 Upcoming 入口。</li>
-            <li>两组使用同一批比赛数据、日期范围、状态口径和详情页，只有 Live 入口呈现方式不同。</li>
-          </ul></section>
-          <section class="rule"><h2>取数</h2><ul>
-            <li>分流字段：<code>experiment_id</code>、<code>variant</code>、<code>user_id</code> 或稳定设备 ID、<code>assignment_time</code>。</li>
-            <li>行为事件：<code>live_preview_exposure</code>、<code>live_card_impression</code>、<code>live_card_click</code>、<code>live_view_all_click</code>、<code>live_status_entry_click</code>、<code>match_detail_open</code>。</li>
-            <li>事件属性统一携带 <code>match_id</code>、<code>status</code>、<code>position</code>、<code>live_count</code>、<code>selected_date</code>、<code>device_width</code>。</li>
-          </ul></section>
-          <section class="rule calculation"><h2>计算</h2><ul>
-            <li><span class="formula">主要指标 = 直播模块曝光用户中，点击任一 Live 入口、Live 卡或进入比赛详情的用户数 ÷ 直播模块曝光用户数</span>。</li>
-            <li>次要指标：Live 卡点击率、View all 点击率、Finished/Upcoming 入口使用率、首次打开比赛详情耗时 P50、单次会话打开的比赛详情数。</li>
-            <li>按用户去重；同一用户同一自然日只计一次曝光和一次主要转化，避免重复刷新放大结果。</li>
-          </ul></section>
-          <section class="rule"><h2>交互</h2><ul>
-            <li>采用 50/50 随机分流，按用户或稳定设备 ID 固定，实验期间不因登录、刷新或日期切换改变方案。</li>
-            <li>正式实验前运行 7 天基线，使用基线主要指标估算样本量；正式实验至少覆盖 <strong>14 天和两个完整周末</strong>。</li>
-            <li>实验监控按天查看曝光、主要指标和护栏指标；不得在看到中期领先后提前结束。</li>
-            <li>判定规则：B 组主要指标相对提升至少 <strong>5%</strong> 且 95% 置信区间不跨 0；护栏无显著恶化，则推荐全量发布。</li>
-          </ul></section>
-          <section class="rule edge"><h2>边界处理</h2><ul>
-            <li>仅统计成功渲染 Live 模块且 Live 数量大于 0 的用户；无直播、接口失败、机器人、内部账号和重复设备剔除。</li>
-            <li>护栏指标包括比赛详情总打开率、页面退出率、Matches 首屏加载耗时和客户端错误率；任一恶化超过 <strong>3%</strong> 或错误率超过基线 <strong>0.2 个百分点</strong>，暂停发布并排查。</li>
-            <li>样本不足、分流失衡超过 5%、埋点缺失超过 2% 或置信区间跨 0 时，结论标记为“无法判断”，延长一周，不得宣布 B 胜出。</li>
-            <li>实验结束后保留 <code>experiment_id</code>、方案、日期、Live 场次数和位置属性，支持按市场、设备宽度和比赛日复盘。</li>
+          <section class="rule calculation" id="abValidationData" data-annotatable="true" aria-label="A/B 测试需要验证的数据" tabindex="0"><h2>需要验证的数据</h2><ul>
+            <li><span class="formula">Live 入口曝光用户数 = 看到 A 组 Live 页签或 B 组横滑 Live 入口的去重用户数</span>。</li>
+            <li><span class="formula">Live 内容进入率 = 点击 Live 页签，或点击 View all / Finished / Upcoming 进入 Live 内容的去重用户数 ÷ Live 入口曝光去重用户数</span>。</li>
+            <li><span class="formula">Live 来源比赛详情转化率 = 从横滑卡或 Live 列表打开比赛详情的去重用户数 ÷ Live 入口曝光去重用户数</span>。</li>
+            <li><span class="formula">Match 比赛详情转化率 = 从 Match 页面打开任一比赛详情的去重用户数 ÷ Match 页面曝光去重用户数</span>。</li>
+            <li><span class="formula">首次打开比赛详情耗时 P50 = 同一会话内首次打开比赛详情时间 - Match 页面首次曝光时间，并取全部有效会话的中位数</span>。</li>
+            <li><span class="formula">单次会话比赛详情打开数 = 从 Match 页面打开比赛详情的总次数 ÷ Match 页面会话数</span>。</li>
+            <li><span class="formula">D1 / D7 Match 留存率 = 首次进入实验后第 1 / 7 天再次进入 Match 页面的去重用户数 ÷ 对应首次进入实验的去重用户数</span>。</li>
+            <li>以上指标均按 <code>variant</code> 区分对照组、A 组和 B 组，并携带用户或设备 ID、入口来源、<code>selected_date</code>、<code>live_count</code>、<code>match_id</code> 和比赛状态。</li>
           </ul></section>
         </div>
       </div>
@@ -530,56 +397,143 @@
   </main>
   <script>
     (() => {
+      let annotationTargetIndex = 0;
+      function ensureAnnotationTargets() {
+        const candidates = document.querySelectorAll('.module-head h1, .module-head p, .spec-group-title, .rule, .rule h2, .rule li');
+        candidates.forEach(element => {
+          element.dataset.annotatable = 'true';
+          if (!element.id) element.id = `requirementsTarget${++annotationTargetIndex}`;
+          if (!element.getAttribute('aria-label')) {
+            const label = element.textContent.replace(/\s+/g, ' ').trim().slice(0, 180);
+            if (label) element.setAttribute('aria-label', label);
+          }
+          if (!element.hasAttribute('tabindex')) element.setAttribute('tabindex', '0');
+        });
+      }
+
       const documentRoot = document.querySelector('.document');
       const variantB = document.getElementById('documentVariantB');
       const variantA = document.getElementById('documentVariantA');
-      const variantBadge = document.getElementById('documentVariantBadge');
-      const variantContext = document.getElementById('documentVariantContext');
       const documentTitle = document.getElementById('documentTitle');
-      const livePrototypeTitle = document.getElementById('livePrototypeTitle');
-      const livePrototypeHint = document.getElementById('livePrototypeHint');
-      const livePrototypeFrame = document.getElementById('livePrototypeFrame');
+      const navigationPrototypeTitle = document.getElementById('navigationPrototypeTitle');
+      const navigationPrototypeHint = document.getElementById('navigationPrototypeHint');
+      const navigationPrototypeFrame = document.getElementById('navigationPrototypeFrame');
+      const liveStateButtons = [...document.querySelectorAll('[data-live-count]')];
+      const featuredPrototypeTitle = document.getElementById('featuredPrototypeTitle');
+      const featuredPrototypeHint = document.getElementById('featuredPrototypeHint');
+      const featuredPrototypeFrame = document.getElementById('featuredPrototypeFrame');
+      const featuredDifferenceHeading = document.getElementById('featuredDifferenceHeading');
+      const featuredDifferenceCopy = document.getElementById('featuredDifferenceCopy');
       const abModuleSubtitle = document.getElementById('abModuleSubtitle');
-      const abCurrentDoc = document.getElementById('abCurrentDoc');
       const abPrototypeTitle = document.getElementById('abPrototypeTitle');
       const abPrototypeLink = document.getElementById('abPrototypeLink');
       const abPrototypeFrame = document.getElementById('abPrototypeFrame');
 
+      const variantContent = {
+        inline: {
+          title: '比赛模块需求文档 · B 测试（横滑 Live）',
+          navigation: {
+            prototypeTitle: '方案 B · All',
+            prototypeHint: '页面调整 + Live 横滑预览',
+            src: 'index.html?view=all&date=27&embed=1',
+            frameTitle: '方案 B All 页面原型'
+          },
+          featured: {
+            subtitle: 'B 测试：新增独立 Recommended 页签',
+            prototypeTitle: '方案 B · Recommended',
+            prototypeHint: '用户关注球队 + Eleven 热门球队前三优先级',
+            src: 'index.html?view=featured&date=27&embed=1',
+            frameTitle: '方案 B 精选比赛连续列表原型',
+            difference: 'B 测试差异',
+            copy: '新增独立 Recommended 页签；B 顶部只保留 All / Recommended。'
+          },
+          ab: {
+            subtitle: '对照组 / A / B 三组测试',
+            prototypeTitle: '方案 B · 横滑直播预览',
+            linkText: '打开方案 A Live',
+            linkHref: 'index.html?view=all&date=27&variant=control',
+            src: 'index.html?view=all&date=27&embed=1',
+            frameTitle: '比赛列表优化 B 测试原型'
+          }
+        },
+        control: {
+          title: '比赛模块需求文档 · A 测试（Live 列表）',
+          navigation: {
+            prototypeTitle: '方案 A · All',
+            prototypeHint: '页面调整；无 Live 横滑预览',
+            src: 'index.html?view=all&date=27&variant=control&embed=1',
+            frameTitle: '方案 A All 页面原型'
+          },
+          featured: {
+            subtitle: 'A 测试：新增独立 Recommended 页签',
+            prototypeTitle: '方案 A · Recommended',
+            prototypeHint: '用户关注球队 + Eleven 热门球队前三优先级',
+            src: 'index.html?view=featured&date=27&variant=control&embed=1',
+            frameTitle: '方案 A 精选比赛连续列表原型',
+            difference: 'A 测试差异',
+            copy: '新增独立 Recommended 页签；A 顶部同时保留独立 Live 页签。'
+          },
+          ab: {
+            subtitle: '对照组 / A / B 三组测试',
+            prototypeTitle: '方案 A · Live 状态列表',
+            linkText: '打开方案 B All',
+            linkHref: 'index.html?view=all&date=27',
+            src: 'index.html?view=all&date=27&variant=control&embed=1',
+            frameTitle: '比赛列表优化 A 测试原型'
+          }
+        }
+      };
+
+      function previewSrc(src) {
+        const separator = src.includes('?') ? '&' : '?';
+        return `${src}${separator}v=page-modules-1`;
+      }
+
+      let selectedLiveCount = '7';
+
+      function liveStateSrc(src) {
+        const separator = src.includes('?') ? '&' : '?';
+        return previewSrc(`${src}${separator}live_count=${selectedLiveCount}`);
+      }
+
+      function updateLiveStateButtons() {
+        liveStateButtons.forEach(button => {
+          const active = button.dataset.liveCount === selectedLiveCount;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-selected', String(active));
+        });
+      }
+
       function setVariant(variant, replaceUrl = true) {
         const isControl = variant === 'control';
+        const content = variantContent[isControl ? 'control' : 'inline'];
         documentRoot.dataset.variant = isControl ? 'control' : 'inline';
         variantB.classList.toggle('active', !isControl);
         variantA.classList.toggle('active', isControl);
         variantB.setAttribute('aria-selected', String(!isControl));
         variantA.setAttribute('aria-selected', String(isControl));
-        variantBadge.textContent = isControl ? 'A' : 'B';
-        variantContext.innerHTML = isControl
-          ? '<strong>A 测试差异</strong>：相对线上版本新增独立 Live 页签，并在原有公共 App 区域不变的前提下切换直播主内容。'
-          : '<strong>B 测试差异</strong>：相对线上版本在 All + Today 下新增横滑 Live 预览和独立列表入口。';
-        documentTitle.textContent = isControl
-          ? '比赛模块需求文档 · A 测试（Live 列表）'
-          : '比赛模块需求文档 · B 测试（横滑 Live）';
-        livePrototypeTitle.textContent = isControl ? '方案 A · Live 状态列表' : '方案 B · 直播预览与状态列表';
-        livePrototypeHint.textContent = isControl ? '保留公共顶部，切换主内容' : '横滑比赛，点击查看全部';
-        livePrototypeFrame.src = isControl
-          ? 'index.html?view=all&date=27&variant=control'
-          : 'index.html?view=all&date=27';
-        livePrototypeFrame.title = isControl ? '方案 A Live 状态列表原型' : '方案 B 直播横滑预览原型';
-        abModuleSubtitle.textContent = isControl
-          ? 'A 测试：保留公共导航，直接切换 Live 状态列表'
-          : 'B 测试：横滑 Live 预览与完整列表入口';
-        abCurrentDoc.innerHTML = isControl
-          ? '当前文档：<strong>A 测试</strong>，点击顶部 Live 后只切换主内容，公共状态栏、页签、日期栏和底部导航保持不变。'
-          : '当前文档：<strong>B 测试</strong>，在 All 页面展示横滑 Live 预览，左右两端提供 Finished / Upcoming 入口。';
-        abPrototypeTitle.textContent = isControl ? '方案 A · Live 状态列表' : '方案 B · 横滑直播预览';
-        abPrototypeLink.textContent = isControl ? '打开方案 A Live' : '打开方案 A Live';
-        abPrototypeLink.href = isControl
-          ? 'index.html?view=all&date=27&variant=control'
-          : 'index.html?view=live&date=27&variant=control';
-        abPrototypeFrame.src = isControl
-          ? 'index.html?view=all&date=27&variant=control'
-          : 'index.html?view=all&date=27';
-        abPrototypeFrame.title = isControl ? '比赛列表优化 A 测试原型' : '比赛列表优化 B 测试原型';
+        documentTitle.textContent = content.title;
+
+        navigationPrototypeTitle.textContent = content.navigation.prototypeTitle;
+        navigationPrototypeHint.textContent = content.navigation.prototypeHint;
+        navigationPrototypeFrame.src = isControl
+          ? previewSrc(content.navigation.src)
+          : liveStateSrc(content.navigation.src);
+        navigationPrototypeFrame.title = content.navigation.frameTitle;
+        featuredPrototypeTitle.textContent = content.featured.prototypeTitle;
+        featuredPrototypeHint.textContent = content.featured.prototypeHint;
+        featuredPrototypeFrame.src = previewSrc(content.featured.src);
+        featuredPrototypeFrame.title = content.featured.frameTitle;
+        featuredDifferenceHeading.textContent = content.featured.difference;
+        featuredDifferenceCopy.textContent = content.featured.copy;
+
+        abModuleSubtitle.textContent = content.ab.subtitle;
+        abPrototypeTitle.textContent = content.ab.prototypeTitle;
+        abPrototypeLink.textContent = content.ab.linkText;
+        abPrototypeLink.href = content.ab.linkHref;
+        abPrototypeFrame.src = previewSrc(content.ab.src);
+        abPrototypeFrame.title = content.ab.frameTitle;
+        ensureAnnotationTargets();
         if (replaceUrl) {
           const params = new URLSearchParams(window.location.search);
           if (isControl) params.set('variant', 'control');
@@ -592,7 +546,16 @@
       const initialVariant = new URLSearchParams(window.location.search).get('variant') === 'control' ? 'control' : 'inline';
       variantB.addEventListener('click', () => setVariant('inline'));
       variantA.addEventListener('click', () => setVariant('control'));
+      liveStateButtons.forEach(button => button.addEventListener('click', () => {
+        selectedLiveCount = button.dataset.liveCount;
+        updateLiveStateButtons();
+        const content = variantContent.inline;
+        navigationPrototypeFrame.src = liveStateSrc(content.navigation.src);
+        navigationPrototypeFrame.title = `${content.navigation.frameTitle} · ${button.textContent.trim()}`;
+      }));
       setVariant(initialVariant, false);
+      updateLiveStateButtons();
+      ensureAnnotationTargets();
     })();
   </script>
 </body>
