@@ -1,91 +1,65 @@
-# Matches Live Entry & Status List
+# Matches Navigation & Live Experiments
 
-## Scope
+## 01 All Page
 
-This specification covers the Live entry inside All and its dedicated status list page. The B variant does not add a top-level Live tab and opens an overlay-style Live page from View all. The A control variant adds a top-level Live tab that switches only the main content in place without changing the URL or shared App chrome. Neither variant changes Recommended selection logic.
+### Shared Page Changes
 
-## Display
+- Rename `Explore` to `All` and remove only `You may like`; Top Competitions and All Competitions remain unchanged.
+- Keep All as the default entry. Status bar, date strip, and bottom navigation keep the original dimensions when tabs change.
 
-- Show the Live entry only when `selected_date` is the user's local Today and the deduplicated Live count is greater than 0.
-- Place the entry directly below the date strip and before Top Competitions.
-- Use a two-part module: a `Live now` title row with count and `View all`, followed by a horizontally scrollable Live match preview.
-- Each preview card shows a fixed-size real competition crest to the left of the competition name, normalized match clock, both team crests, both team names, and the current score.
-- Reveal part of the next card in the first viewport to make horizontal scrolling discoverable.
-- Place a `Finished` entry at the far left and an `Upcoming` entry at the far right. Start at the first Live card, with both status entries reachable by horizontal scrolling.
-- Use the same neutral card style for every Live preview; do not add an `is_featured` background or emphasis border in this rail.
-- Do not show a recommendation rail or `You may like` in Matches.
-- B opens a dedicated Live page layer and keeps `All` active in the shared navigation beneath that layer.
-- A switches only the area below the date strip to the reference Live content. The device status bar, `All / Recommended / Live`, date strip, and standard bottom navigation keep the same dimensions and positions as All.
+### Experiment B: Live Preview Area
 
-## Data
+- Top navigation contains `All / Recommended`.
+- On local Today, always show `Live now / count / View all` below the date strip and above Top Competitions. Show the horizontal match preview when ongoing matches exist.
+- Each card shows competition crest, clock, team crests, team names, and score. Track order is `Finished entry / Live cards / Upcoming entry`, initially aligned to the first Live card.
+- A card opens Match Detail. `View all`, Finished, and Upcoming open the standalone Live page in the corresponding state. Back restores All, the selected date, and prior scroll position.
+- With no ongoing match, keep `Live now 0 / View all` and hide only the horizontal cards. With exactly one ongoing match, show one wider card without duplication.
+- When the final ongoing match finishes, remove that card from the preview, update the count to 0, and keep the Live entry. Loading uses fixed-height skeletons; load failure hides only the Live area. Missing scores use dashes and missing crests use fixed-size placeholders.
 
-- Match: `match_id`, `status`, `status_period`, `clock`, `kickoff_time`, `score`, `updated_at`.
-- Competition: `competition_id`, `competition_name`, `competition_logo_url`, `competition_sort_order`.
-- Teams: `home_team`, `away_team`, `home_crest_url`, `away_crest_url`.
-- User: `is_following`.
-- Editorial: `is_featured`.
-- Preview order: `live_preview_sort_order`.
+### Experiment A
 
-## Calculation
+- Top navigation contains `All / Recommended / Live`; All contains no horizontal Live preview.
 
-- Deduplication key: `match_id + status_period`; keep the newest `updated_at`.
-- Group count: count unique `match_id` values in Finished, Live, and Upcoming.
-- Title count and preview-card count: use the Live group count.
-- Order preview cards by `live_preview_sort_order`; fall back to competition order and kickoff time.
-- Track order is `Finished entry`, Live cards, `Upcoming entry`; initial scroll offset equals the Finished entry width plus one gap.
-- Group order: Finished, Live, Upcoming.
-- Within a group, order by `competition_sort_order`, competition name, then kickoff time.
-- Display `HT` at half time; otherwise use the provider's normalized match clock.
+## 02 Recommended Page
 
-## Interaction
+### Page Notes
 
-- Swiping the preview browses Live cards without leaving Matches.
-- Clicking a preview card opens the standalone Match Detail page in the current tab.
-- Clicking `View all` opens a dedicated Live page layer in the current tab. It covers the status bar, top navigation, date strip, and previous match content; only the persistent bottom tab bar remains visible.
-- Clicking a status entry navigates to the dedicated Live list page with the selected Finished or Upcoming group expanded and the other groups collapsed.
-- The child list opens with Live expanded and Finished/Upcoming collapsed.
-- Status groups expand independently and may remain open together.
-- Back or the bottom Matches tab closes the Live page layer, returns to the directory, and restores the selected-date context.
-- `By time` changes to a cross-competition chronological list.
-- Search accepts team and competition names; Filter supports status, competition, and following.
-- Clicking a match opens the standalone Match Detail page in the current tab. Clicking the favorite control only changes following state.
-- The standalone Match Detail page owns the match URL and content; the Matches list never opens a bottom sheet or scrim for match details.
-- In A, clicking the top-level Live tab keeps the URL unchanged. Clicking All or Recommended switches only the main content while all shared App regions remain mounted and fixed.
+- Recommended is an independent top tab: to the right of All in B, and between All and Live in A.
 
-## Boundary Handling
+### Match List
 
-- Hide the complete preview module on non-Today dates or when the Live count is 0.
-- A legacy/direct Live URL on a non-Today date shows an empty state with a back action.
-- Missing scores render as dashes; do not convert missing values to 0.
-- Missing logos use fixed-size neutral placeholders without changing row height.
-- Truncate long team and competition names to one line while retaining score and status.
-- If push updates stop, poll every 15 seconds. Mark data delayed after 30 seconds without a successful update.
-- On request failure, retain the latest successful list and expose retry state.
+- Include a match when either team is followed by the user, or at least one participating team belongs to one of the top three priority tiers in Eleven backend's `Popular Team Priority`. Show a double-qualified match only once.
+- Scrolling into another date group updates the selected top date. Clicking a date scrolls the list to that group.
+- If the selected date has no eligible match, show the online `No matches in this filter` empty state. Matches without a kickoff time appear at the end.
+- Match rows open `match.html` directly. Clicking a league crest or name opens `league.html`; the right arrow only expands or collapses that league's matches.
 
-## Acceptance
+## 03 Live Page
 
-- At 393 x 852 and 320 x 700, there is no horizontal overflow.
-- Today shows the Live title and horizontal preview; Tue 28 shows neither.
-- At least one preview card is fully visible and the following card remains partially visible at 393 px and 320 px widths.
-- Scrolling fully left exposes Finished; scrolling fully right exposes Upcoming.
-- The prototype includes a compact A/B variant switcher outside the phone app canvas. Variant B top navigation contains only All and Recommended; variant A adds Live as a third tab.
-- B opening Live renders Finished, Live, Upcoming in that order on a dedicated full-screen page layer covering every App region except the persistent bottom tab bar.
-- Any match row in Recommended, All, B Live preview, or either Live list navigates to `match.html` with match, status, score, crest, date, and source context in the URL.
-- A opening Live renders the supplied reference only inside the main content area: toolbar, Finished / Live / Upcoming, and competition-grouped rows. The shared status bar, three match tabs, date strip, and bottom navigation are identical before and after the switch; the URL remains unchanged.
-- Initial expanded states are `false`, `true`, `false`.
-- The Live row count equals the entry count and no duplicate `match_id + status_period` is rendered.
-- All visible team and competition assets load, and browser console errors remain at 0.
+### Entry
 
-## A/B Test
+- In A, open Live from the third top tab. In B, open Live through `View all` in the All-page Live entry.
 
-- Objective: validate whether the horizontal Live preview improves Live discovery and match-detail entry without harming overall match browsing.
-- Control A: three top-level tabs, All, Recommended, and Live; Live opens the dedicated Live list directly, and All has no inline Live preview.
-- Variant B: `Live now` title row with `View all`, horizontal Live cards, and Finished/Upcoming entries at the two ends of the rail. All cards use the same neutral style.
-- Control demo URL: `?view=all&date=27&variant=control`. Clicking the top-level Live tab switches only the main content in place without changing the URL.
-- All, Recommended, and control Live share one fixed status-bar, top-navigation, date-strip, and bottom-navigation geometry. Active state must not alter any shared component's bounding box.
-- Eligibility: Matches + Today users with a successfully rendered Live module and at least one Live match. Exclude bots, internal accounts, request failures, and duplicate devices.
-- Assignment: 50/50 random assignment by `user_id` or stable device ID, sticky for the experiment period; keep `experiment_id`, `variant`, and `assignment_time` on every event.
-- Primary metric: unique exposed users who click any Live entry, Live card, or open Match Detail divided by unique exposed users.
-- Secondary metrics: card click-through, View all click-through, Finished/Upcoming usage, P50 time to first Match Detail, and Match Detail opens per session.
-- Guardrails: overall Match Detail opens, page exit rate, first-screen load time, and client error rate. Pause if any guardrail worsens by more than 3% or errors rise by more than 0.2 percentage points.
-- Runtime: collect a 7-day baseline for sample sizing, then run at least 14 days including two complete weekends. Recommend B only when the primary metric improves by at least 5% relative and its 95% confidence interval excludes 0; otherwise extend one week or mark the result inconclusive.
+### Page Content
+
+- The Live page reached from either A or B has no visual, content, or interaction changes from the current online Live page. Reuse the online toolbar, Finished / Live / Upcoming groups, match rows, expand behavior, search, filter, following, and Match Detail navigation.
+
+## 04 A/B Test
+
+### Test Method
+
+- Randomly assign new users and existing users separately 1:1:1 to Control (current online experience), A (Live tab), or B (inline Live preview).
+- Run the experiment only on the current latest App version. Users still on older versions do not participate.
+
+### Data to Validate
+
+- Recommended daily UV = distinct users who enter Recommended at least once that day.
+- Recommended daily PV = total Recommended entries that day; repeated entries by the same user on the same day continue to count.
+- Recommended penetration rate = Recommended daily UV / Match module daily UV.
+- Recommended visits per user-day = Recommended daily PV / Recommended daily UV.
+- Recommended same-day revisit rate = distinct users who enter Recommended at least twice that day / Recommended daily UV.
+- Match module daily UV = distinct users who enter Match at least once that day.
+- Match module daily PV = total Match module entries that day; re-entry after leaving counts again, while switching All / Recommended / Live inside Match does not.
+- Match module visits per user-day = Match module daily PV / Match module daily UV.
+- Match module same-day revisit rate = distinct users who enter Match at least twice that day / Match module daily UV.
+- Match Detail conversion rate = distinct Match daily users who open any Match Detail that day / Match module daily UV.
+- D1 / D7 Match retention rate = distinct first-exposure cohort users who return to Match on day 1 / day 7 / distinct users in the corresponding first-exposure cohort.

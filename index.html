@@ -27,6 +27,18 @@
       color: var(--ink);
       letter-spacing: 0;
     }
+    /* Keep prototype text selectable when the Codex annotation layer adds a global reset. */
+    :root, :root body, :root body * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      -webkit-touch-callout: default;
+    }
+    html, html body, html body .app, html body .app * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    button, a, select, input, textarea { user-select: text; -webkit-user-select: text; }
+    [data-annotatable], [data-openai-annotatable] { position: relative; }
     button { font: inherit; color: inherit; }
     button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
@@ -104,6 +116,7 @@
     .variant-switcher-shell {
       width: min(100%, var(--app-width)); margin: 0 auto 10px;
     }
+    body.embedded .variant-switcher-shell { display: none; }
     .variant-switcher-label {
       flex: 0 0 auto; color: #9a9ba0; font-size: 10px; font-weight: 800; letter-spacing: .04em;
     }
@@ -160,6 +173,7 @@
     }
     .app.live-page .all-games-live-entry { display: block; }
     .app.all-games-redesign .all-games-live-entry { border-bottom: 5px solid var(--soft); }
+    .all-games-live-entry.zero-live { height: 58px; }
     .live-preview-heading {
       height: 44px; padding: 2px 14px; display: flex; align-items: center;
     }
@@ -187,6 +201,7 @@
       width: 196px; padding: 6px 10px; display: block; text-align: left;
       box-shadow: 0 1px 3px rgba(20, 24, 32, .06);
     }
+    .live-preview-track.single .live-preview-match { width: calc(100vw - 58px); max-width: 335px; }
     .live-preview-card-head { height: 22px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--line); }
     .live-preview-league-mark { width: 16px; height: 16px; flex: 0 0 16px; display: grid; place-items: center; }
     .live-preview-league-mark img { width: 100%; height: 100%; max-height: 16px; object-fit: contain; }
@@ -397,6 +412,15 @@
     .reference-status-toggle.live .reference-count { color: var(--red); background: var(--red-soft); }
     .reference-chevron { margin-left: auto; color: #111; font-size: 18px; line-height: 1; }
     .reference-live-block.collapsed .reference-live-content { display: none; }
+    .reference-live-empty {
+      min-height: 150px;
+      padding: 48px 24px 34px;
+      color: #8c8e94;
+      background: #fff;
+      text-align: center;
+    }
+    .reference-live-empty b { display: block; margin-bottom: 6px; color: #4f5157; font-size: 15px; }
+    .reference-live-empty span { font-size: 12px; }
 
     .reference-league-row {
       height: 38px;
@@ -972,15 +996,15 @@
 </head>
 <body>
   <div class="variant-switcher-shell">
-    <div class="variant-switcher" role="tablist" aria-label="Compare Live entry variants">
+    <div class="variant-switcher" role="tablist" aria-label="Compare Live entry variants" data-annotatable="true" tabindex="0">
       <span class="variant-switcher-label">A/B</span>
       <div class="variant-tabs">
-        <button class="variant-tab active" id="variantInlineTab" role="tab" aria-selected="true" data-variant="inline">B · Inline Live</button>
-        <button class="variant-tab" id="variantControlTab" role="tab" aria-selected="false" data-variant="control">A · Live Tab</button>
+        <button class="variant-tab active" id="variantInlineTab" role="tab" aria-selected="true" data-variant="inline" data-annotatable="true" aria-label="B 测试 横滑预览 实验组">B · Inline Live</button>
+        <button class="variant-tab" id="variantControlTab" role="tab" aria-selected="false" data-variant="control" data-annotatable="true" aria-label="A 测试 Live 列表 实验组">A · Live Tab</button>
       </div>
     </div>
   </div>
-  <div class="app">
+  <div class="app" id="matchApp" data-annotatable="true" data-openai-annotatable="true" aria-label="比赛页面原型" tabindex="0">
     <div class="status-bar" aria-hidden="true">
       <span class="status-time">09:34</span>
       <span class="status-dynamic-island"></span>
@@ -988,23 +1012,23 @@
       <span class="status-icons"><span>▮▮▮</span><span>◒</span><span class="battery"><span></span></span></span>
     </div>
 
-    <header class="topbar">
-      <nav class="explore-tabs" aria-label="Match sections">
-        <button class="explore-tab" id="liveNav">All</button>
-        <button class="explore-tab active" id="exploreNav">Recommended</button>
-        <button class="explore-tab standalone-live-nav" id="standaloneLiveNav">Live</button>
+    <header class="topbar" data-annotatable="true" aria-label="比赛页顶部导航" tabindex="0">
+      <nav class="explore-tabs" aria-label="Match sections" data-annotatable="true" tabindex="0">
+        <button class="explore-tab" id="liveNav" data-annotatable="true" aria-label="All 比赛库">All</button>
+        <button class="explore-tab active" id="exploreNav" data-annotatable="true" aria-label="Recommended 精选比赛">Recommended</button>
+        <button class="explore-tab standalone-live-nav" id="standaloneLiveNav" data-annotatable="true" aria-label="Live 直播列表">Live</button>
       </nav>
       <div class="top-actions">
-        <button class="icon-btn search-action" aria-label="Search">⌕</button>
-        <button class="icon-btn avatar" aria-label="Profile">WF</button>
+        <button class="icon-btn search-action" aria-label="Search" data-annotatable="true">⌕</button>
+        <button class="icon-btn avatar" aria-label="Profile" data-annotatable="true">WF</button>
       </div>
     </header>
 
-    <section class="date-strip" aria-label="Choose date" id="dateStrip"></section>
+    <section class="date-strip" aria-label="Choose date" id="dateStrip" data-annotatable="true" tabindex="0"></section>
 
-    <main id="matchList"></main>
+    <main id="matchList" data-annotatable="true" aria-label="比赛列表" tabindex="0"></main>
 
-    <nav class="bottom-nav" aria-label="Main navigation">
+    <nav class="bottom-nav" aria-label="Main navigation" data-annotatable="true" tabindex="0">
       <button class="nav-btn"><span class="nav-icon">▤</span><span>News</span></button>
       <button class="nav-btn active"><span class="nav-icon">▦</span><span>Matches</span></button>
       <button class="nav-btn"><span class="nav-icon">☆</span><span id="followingNavLabel">Following</span></button>
@@ -1076,11 +1100,6 @@
       ['Serie A', 'A', '#1466c3', 'live', "51'", 'Live', 'Napoli', A+'napoli.png', 'Roma', A+'roma.png', '2', '0'],
       ['Bundesliga', 'BL', '#d91d32', 'live', "80'", 'Live', 'Bayern Munich', A+'bayern.png', 'Leverkusen', A+'leverkusen.png', '3', '2']
     ];
-
-    const liveTeamByLogo = new Map(liveData.flatMap(match => [
-      [match[7], match[6]],
-      [match[9], match[8]]
-    ]));
 
     const importantMatchups = new Set([
       'Arsenal|Chelsea',
@@ -1262,6 +1281,15 @@
 
     const previewParams = new URLSearchParams(location.search);
     const experimentVariant = previewParams.get('variant') === 'control' ? 'control' : 'inline';
+    const requestedLiveCount = previewParams.get('live_count') === '0'
+      ? 0
+      : previewParams.get('live_count') === '1' ? 1 : liveData.length;
+    const activeLiveData = liveData.slice(0, requestedLiveCount);
+    const liveTeamByLogo = new Map(activeLiveData.flatMap(match => [
+      [match[7], match[6]],
+      [match[9], match[8]]
+    ]));
+    document.body.classList.toggle('embedded', previewParams.get('embed') === '1');
     let selectedDate = previewParams.get('date') || '27';
     let currentPage = 'explore';
     const liveSectionState = { upcoming: false, live: true, finished: false };
@@ -1319,6 +1347,25 @@
       matchList.scrollTo({ top: targetTop, behavior });
     }
 
+    function scrollToRecommendedStart(key, behavior = 'auto') {
+      const section = matchList.querySelector(`.day-section[data-date="${key}"]`);
+      if (!section) return;
+      const live = section.querySelector('.match-row[data-status="live"]');
+      const upcoming = section.querySelector('.match-row[data-status="upcoming"]');
+      const finished = [...section.querySelectorAll('.match-row[data-status="finished"]')].at(-1);
+      const target = live || finished || upcoming;
+      matchList.querySelectorAll('[data-default-anchor="true"]').forEach(row => row.removeAttribute('data-default-anchor'));
+      if (!target) {
+        scrollToDate(key, behavior);
+        return;
+      }
+      target.dataset.defaultAnchor = 'true';
+      const listRect = matchList.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const targetTop = Math.max(0, matchList.scrollTop + targetRect.top - listRect.top - 100);
+      matchList.scrollTo({ top: targetTop, behavior });
+    }
+
     function dayTemplate(date) {
       const dayData = data[date.key] || [];
       const visible = dayData;
@@ -1366,7 +1413,7 @@
         showToast(btn.classList.contains('active') ? 'Match added to Following' : 'Match removed from Following');
       }));
       matchList.querySelectorAll('.match-row').forEach(row => row.addEventListener('click', () => navigateToMatch(JSON.parse(row.dataset.match), row.dataset.date)));
-      if (scrollToActive) requestAnimationFrame(() => scrollToDate(activeDate, 'auto'));
+      if (scrollToActive) requestAnimationFrame(() => scrollToRecommendedStart(activeDate));
     }
 
     function liveMatchTemplate(m) {
@@ -1432,7 +1479,7 @@
     }
 
     function standaloneLiveTemplate() {
-      const matches = selectedDate === '27' ? liveData : [];
+      const matches = selectedDate === '27' ? activeLiveData : [];
       return `<section class="standalone-live-view" aria-label="Live matches list">
         <header class="standalone-live-summary">
           <button class="standalone-live-back" id="backToAllGames" aria-label="Back to Matches">‹</button>
@@ -1491,6 +1538,9 @@
     }
 
     function referenceControlLiveTemplate() {
+      const visibleReferenceMatches = requestedLiveCount === 0
+        ? []
+        : referenceLiveMatches.slice(0, requestedLiveCount === 1 ? 1 : referenceLiveMatches.length);
       return `<section class="reference-live-view" aria-label="Live matches list">
         <section class="reference-live-toolbar" aria-label="Live match tools">
           <button class="reference-live-tool" id="referenceSortLive"><span class="clock-glyph" aria-hidden="true"></span><span>By time</span></button>
@@ -1502,13 +1552,12 @@
         </button>
         <section class="reference-live-block" id="referenceLiveBlock">
           <button class="reference-status-toggle live" id="referenceLiveToggle" aria-expanded="true">
-            <strong>Live</strong><span class="reference-count">2</span><span class="reference-chevron">⌃</span>
+            <strong>Live</strong><span class="reference-count">${visibleReferenceMatches.length}</span><span class="reference-chevron">⌃</span>
           </button>
           <div class="reference-live-content">
-            <div class="reference-league-row highlight"><img src="${A}liga-mx-reference.png" alt=""><span>Mexico &gt; Mexico Liga MX</span></div>
-            ${referenceMatchTemplate(referenceLiveMatches[0])}
-            <div class="reference-league-row next-pro"><img src="${A}mls-next-pro-reference.png" alt=""><span>USA &gt; MLS Next Pro</span></div>
-            ${referenceMatchTemplate(referenceLiveMatches[1])}
+            ${visibleReferenceMatches[0] ? `<div class="reference-league-row highlight"><img src="${A}liga-mx-reference.png" alt=""><span>Mexico &gt; Mexico Liga MX</span></div>${referenceMatchTemplate(visibleReferenceMatches[0])}` : ''}
+            ${visibleReferenceMatches[1] ? `<div class="reference-league-row next-pro"><img src="${A}mls-next-pro-reference.png" alt=""><span>USA &gt; MLS Next Pro</span></div>${referenceMatchTemplate(visibleReferenceMatches[1])}` : ''}
+            ${visibleReferenceMatches.length ? '' : '<div class="reference-live-empty"><b>No live matches right now</b><span>Check Finished or Upcoming matches.</span></div>'}
           </div>
         </section>
         <button class="reference-status-toggle" data-reference-status="upcoming" aria-expanded="false">
@@ -1577,7 +1626,7 @@
       const finishedMatches = data['26'];
       return `<section class="live-view">
         ${liveStatusSection('finished', 'Finished', finishedMatches)}
-        ${liveStatusSection('live', 'Live', liveData)}
+        ${liveStatusSection('live', 'Live', activeLiveData)}
         ${liveStatusSection('upcoming', 'Upcoming', upcomingMatches)}
       </section>`;
     }
@@ -1709,15 +1758,16 @@
     }
 
     function livePreviewTemplate() {
-      return `<section class="all-games-live-entry" aria-label="Live match preview">
+      const hasLiveMatches = activeLiveData.length > 0;
+      return `<section class="all-games-live-entry ${hasLiveMatches ? '' : 'zero-live'}" aria-label="Live match preview">
         <div class="live-preview-heading">
-          <a class="live-preview-title" id="openStandaloneLive" href="${standaloneLiveHref('live').replaceAll('&', '&amp;')}" aria-label="Open ${liveData.length} live matches">Live now <strong>${liveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></a>
+          <a class="live-preview-title" id="openStandaloneLive" href="${standaloneLiveHref('live').replaceAll('&', '&amp;')}" aria-label="Open ${activeLiveData.length} live matches">Live now <strong>${activeLiveData.length}</strong><span class="live-preview-action">View all <b aria-hidden="true">›</b></span></a>
         </div>
-        <div class="live-preview-track" id="livePreviewTrack" aria-label="Swipe through live matches">
+        ${hasLiveMatches ? `<div class="live-preview-track ${activeLiveData.length === 1 ? 'single' : ''}" id="livePreviewTrack" aria-label="Swipe through live matches">
           <button class="live-status-entry finished" data-open-status="finished" aria-label="Open finished matches"><strong>← Finished</strong></button>
-          ${liveData.map(livePreviewMatchTemplate).join('')}
+          ${activeLiveData.map(livePreviewMatchTemplate).join('')}
           <button class="live-status-entry upcoming" data-open-status="upcoming" aria-label="Open upcoming matches"><strong>Upcoming →</strong></button>
-        </div>
+        </div>` : ''}
       </section>`;
     }
 
@@ -1813,6 +1863,7 @@
     function navigateToAllGames() {
       const params = new URLSearchParams({ view: 'all', date: selectedDate });
       if (experimentVariant === 'control') params.set('variant', 'control');
+      if (previewParams.has('live_count')) params.set('live_count', String(requestedLiveCount));
       window.location.assign(`?${params.toString()}`);
     }
 
@@ -1820,6 +1871,7 @@
       const params = new URLSearchParams({ view: 'live', date: selectedDate });
       if (status !== 'live') params.set('status', status);
       if (experimentVariant === 'control') params.set('variant', 'control');
+      if (previewParams.has('live_count')) params.set('live_count', String(requestedLiveCount));
       return `?${params.toString()}`;
     }
 
@@ -2026,6 +2078,35 @@
 
     drawDates();
     applyPreviewState();
+
+    // Give the annotation layer stable targets even after the match list re-renders.
+    let annotationTargetIndex = 0;
+    function markAnnotationTargets() {
+      const selectors = [
+        '[data-annotatable]', '.date-btn', '.date-calendar', '.all-game-toggle',
+        '.redesign-competition-row', '.redesign-region-row', '.match-row',
+        '.live-preview-match', '.live-preview-title', '.live-tool', '.nav-btn',
+        '.rule', 'h1', 'h2', 'h3', 'p', 'li', 'article'
+      ].join(',');
+      document.querySelectorAll(selectors).forEach(element => {
+        element.dataset.annotatable = 'true';
+        element.dataset.openaiAnnotatable = 'true';
+        if (!element.id) element.id = `prototypeTarget${++annotationTargetIndex}`;
+        if (!element.getAttribute('aria-label')) {
+          const label = (element.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+          if (label) element.setAttribute('aria-label', label);
+        }
+        if (element.matches('main, section, header, nav, article, h1, h2, h3, p, li, a, button') && !element.hasAttribute('tabindex')) {
+          element.setAttribute('tabindex', '0');
+        }
+      });
+      document.querySelectorAll('span, strong, small, code').forEach(element => {
+        element.dataset.openaiAnnotatable = 'true';
+      });
+    }
+    markAnnotationTargets();
+    const annotationObserver = new MutationObserver(markAnnotationTargets);
+    annotationObserver.observe(app, { childList: true, subtree: true });
   </script>
 </body>
 </html>
